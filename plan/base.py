@@ -6,6 +6,8 @@ from PIL import Image
 import networkx as nx
 import prior
 
+from agents.mapping_agent import MappingAgent
+
 PROMPT = """
 You are a helpful planning agent. Your role is to decide the action to be taken based on the task provided, visual input, map and top down view of the current location.
 Here is a detailed description of the inputs you will receive:
@@ -15,15 +17,16 @@ Here is a detailed description of the inputs you will receive:
 """
 
 class PlanningAgent:
-    def __init__(self, name, role, controller: Controller):
+    def __init__(self, name, role, controller: Controller, mapping_agent: MappingAgent = None):
         self.name = name
         self.role = role
         self.controller = controller
+        self.mapping_agent = mapping_agent or MappingAgent()
 
         self.client = OpenAI()
-        
+
         self.LLM = self.client.responses.create
-        
+
         self.task_terminate = "Call to critic"
 
 
@@ -84,8 +87,8 @@ class PlanningAgent:
         response = response.output_text
         return response
     
-    def generate_plan(self, task, visual_input, map_view, top_down_view):
-        # Generate a plan based on the task and the provided inputs
+    def generate_plan(self, task, visual_input, top_down_view):
+        map_view = self.mapping_agent.get_context_string()
         plan = self.__call__(f"{PROMPT}\nTask: {task}\nVisual Input: {visual_input}\nGraph View: {map_view}\nTop Down View: {top_down_view}")
         return plan
     
