@@ -15,6 +15,7 @@ class PerceptionAgent:
         self.sam_weights = sam_weights
         self.save_dir = save_dir
         if headless:
+            import ai2thor_colab  # lazy: only required on Linux headless runs (DSMLP/Colab)
             ai2thor_colab.start_xserver()
       
         if torch.cuda.is_available():

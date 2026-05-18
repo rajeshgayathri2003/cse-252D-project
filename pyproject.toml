@@ -16,3 +16,8 @@ sim = [
     "prior",
     "pillow",
 ]
+perception = [
+    "ultralytics",
+    "transformers",
+    "ai2thor_colab",
+]
