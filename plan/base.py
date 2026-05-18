@@ -10,6 +10,9 @@ import os
 import matplotlib.pyplot as plt
 from agents.mapping_agent import MappingAgent
 
+# Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
+PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
+
 PROMPT = """
 You are a helpful planning agent. Your role is to decide the action to be taken based on the task provided, visual input, map and top down view of the current location.
 Here is a detailed description of the inputs you will receive:
@@ -191,7 +194,7 @@ class PlanningAgent:
     
 
 if __name__ == "__main__":
-    dataset = prior.load_dataset("procthor-10k")
+    dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
     house = dataset["train"][0]
     controller = Controller(scene=house)
     

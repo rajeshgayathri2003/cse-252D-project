@@ -3,7 +3,10 @@ from ai2thor.controller import Controller
 from PIL import Image
 import matplotlib.pyplot as plt
 
-dataset = prior.load_dataset("procthor-10k")
+# Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
+PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
+
+dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
 dataset
 
 house = dataset["train"][0]
