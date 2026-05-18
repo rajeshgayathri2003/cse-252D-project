@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -78,9 +79,8 @@ class CriticAgent:
     def _parse_verdict(self, raw):
         # On malformed output, default to rejected so the planner re-plans
         # rather than the loop silently approving a bad sub-goal.
-        try:
-            verdict = json.loads(raw)
-        except (TypeError, json.JSONDecodeError):
+        verdict = self._extract_json(raw)
+        if verdict is None:
             return {
                 "approved": False,
                 "reason": f"Critic response was not valid JSON: {raw!r}",
@@ -92,6 +92,23 @@ class CriticAgent:
             "reason": str(verdict.get("reason", "")),
             "revised_subgoal": verdict.get("revised_subgoal"),
         }
+
+    @staticmethod
+    def _extract_json(raw):
+        if not isinstance(raw, str):
+            return None
+        try:
+            return json.loads(raw)
+        except json.JSONDecodeError:
+            pass
+        # Strip ```json ... ``` or ``` ... ``` code fences that small LLMs love.
+        match = re.search(r"\{.*\}", raw, re.DOTALL)
+        if match is None:
+            return None
+        try:
+            return json.loads(match.group(0))
+        except json.JSONDecodeError:
+            return None
 
 
 if __name__ == "__main__":
