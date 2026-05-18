@@ -10,11 +10,13 @@ from IPython.display import display, clear_output
 import time
 
 class PerceptionAgent:
-    def __init__(self, yolo_weights="yolo11m.pt", sam_weights="sam2-b.pt", save_dir="saved_agent_data"):
+    def __init__(self, yolo_weights="yolo11m.pt", sam_weights="sam2-b.pt", headless = True, save_dir="saved_agent_data"):
         self.yolo_weights = yolo_weights
         self.sam_weights = sam_weights
         self.save_dir = save_dir
-        
+        if headless:
+            ai2thor_colab.start_xserver()
+      
         if torch.cuda.is_available():
             self.device = "cuda"
         else:
@@ -110,3 +112,4 @@ class PerceptionAgent:
             torch.cuda.empty_cache()
 
         return "\n".join(description_lines)
+
