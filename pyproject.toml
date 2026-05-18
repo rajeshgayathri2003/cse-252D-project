@@ -1,0 +1,18 @@
+[project]
+name = "cse-252d-project"
+version = "0.1.0"
+description = "Visual Navigation via Agentic Systems in ProcTHOR"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "openai>=1.0",
+    "python-dotenv>=1.0",
+    "networkx>=3.0",
+]
+
+[project.optional-dependencies]
+sim = [
+    "ai2thor",
+    "procthor",
+    "prior",
+    "pillow",
+]
