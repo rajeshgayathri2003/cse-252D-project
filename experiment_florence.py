@@ -86,6 +86,13 @@ def annotate_od(image, od_result, save_path):
 
 def main():
     os.makedirs(SAVE_DIR, exist_ok=True)
+
+    # AI2-THOR's Linux build needs a GLX-capable display. ai2thor_colab.start_xserver()
+    # boots xvfb (no sudo needed) so the simulator can render headlessly on DSMLP.
+    import ai2thor_colab
+    print("Starting headless X server (xvfb)...")
+    ai2thor_colab.start_xserver()
+
     model, processor, device, dtype = load_florence()
 
     print("Loading procthor-10k...")
