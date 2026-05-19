@@ -18,7 +18,8 @@ You are a helpful planning agent. Your role is to decide the action to be taken 
 Here is a detailed description of the inputs you will receive:
 1. Task: A natural language description of the task that needs to be accomplished. For example, "Go to the kitchen and pick up the apple on the table."
 2. Visual Input: A description of the current visual scene from the agent's perspective. This may include objects in view, their locations, and any relevant details. For example, "You see a table with an apple on it, a chair, and a door leading to the kitchen."
-3. Graph Representation: A graph representation of the environment, where nodes represent reachable positions and edges represent possible movements between those positions. 
+3. Map Summary: The Mapping Agent's spatial memory, including visited nodes, known objects, and current location.
+4. Graph Representation: A graph representation of the environment, where nodes represent reachable positions and edges represent possible movements between those positions. 
 
 Return a clear instruction for the next action to take, such as "Move forward", "Turn left" etc. Make sure the instruction is actionable and directly contributes to accomplishing the task.
 """
@@ -114,9 +115,9 @@ class PlanningAgent:
         
         # Save the graph if save_dir is provided
         if self.save_dir:
-            path = self._save_graph(G)
-        
-        return path
+            return self._save_graph(G)
+
+        return None
     
     def _save_graph(self, G):
         """Save the graph visualization to a JPG file."""
@@ -149,43 +150,64 @@ class PlanningAgent:
         return graph_path
         
         
-    def __call__(self, text_input, visual_input, graph_view, top_down_view):
-        response = self.LLM(model="gpt-5.5", input=[{
-            "role": "user",
-            "content": [
-                { "type": "input_text", "text": text_input },
+    def __call__(self, text_input, visual_input=None, graph_view=None, top_down_view=None):
+        content = [{"type": "input_text", "text": text_input}]
+
+        if visual_input:
+            content.append(
                 {
                     "type": "input_image",
                     "image_url": f"data:image/jpeg;base64,{visual_input}",
-                },
+                }
+            )
+
+        if graph_view:
+            content.append(
                 {
                     "type": "input_image",
                     "image_url": f"data:image/jpeg;base64,{graph_view}",
-                },
+                }
+            )
+
+        if top_down_view:
+            content.append(
                 {
                     "type": "input_image",
                     "image_url": f"data:image/jpeg;base64,{top_down_view}",
                 }
-            ],
+            )
+
+        response = self.LLM(model="gpt-5.5", input=[{
+            "role": "user",
+            "content": content,
         }
         ],)
         response = response.output_text
         return response
     
-    def generate_plan(self, task, visual_input= None):
-        map_view = self.mapping_agent.get_context_string()
+    def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None):
+        map_summary = map_summary or self.mapping_agent.get_context_string()
         
-        if visual_input is None:
+        if perception_description is None:
+            perception_description = "No perception description was provided."
+
+        if visual_input is None and self.save_dir:
             visual_input_path = self.get_current_visual_input()
             visual_input = encode_image(visual_input_path)
         
         graph_path = self.create_graph(self.get_reachable_positions())
-        graph_view = encode_image(graph_path)
+        graph_view = encode_image(graph_path) if graph_path else None
+
+        top_down_frame_path = self.get_top_down_frame() if self.save_dir else None
+        top_down_view = encode_image(top_down_frame_path) if top_down_frame_path else None
         
-        top_down_frame_path = self.get_top_down_frame()
-        top_down_view = encode_image(top_down_frame_path)
-        
-        plan = self.__call__(f"{PROMPT}\nTask: {task}", visual_input, graph_view, top_down_view)
+        planner_input = (
+            f"{PROMPT}\n\n"
+            f"Task:\n{task}\n\n"
+            f"Visual Input:\n{perception_description}\n\n"
+            f"Map Summary:\n{map_summary}\n"
+        )
+        plan = self.__call__(planner_input, visual_input, graph_view, top_down_view)
         return plan
     
         

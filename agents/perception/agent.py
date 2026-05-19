@@ -1,13 +1,11 @@
 import os
 import shutil
+import time
+
 import torch
-import prior
-from ai2thor.controller import Controller
 from PIL import Image
 from ultralytics import YOLO
 from ultralytics.data.annotator import auto_annotate
-from IPython.display import display, clear_output
-import time
 
 class PerceptionAgent:
     def __init__(self, yolo_weights="yolo11m.pt", sam_weights="sam2-b.pt", headless = True, save_dir="saved_agent_data"):
@@ -57,7 +55,7 @@ class PerceptionAgent:
             return "in the center"
         return f"in the {vertical}-{horizontal}"
 
-    def perceive(self, image: Image.Image, frame_name: str) -> str:
+    def perceive(self, image: Image.Image, frame_name: str, return_structured: bool = False):
         """
         Runs perception and saves the image and mask data into a persistent folder.
         """
@@ -83,9 +81,18 @@ class PerceptionAgent:
         label_file = os.path.join(step_dir, "frame.txt")
         
         if not os.path.exists(label_file):
-            return "No distinct objects are visible in the current view."
+            description = "No distinct objects are visible in the current view."
+            if return_structured:
+                return {
+                    "description": description,
+                    "objects": [],
+                    "frame_path": img_path,
+                    "label_path": None,
+                }
+            return description
 
         description_lines = ["Visible Objects (Segmented):"]
+        objects = []
         
         with open(label_file, "r") as f:
             lines = f.readlines()
@@ -105,6 +112,12 @@ class PerceptionAgent:
                     width = max(polygon_coords[0::2]) - min(polygon_coords[0::2])
                     height = max(polygon_coords[1::2]) - min(polygon_coords[1::2])
                     area_ratio = width * height
+                    object_info = {
+                        "label": class_name,
+                        "screen_location": spatial_loc,
+                        "area_ratio": area_ratio,
+                    }
+                    objects.append(object_info)
                     
                     description_lines.append(f"- {class_name} located {spatial_loc}, covering roughly {area_ratio:.1%} of the view.")
 
@@ -112,5 +125,13 @@ class PerceptionAgent:
         if self.device == "cuda":
             torch.cuda.empty_cache()
 
-        return "\n".join(description_lines)
+        description = "\n".join(description_lines)
+        if return_structured:
+            return {
+                "description": description,
+                "objects": objects,
+                "frame_path": img_path,
+                "label_path": label_file,
+            }
 
+        return description
