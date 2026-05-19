@@ -22,6 +22,9 @@ perception = [
     # PretrainedConfig attribute resolution (forced_bos_token_id AttributeError).
     "transformers>=4.41,<4.50",
     "ai2thor_colab",
+    # ai2thor_colab does `from IPython.display import ...` at import time
+    # but doesn't declare ipython as a dep. Pull it in explicitly.
+    "ipython",
     "einops",
     "timm",
 ]
