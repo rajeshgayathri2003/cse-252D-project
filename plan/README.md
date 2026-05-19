@@ -3,10 +3,10 @@
 This module implements an early prototype of the **Planning Agent**, one of the
 five cooperating agents described in our system architecture (see
 `report/week5.tex`, §System Architecture). In the full framework, the planner
-sits at the center of a closed perception–reasoning–action loop: it fuses a
-local semantic snapshot from the Perception Agent with a long-horizon path from
-the Spatial Memory Agent, then proposes the next sub-goal for the Critic Agent
-to audit before the Action Agent executes it in ProcTHOR.
+sits at the center of a closed simulator/perception–reasoning–action loop: it
+fuses a local semantic snapshot from the Perception Agent with a long-horizon
+topological path from the Spatial Memory Agent, then proposes the next sub-goal
+for the Critic Agent to audit before the Action Agent executes it in ProcTHOR.
 
 The shared agent scaffolding (`BaseAgentCore`, `AgentBase`) lives in
 `agents/base.py`, and the Spatial Memory Agent it composes with lives in
@@ -24,9 +24,12 @@ The file defines a single class, `PlanningAgent`, that bundles together:
 
 2. **Mapping Agent composition.** The constructor now takes an optional
    `mapping_agent: MappingAgent` (defaulting to a fresh instance). The planner
-   no longer owns the spatial graph itself — it queries the mapping agent for
-   a textual summary via `mapping_agent.get_context_string()` whenever it
-   builds a prompt.
+   no longer owns the spatial graph itself. Following the architecture diagram,
+   the Mapping Agent is pose-first: AI2-THOR/ProcTHOR provides `(x, y, z)` and
+   yaw directly to `MappingAgent.update(...)` / `update_pose(...)`, while
+   perception remains a separate RGB branch. The planner queries the mapping
+   agent for a textual summary via `mapping_agent.get_context_string()` whenever
+   it builds a prompt.
 
 3. **Environment introspection via AI2-THOR.** The agent holds a
    `ai2thor.controller.Controller` and exposes two utilities for inspecting the
@@ -64,7 +67,7 @@ step.
 | ------------------------------- | ---------------------------------------------------------------------------- |
 | Planning Agent (LLM core)       | Implemented in `plan/base.py` (`PlanningAgent.__call__` / `generate_plan`)   |
 | Spatial Memory / Mapping Agent  | Implemented in `agents/mapping_agent.py` (`SpatialGraph` + `MappingAgent`)   |
-| Perception Agent                | Not present — `visual_input` is still an external string                     |
+| Perception Agent                | Implemented separately under `agents/perception`; feeds planner context, not required by Mapping Agent topology |
 | Critic Agent                    | Not present — `should_terminate` is a stub for the handoff                   |
 | Action Agent                    | Not present — plans are returned as text, not executed                       |
 
@@ -82,8 +85,5 @@ step.
 - `should_terminate` calls `self.task_terminate(task)`, but `task_terminate`
   is a string constant (`"Call to critic"`), not a callable. This needs to be
   replaced with an actual Critic Agent invocation.
-- The `__main__` block stops at controller construction; nothing wires the
-  controller into the mapping agent (`MappingAgent.update(event, ...)` is
-  never called) and there is no perception→planning→critic→action loop yet.
-- `visual_input` is passed to the LLM as a raw string; once the Perception
-  Agent exists, this should become a structured payload.
+- `visual_input` is passed to the LLM as a raw string; this should become a
+  structured Perception Agent payload.

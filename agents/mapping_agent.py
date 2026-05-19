@@ -190,6 +190,22 @@ class MappingAgentCore(BaseAgentCore):
         self.current_node_id = None
         self.previous_node_id = None
 
+    def update_pose(self, position, rotation, action=None, action_success=True, semantic_observations=None):
+        """Update the topological map from simulator pose.
+
+        The mapping agent's primary input is pose from AI2-THOR/ProcTHOR
+        ((x, y, z), yaw). Semantic observations are optional annotations for
+        callers that deliberately want to enrich nodes with object labels.
+        """
+        node_id = self.spatial_graph.add_or_update_node(position, rotation, semantic_observations)
+
+        if action_success:
+            self.spatial_graph.add_edge(self.current_node_id, node_id, action)
+
+        self.previous_node_id = self.current_node_id
+        self.current_node_id = node_id
+        return node_id
+
     def update_map(self, event, perception_output=None, action=None):
         metadata = self._event_metadata(event)
         agent_metadata = metadata.get("agent", {})
@@ -200,14 +216,13 @@ class MappingAgentCore(BaseAgentCore):
             action = metadata.get("lastAction")
 
         action_success = metadata.get("lastActionSuccess", True)
-        node_id = self.spatial_graph.add_or_update_node(position, rotation, perception_output)
-
-        if action_success:
-            self.spatial_graph.add_edge(self.current_node_id, node_id, action)
-
-        self.previous_node_id = self.current_node_id
-        self.current_node_id = node_id
-        return node_id
+        return self.update_pose(
+            position=position,
+            rotation=rotation,
+            action=action,
+            action_success=action_success,
+            semantic_observations=perception_output,
+        )
 
     def find_object(self, label):
         node_ids = self.spatial_graph.find_nodes_with_object(label)
@@ -272,6 +287,17 @@ class MappingAgent(AgentBase):
 
     def update(self, event, perception_output=None, action=None):
         return self.core.update_map(event, perception_output=perception_output, action=action)
+
+    def update_pose(self, position, rotation=None, yaw=None, action=None, action_success=True, semantic_observations=None):
+        if rotation is None:
+            rotation = {"x": 0.0, "y": 0.0 if yaw is None else yaw, "z": 0.0}
+        return self.core.update_pose(
+            position=position,
+            rotation=rotation,
+            action=action,
+            action_success=action_success,
+            semantic_observations=semantic_observations,
+        )
 
     def find_object(self, label):
         return self.core.find_object(label)

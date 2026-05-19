@@ -1,8 +1,8 @@
 import base64
 import copy
 
-from openai import OpenAI
 from ai2thor.controller import Controller
+from dotenv import load_dotenv
 from PIL import Image
 import networkx as nx
 import prior
@@ -10,8 +10,16 @@ import os
 import matplotlib.pyplot as plt
 from agents.mapping_agent import MappingAgent
 
+try:
+    from openai import OpenAI
+except ModuleNotFoundError:
+    OpenAI = None
+
 # Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
 PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
+TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
+DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
+DEFAULT_TRITONAI_MODEL = "api-gpt-oss-120b"
 
 PROMPT = """
 You are a helpful planning agent. Your role is to decide the action to be taken based on the task provided, visual input, map and top down view of the current location.
@@ -20,8 +28,6 @@ Here is a detailed description of the inputs you will receive:
 2. Visual Input: A description of the current visual scene from the agent's perspective. This may include objects in view, their locations, and any relevant details. For example, "You see a table with an apple on it, a chair, and a door leading to the kitchen."
 3. Map Summary: The Mapping Agent's spatial memory, including visited nodes, known objects, and current location.
 4. Graph Representation: A graph representation of the environment, where nodes represent reachable positions and edges represent possible movements between those positions. 
-
-Return a clear instruction for the next action to take, such as "Move forward", "Turn left" etc. Make sure the instruction is actionable and directly contributes to accomplishing the task.
 """
 
 # Function to encode the image
@@ -30,19 +36,65 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode("utf-8")
 
 class PlanningAgent:
-    def __init__(self, name, role, controller: Controller, mapping_agent: MappingAgent = None, save_dir: str = None):
+    def __init__(
+        self,
+        name,
+        role,
+        controller: Controller,
+        mapping_agent: MappingAgent = None,
+        save_dir: str = None,
+        client=None,
+        model=DEFAULT_OPENAI_MODEL,
+    ):
         self.name = name
         self.role = role
         self.controller = controller
         self.mapping_agent = mapping_agent or MappingAgent()
         self.save_dir = save_dir
+        self.model = model
 
-        self.client = OpenAI(api_key="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")
+        if client is not None:
+            self.client = client
+        elif OpenAI is not None:
+            self.client = OpenAI()
+        else:
+            self.client = None
 
-        self.LLM = self.client.responses.create
+        self.LLM = self.client.responses.create if self.client is not None else None
 
         self.task_terminate = "Call to critic"
 
+    @classmethod
+    def from_tritonai(
+        cls,
+        name,
+        role,
+        controller: Controller,
+        mapping_agent: MappingAgent = None,
+        save_dir: str = None,
+        model=DEFAULT_TRITONAI_MODEL,
+        api_key=None,
+    ):
+        if OpenAI is None:
+            raise RuntimeError("The openai package is required for TritonAI planner calls.")
+
+        load_dotenv(cls._repo_env_path())
+        key = api_key or os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+        if not key:
+            raise RuntimeError(
+                "TritonAI API key not found. Set TRITONAI_API_KEY (or OPENAI_API_KEY) in .env."
+            )
+
+        client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=key)
+        return cls(
+            name=name,
+            role=role,
+            controller=controller,
+            mapping_agent=mapping_agent,
+            save_dir=save_dir,
+            client=client,
+            model=model,
+        )
 
     def get_reachable_positions(self):
         reachable = self.controller.step(action="GetReachablePositions").metadata["actionReturn"]
@@ -177,13 +229,31 @@ class PlanningAgent:
                 }
             )
 
-        response = self.LLM(model="gpt-5.5", input=[{
-            "role": "user",
-            "content": content,
-        }
-        ],)
-        response = response.output_text
-        return response
+        if self.LLM is None:
+            raise RuntimeError("PlanningAgent needs an OpenAI client or a test LLM callable.")
+
+        return self._create_response(content)
+
+    def _create_response(self, content):
+        try:
+            response = self.LLM(
+                model=self.model,
+                input=[{
+                    "role": "user",
+                    "content": content,
+                }],
+            )
+            return response.output_text
+        except Exception:
+            if any(item.get("type") == "input_image" for item in content):
+                raise
+
+            text = "\n\n".join(item["text"] for item in content if item.get("type") == "input_text")
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": text}],
+            )
+            return response.choices[0].message.content
     
     def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None):
         map_summary = map_summary or self.mapping_agent.get_context_string()
@@ -213,6 +283,10 @@ class PlanningAgent:
         
     def should_terminate(self, task):
         return self.task_terminate(task)["completed"]
+
+    @staticmethod
+    def _repo_env_path():
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
     
 
 if __name__ == "__main__":

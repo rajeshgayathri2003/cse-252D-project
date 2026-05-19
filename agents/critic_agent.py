@@ -9,7 +9,7 @@ from openai import OpenAI
 TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_TRITONAI_MODEL = "api-mistral-small-3.2-2506"
+DEFAULT_TRITONAI_MODEL = "api-gpt-oss-120b"
 
 
 CRITIC_SYSTEM_PROMPT = """
@@ -22,7 +22,7 @@ You will receive:
 2. Proposed sub-goal: the plan text emitted by the Planning Agent.
 3. Map summary: a textual snapshot of the spatial memory built so far
    (nodes visited, objects seen, current location).
-4. Action history: the most recent actions taken by the agent.
+5. Action history: the most recent actions taken by the agent.
 
 Audit the proposal against three criteria:
 - Goal alignment: does the sub-goal make progress toward the task?
@@ -51,7 +51,7 @@ class CriticAgent:
 
     @classmethod
     def from_tritonai(cls, model=DEFAULT_TRITONAI_MODEL, api_key=None):
-        load_dotenv()  # pulls TRITONAI_API_KEY from .env at repo root if present
+        load_dotenv(cls._repo_env_path())
         key = api_key or os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
         if not key:
             raise RuntimeError(
@@ -61,18 +61,35 @@ class CriticAgent:
         client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=key)
         return cls(model=model, client=client)
 
-    def review(self, task, proposed_subgoal, map_summary="", action_history=None):
-        prompt = self._build_prompt(task, proposed_subgoal, map_summary, action_history or [])
-        raw = self.client.responses.create(model=self.model, input=prompt).output_text
+    def review(self, task, proposed_subgoal, map_summary="", action_history=None, perception_description=""):
+        prompt = self._build_prompt(
+            task,
+            proposed_subgoal,
+            map_summary,
+            action_history or [],
+            perception_description,
+        )
+        raw = self._create_text_response(prompt)
         return self._parse_verdict(raw)
 
-    def _build_prompt(self, task, proposed_subgoal, map_summary, action_history):
+    def _create_text_response(self, prompt):
+        try:
+            return self.client.responses.create(model=self.model, input=prompt).output_text
+        except Exception:
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            return response.choices[0].message.content
+
+    def _build_prompt(self, task, proposed_subgoal, map_summary, action_history, perception_description):
         history_text = "\n".join(f"- {a}" for a in action_history) if action_history else "(none)"
         return (
             f"{CRITIC_SYSTEM_PROMPT}\n\n"
             f"Task:\n{task}\n\n"
             f"Proposed sub-goal:\n{proposed_subgoal}\n\n"
             f"Map summary:\n{map_summary or '(empty)'}\n\n"
+            f"Visual input:\n{perception_description or '(not provided)'}\n\n"
             f"Action history:\n{history_text}\n"
         )
 
@@ -109,6 +126,10 @@ class CriticAgent:
             return json.loads(match.group(0))
         except json.JSONDecodeError:
             return None
+
+    @staticmethod
+    def _repo_env_path():
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 
 if __name__ == "__main__":
