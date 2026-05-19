@@ -18,7 +18,9 @@ sim = [
 ]
 perception = [
     "ultralytics",
-    "transformers",
+    # Florence-2's hosted modeling code targets transformers ~=4.41; 4.50+ broke
+    # PretrainedConfig attribute resolution (forced_bos_token_id AttributeError).
+    "transformers>=4.41,<4.50",
     "ai2thor_colab",
     "einops",
     "timm",
