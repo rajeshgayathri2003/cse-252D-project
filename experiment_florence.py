@@ -87,20 +87,17 @@ def annotate_od(image, od_result, save_path):
 def main():
     os.makedirs(SAVE_DIR, exist_ok=True)
 
-    # AI2-THOR's Linux build needs a GLX-capable display. ai2thor_colab.start_xserver()
-    # boots xvfb (no sudo needed) so the simulator can render headlessly on DSMLP.
-    import ai2thor_colab
-    print("Starting headless X server (xvfb)...")
-    ai2thor_colab.start_xserver()
-
     model, processor, device, dtype = load_florence()
 
     print("Loading procthor-10k...")
     dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
     house = dataset["train"][0]
 
-    print("Starting ai2thor controller...")
-    controller = Controller(scene=house)
+    # CloudRendering uses EGL (offscreen GPU rendering via the NVIDIA driver),
+    # so no X server / xvfb / ai2thor_colab is needed on DSMLP. Downloads a
+    # separate Unity binary on first use (~700 MB, cached in ~/.ai2thor/).
+    print("Starting ai2thor controller (CloudRendering platform)...")
+    controller = Controller(scene=house, platform="CloudRendering")
 
     try:
         for step in range(TOTAL_STEPS):
