@@ -20,4 +20,6 @@ perception = [
     "ultralytics",
     "transformers",
     "ai2thor_colab",
+    "einops",
+    "timm",
 ]
