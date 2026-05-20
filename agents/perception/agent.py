@@ -1,137 +1,182 @@
 import os
 import shutil
-import time
-
 import torch
+import prior
+from ai2thor.controller import Controller
 from PIL import Image
-from ultralytics import YOLO
-from ultralytics.data.annotator import auto_annotate
+from ultralytics import SAM
+from transformers import AutoProcessor, AutoModelForCausalLM
+from IPython.display import display, clear_output
+import time
+import ai2thor_colab
 
-class PerceptionAgent:
-    def __init__(self, yolo_weights="yolo11m.pt", sam_weights="sam2-b.pt", headless = True, save_dir="saved_agent_data"):
-        self.yolo_weights = yolo_weights
-        self.sam_weights = sam_weights
-        self.save_dir = save_dir
+# Import the patching tools needed for the fix
+from unittest.mock import patch
+from transformers.dynamic_module_utils import get_imports
+
+#for cpu eval
+def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
+    """Intercepts the dependency check and removes flash_attn."""
+    if not str(filename).endswith("modeling_florence2.py"):
+        return get_imports(filename)
+    
+    imports = get_imports(filename)
+    if "flash_attn" in imports:
+        imports.remove("flash_attn")
+    return imports
+
+
+class FlorencePerceptionAgent:
+    def __init__(self, florence_model="microsoft/Florence-2-base", sam_weights="sam2_b.pt", save_dir="saved_agent_data", headless = True):
         if headless:
-            import ai2thor_colab  # lazy: only required on Linux headless runs (DSMLP/Colab)
             ai2thor_colab.start_xserver()
-      
-        if torch.cuda.is_available():
-            self.device = "cuda"
-        else:
-            self.device = "cpu"
-            
+        self.save_dir = save_dir
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         print(f"[PerceptionAgent] Initializing with device: {self.device}")
         
-        self.yolo = YOLO(self.yolo_weights)
-        self.yolo.to(self.device)
-        self.class_names = self.yolo.names
+        # 1. Load Florence-2 (The Open-Vocabulary Detector)
+        print("Loading Florence-2... (This may take a moment)")
+        self.processor = AutoProcessor.from_pretrained(florence_model, trust_remote_code=True)
+
+        # --- THE FIX ---
+        # We wrap the model loading step in the patch context manager.
+        # This forces the loader to use our modified dependency list.
+        with patch("transformers.dynamic_module_utils.get_imports", workaround_fixed_get_imports):
+            self.florence = AutoModelForCausalLM.from_pretrained(
+                florence_model, 
+                trust_remote_code=True,
+                attn_implementation="sdpa" # Fall back to standard PyTorch attention
+            ).to(self.device)
+
+       # self.florence = AutoModelForCausalLM.from_pretrained(florence_model, trust_remote_code=True).to(self.device)
         
-        # Clean the master directory on startup so old Colab runs don't pile up
+        # 2. Load SAM2 (The Segmenter)
+        print("Loading SAM2...")
+        self.sam = SAM(sam_weights)
+        self.sam.to(self.device)
+        
+        # 3. Dynamic Class Dictionary for Dataset Labeling
+        self.class_map = {}
+        self.next_class_id = 0
+        
+        # Clean workspace
         if os.path.exists(self.save_dir):
             shutil.rmtree(self.save_dir)
         os.makedirs(self.save_dir, exist_ok=True)
 
-    def _get_spatial_descriptor(self, polygon_coords) -> str:
-        x_coords = polygon_coords[0::2]
-        y_coords = polygon_coords[1::2]
+    def _get_class_id(self, text_label: str) -> int:
+        """Dynamically assigns an integer ID to new object strings discovered by Florence."""
+        clean_label = text_label.lower().strip()
+        if clean_label not in self.class_map:
+            self.class_map[clean_label] = self.next_class_id
+            self.next_class_id += 1
+            
+            # Save/Update the global class dictionary for the dataset
+            dict_path = os.path.join(self.save_dir, "classes.txt")
+            with open(dict_path, "w") as f:
+                for name, cid in self.class_map.items():
+                    f.write(f"{cid}: {name}\n")
+                    
+        return self.class_map[clean_label]
+
+    def _get_spatial_descriptor(self, normalized_polygon) -> str:
+        """Translates normalized polygon points into spatial text."""
+        x_coords = [pt[0] for pt in normalized_polygon]
+        y_coords = [pt[1] for pt in normalized_polygon]
         
         center_x = sum(x_coords) / len(x_coords)
         center_y = sum(y_coords) / len(y_coords)
         
         horizontal = "center"
-        if center_x < 0.33:
-            horizontal = "left"
-        elif center_x > 0.66:
-            horizontal = "right"
+        if center_x < 0.33: horizontal = "left"
+        elif center_x > 0.66: horizontal = "right"
             
         vertical = "center"
-        if center_y < 0.33:
-            vertical = "top"
-        elif center_y > 0.66:
-            vertical = "bottom"
+        if center_y < 0.33: vertical = "top"
+        elif center_y > 0.66: vertical = "bottom"
             
         if horizontal == "center" and vertical == "center":
             return "in the center"
         return f"in the {vertical}-{horizontal}"
 
-    def perceive(self, image: Image.Image, frame_name: str, return_structured: bool = False):
-        """
-        Runs perception and saves the image and mask data into a persistent folder.
-        """
-        # Create an isolated directory just for this specific step
+    def perceive(self, image: Image.Image, frame_name: str) -> str:
         step_dir = os.path.join(self.save_dir, frame_name)
         os.makedirs(step_dir, exist_ok=True)
         
-        # Save the original image
+        # Save raw image
         img_path = os.path.join(step_dir, "frame.jpg")
         image.save(img_path)
-        
-        # Trigger native auto_annotate
-        # By setting data and output_dir to the same folder, it places the 
-        # YOLO bounding boxes and SAM masks (.txt) right next to the .jpg
-        auto_annotate(
-            data=step_dir,
-            det_model=self.yolo_weights,
-            sam_model=self.sam_weights,
-            output_dir=step_dir,
-            device=self.device
-        )
-        
         label_file = os.path.join(step_dir, "frame.txt")
         
-        if not os.path.exists(label_file):
-            description = "No distinct objects are visible in the current view."
-            if return_structured:
-                return {
-                    "description": description,
-                    "objects": [],
-                    "frame_path": img_path,
-                    "label_path": None,
-                }
-            return description
-
-        description_lines = ["Visible Objects (Segmented):"]
-        objects = []
+        # --- STEP 1: Florence-2 Open Vocabulary Detection ---
+        # --- STEP 1: Florence-2 Open Vocabulary Detection ---
+        prompt = "<OD>" # Switched to standard Object Detection
+        inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
         
-        with open(label_file, "r") as f:
-            lines = f.readlines()
-            for line in lines:
-                parts = line.strip().split()
-                if not parts:
-                    continue
-                    
-                class_id = int(parts[0])
-                class_name = self.class_names.get(class_id, "unknown object")
-                
-                polygon_coords = [float(x) for x in parts[1:]]
-                
-                if len(polygon_coords) >= 2:
-                    spatial_loc = self._get_spatial_descriptor(polygon_coords)
-                    
-                    width = max(polygon_coords[0::2]) - min(polygon_coords[0::2])
-                    height = max(polygon_coords[1::2]) - min(polygon_coords[1::2])
-                    area_ratio = width * height
-                    object_info = {
-                        "label": class_name,
-                        "screen_location": spatial_loc,
-                        "area_ratio": area_ratio,
-                    }
-                    objects.append(object_info)
-                    
-                    description_lines.append(f"- {class_name} located {spatial_loc}, covering roughly {area_ratio:.1%} of the view.")
+        with torch.no_grad():
+            generated_ids = self.florence.generate(
+                input_ids=inputs["input_ids"],
+                pixel_values=inputs["pixel_values"],
+                max_new_tokens=1024,
+                num_beams=3
+            )
+            
+        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
+        parsed_answer = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
+        
+        # Print exactly what Florence sees to the console so we aren't flying blind
+        print(f"\n[DEBUG] Florence Output: {parsed_answer}")
+        
+        detections = parsed_answer.get(prompt, {})
+        
+        # --- THE FIX ---
+        # Check if Florence returned a proper dictionary. 
+        # If it panicked and returned a string, default to empty lists.
+        if isinstance(detections, dict):
+            bboxes = detections.get('bboxes', [])
+            labels = detections.get('labels', [])
+        else:
+            bboxes = []
+            labels = []
+        # Handle Empty Detections
+        if len(bboxes) == 0:
+            open(label_file, 'w').close()
+            return "No distinct objects are visible in the current view."
 
-        # Clear GPU cache to prevent OOM errors over the loop
+        # --- STEP 2: SAM2 Segmentation from Florence Boxes ---
+        # We pass the Florence bounding boxes directly to SAM as prompts
+        sam_results = self.sam(image, bboxes=bboxes, verbose=False)[0]
+        
+        description_lines = ["Visible Objects (Segmented):"]
+        
+        # Open file to write dataset labels
+        with open(label_file, "w") as f:
+            # Check if masks were successfully generated
+            if sam_results.masks is not None:
+                # Iterate through every object detected
+                for i, (bbox, label) in enumerate(zip(bboxes, labels)):
+                    # Get normalized polygon coordinates from SAM2
+                    polygon = sam_results.masks.xyn[i] 
+                    
+                    if len(polygon) < 3: 
+                        continue # Skip invalid masks
+                    
+                    # 1. Write to dataset txt file
+                    class_id = self._get_class_id(label)
+                    flat_coords = " ".join([f"{pt[0]:.5f} {pt[1]:.5f}" for pt in polygon])
+                    f.write(f"{class_id} {flat_coords}\n")
+                    
+                    # 2. Build Text Description for LLM
+                    spatial_loc = self._get_spatial_descriptor(polygon)
+                    
+                    # Calculate Area
+                    width = max([p[0] for p in polygon]) - min([p[0] for p in polygon])
+                    height = max([p[1] for p in polygon]) - min([p[1] for p in polygon])
+                    area_ratio = width * height
+                    
+                    description_lines.append(f"- {label} located {spatial_loc}, covering roughly {area_ratio:.1%} of the view.")
+
         if self.device == "cuda":
             torch.cuda.empty_cache()
 
-        description = "\n".join(description_lines)
-        if return_structured:
-            return {
-                "description": description,
-                "objects": objects,
-                "frame_path": img_path,
-                "label_path": label_file,
-            }
-
-        return description
+        return "\n".join(description_lines)
