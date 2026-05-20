@@ -11,6 +11,9 @@ except ImportError:
 from plan.base import PlanningAgent
 from agents.mapping_agent import MappingAgent
 
+with open("key.txt", "r") as f:
+    key = f.read().strip()
+
 # Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
 PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
 TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
@@ -59,7 +62,7 @@ class ActionAgent:
         self.controller = controller
         self.planning_agent = planning_agent
 
-        self.client = OpenAI(api_key="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")
+        self.client = OpenAI(api_key=key)
 
         self.LLM = self.client.responses.create
         
