@@ -1,6 +1,21 @@
 from ai2thor.controller import Controller
 from openai import OpenAI
 import prior
+import os
+from PIL import Image
+from dotenv import load_dotenv
+try:
+    from agents.perception.agent import FlorencePerceptionAgent
+except ImportError:
+    FlorencePerceptionAgent = None
+from plan.base import PlanningAgent
+from agents.mapping_agent import MappingAgent
+
+# Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
+PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
+TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
+DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
+DEFAULT_TRITONAI_MODEL = "api-gemma-4-26b"
 
 ACTION_TYPE_PROMPT = """You are given a description of the action that needs to be performed by the agent. \n
 Action Description: {} \n
@@ -34,14 +49,24 @@ You will be using the Controller from ai2thor to perform the actions. Return the
 """
 
 class ActionAgent:
-    def __init__(self, name, role, controller: Controller):
+    def __init__(self, 
+                 name, 
+                 role, 
+                 controller: Controller, 
+                 planning_agent: PlanningAgent = None):
         self.name = name
         self.role = role
         self.controller = controller
-        
+        self.planning_agent = planning_agent
+
         self.client = OpenAI(api_key="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")
 
         self.LLM = self.client.responses.create
+        
+        project_dir = os.path.dirname(os.path.abspath(__file__))
+        temp_dir = os.path.join(project_dir, "action_outputs")
+        os.makedirs(temp_dir, exist_ok=True)
+        self.save_dir = temp_dir
         
         self.navigation = [
             "MoveAhead",
@@ -88,6 +113,38 @@ class ActionAgent:
             "UseUpObject",
         ]
         
+    @classmethod
+    def from_tritonai(
+        cls,
+        name,
+        role,
+        controller: Controller,
+        planning_agent: PlanningAgent = None,
+        save_dir: str = None,
+        model=DEFAULT_TRITONAI_MODEL,
+        api_key=None,
+    ):
+        if OpenAI is None:
+            raise RuntimeError("The openai package is required for TritonAI planner calls.")
+
+        load_dotenv(cls._repo_env_path())
+        key = api_key or os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+        if not key:
+            raise RuntimeError(
+                "TritonAI API key not found. Set TRITONAI_API_KEY (or OPENAI_API_KEY) in .env."
+            )
+
+        client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=key)
+        return cls(
+            name=name,
+            role=role,
+            controller=controller,
+            planning_agent=planning_agent,
+            save_dir=save_dir,
+            client=client,
+            model=model,
+        )
+
     def __call__(self, text_input):
         response = self.LLM(model="gpt-5.5", input=[{
             "role": "user",
@@ -99,12 +156,24 @@ class ActionAgent:
         ],)
         response = response.output_text
         return response
+    
+    def get_current_visual_output(self):
+        curr = Image.fromarray(self.controller.last_event.frame)
+        
+        if self.save_dir:
+            frame_path = os.path.join(self.save_dir, "visual_output.jpg")
+            curr.save(frame_path)
+            print(f"Visual output saved to {frame_path}")
+            return frame_path
+        return None
         
     def choose_action_type(self, action_description):
         response = self.__call__(ACTION_TYPE_PROMPT.format(action_description))
         return response.strip()
     
-    def choose_action(self, action_description):
+    def choose_action(self, task_description):
+        action_description = self.planning_agent.generate_plan(task_description)
+        print(f"Generated plan: {action_description}")
         type = self.choose_action_type(action_description)
         if type == "Navigation":
             possible_actions = self.navigation
@@ -141,11 +210,38 @@ class ActionAgent:
     
 if __name__ == "__main__":
     dataset = prior.load_dataset("procthor-10k")
-    house = dataset["train"][0]
+    house = dataset["train"][5]
     controller = Controller(scene=house)
     
-    action = "Move towards the wall"
-    agent = ActionAgent(name="ActionAgent", role="User", controller=controller)
-    action_command = agent.choose_action(action)
+    task = "Find the table and move towards it."
+    
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    temp_dir = os.path.join(project_dir, "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+    print(f"Created temp folder at: {temp_dir}")
+    
+    # Optional testing wrapper if running script locally:
+    perception_module = None
+    if FlorencePerceptionAgent is not None:
+        print("Instantiating FlorencePerceptionAgent...")
+        perception_module = FlorencePerceptionAgent(
+            florence_model="microsoft/Florence-2-base",
+            sam_weights="sam2_b.pt",
+            save_dir=os.path.join(temp_dir, "perception_logs"),
+            headless=True
+        )
+
+    planning_agent = PlanningAgent(
+        name="Planner",
+        role="Planning",
+        controller=controller,
+        mapping_agent=None,
+        perception_agent=perception_module,
+        save_dir=temp_dir
+    )
+    
+    agent = ActionAgent(name="ActionAgent", role="User", controller=controller, planning_agent=planning_agent)
+    action_command = agent.choose_action(task)
     print(f"Action Command: {action_command}")
     agent.perform_action(action_command)
+    agent.get_current_visual_output()
