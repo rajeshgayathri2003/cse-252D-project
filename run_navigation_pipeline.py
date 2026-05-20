@@ -25,7 +25,12 @@ from PIL import Image
 
 from agents.critic_agent import CriticAgent
 from agents.mapping_agent import MappingAgent
-from agents.perception.agent import FlorencePerceptionAgent
+try:
+    from agents.perception.agent import FlorencePerceptionAgent
+except ImportError as e:
+    print(f"Error importing FlorencePerceptionAgent: {e}")
+    FlorencePerceptionAgent = None
+from act.base import ActionAgent
 from plan.base import PROCTHOR_REVISION, PlanningAgent, encode_image
 
 
@@ -45,7 +50,11 @@ def build_controller(scene_index):
     dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
     house = dataset["train"][scene_index]
     print("[Sim] Starting AI2-THOR controller with CloudRendering...")
-    return Controller(scene=house, platform="CloudRendering")
+    try:
+        return Controller(scene=house, platform="CloudRendering")
+    except:
+        return Controller(scene=house)
+        
 
 
 def placeholder_action(step_index):
@@ -101,14 +110,40 @@ def run_pipeline(args):
         save_dir=args.output_dir,
         headless=args.headless_perception,
     )
-    planner = PlanningAgent.from_tritonai(
+    if args.trionai:
+        planner = PlanningAgent.from_tritonai(
+            name="Planner",
+            role="navigation planner",
+            controller=controller,
+            mapping_agent=mapping_agent,
+            save_dir=None,
+        )
+        critic = CriticAgent.from_tritonai()
+        actor = ActionAgent.from_tritonai(
+            name="ActionAgent",
+            role="User",
+            controller=controller,
+            planning_agent=planner,
+            save_dir=None,
+        )
+        
+    else:
+        project_dir = os.path.dirname(os.path.abspath(__file__))
+        temp_dir = os.path.join(project_dir, "temp")
+        os.makedirs(temp_dir, exist_ok=True)
+        print(f"Created temp folder at: {temp_dir}")
+        
+        planner = PlanningAgent(
         name="Planner",
-        role="navigation planner",
+        role="Planning",
         controller=controller,
-        mapping_agent=mapping_agent,
-        save_dir=None,
-    )
-    critic = CriticAgent.from_tritonai()
+        mapping_agent=None,
+        perception_agent=perception_agent,
+        save_dir=temp_dir
+        )
+
+        critic = CriticAgent.from_openai()
+        actor = ActionAgent(name="ActionAgent", role="User", controller=controller, planning_agent=planner)
 
     action_history = []
     event = controller.last_event
@@ -144,6 +179,10 @@ def run_pipeline(args):
                 perception_description=perception.description,
             )
             selected_subgoal = plan if verdict["approved"] else verdict.get("revised_subgoal") or plan
+            
+            action_command = actor.choose_action(selected_subgoal)
+            print(f"Action Command: {action_command}")
+            actor.perform_action(action_command)
 
             print("\n[Perception]\n" + perception.description)
             print("\n[Map]\n" + map_summary)
@@ -176,6 +215,7 @@ def parse_args():
     parser.add_argument("--output-dir", default="pipeline_outputs")
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
+    parser.add_argument("--trionai", type=bool, default=False, help="Use TritonAI-hosted models for planner and critic.")
     parser.add_argument(
         "--headless-perception",
         action="store_true",
