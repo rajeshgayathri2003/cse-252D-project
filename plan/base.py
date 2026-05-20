@@ -26,7 +26,7 @@ except ModuleNotFoundError:
 PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
 TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_TRITONAI_MODEL = "api-gpt-oss-120b"
+DEFAULT_TRITONAI_MODEL = "api-gemma-4-26b"
 
 PROMPT = """
 You are a helpful planning agent. Your role is to decide the action to be taken based on the task provided, visual input, map and top down view of the current location.
@@ -157,7 +157,9 @@ class PlanningAgent:
         return None
     
     def create_graph(self, reachable_positions):
-        reachable = self.get_reachable_positions()
+        if not reachable_positions:
+            return None
+        reachable = reachable_positions
         G = nx.Graph()
 
         STEP = 0.25  # AI2-THOR default grid size
@@ -248,25 +250,21 @@ class PlanningAgent:
         return self._create_response(content)
 
     def _create_response(self, content):
-        try:
-            response = self.LLM(
-                model=self.model,
-                input=[{
-                    "role": "user",
-                    "content": content,
-                }],
-            )
-            return response.output_text
-        except Exception:
-            if any(item.get("type") == "input_image" for item in content):
-                raise
+        chat_content = []
+        for item in content:
+            if item.get("type") == "input_text":
+                chat_content.append({"type": "text", "text": item["text"]})
+            elif item.get("type") == "input_image":
+                chat_content.append({
+                    "type": "image_url",
+                    "image_url": {"url": item["image_url"]},
+                })
 
-            text = "\n\n".join(item["text"] for item in content if item.get("type") == "input_text")
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": text}],
-            )
-            return response.choices[0].message.content
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": chat_content}],
+        )
+        return response.choices[0].message.content
     
     def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None):
         map_summary = map_summary or self.mapping_agent.get_context_string()
@@ -292,7 +290,7 @@ class PlanningAgent:
             else:
                 perception_description = "No perception description was provided."
 
-        graph_path = self.create_graph(self.get_reachable_positions())
+        graph_path = self.create_graph(self.get_reachable_positions()) if self.save_dir else None
         graph_view = encode_image(graph_path) if graph_path else None
 
         top_down_frame_path = self.get_top_down_frame() if self.save_dir else None

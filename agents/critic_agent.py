@@ -9,7 +9,7 @@ from openai import OpenAI
 TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
 
 DEFAULT_OPENAI_MODEL = "gpt-4o-mini"
-DEFAULT_TRITONAI_MODEL = "api-gpt-oss-120b"
+DEFAULT_TRITONAI_MODEL = "api-gemma-4-26b"
 
 
 CRITIC_SYSTEM_PROMPT = """
@@ -73,14 +73,11 @@ class CriticAgent:
         return self._parse_verdict(raw)
 
     def _create_text_response(self, prompt):
-        try:
-            return self.client.responses.create(model=self.model, input=prompt).output_text
-        except Exception:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-            )
-            return response.choices[0].message.content
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        return response.choices[0].message.content
 
     def _build_prompt(self, task, proposed_subgoal, map_summary, action_history, perception_description):
         history_text = "\n".join(f"- {a}" for a in action_history) if action_history else "(none)"
