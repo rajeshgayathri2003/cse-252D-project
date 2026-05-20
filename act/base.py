@@ -11,9 +11,6 @@ except ImportError:
 from plan.base import PlanningAgent
 from agents.mapping_agent import MappingAgent
 
-with open("key.txt", "r") as f:
-    key = f.read().strip()
-
 # Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
 PROCTHOR_REVISION = "ab3cacd0fc17754d4c080a3fd50b18395fae8647"
 TRITONAI_BASE_URL = "https://tritonai-api.ucsd.edu/v1"
@@ -31,45 +28,47 @@ Based on the description of the action, classify it into one of the three catego
 Your response should be only one of the following: "Navigation", "Object Interaction", or "Object State Change". Make sure to choose the category that best fits the action description provided.
 """
 
-ACTION_CHOOSE_PROMPT ="""
-The goal of the agent is to perform {}. The possible actions that can be taken are as follows: {}. \n
-Available objects in the scene: {}
+ACTION_CHOOSE_PROMPT = """
+The agent's goal is: {}.
+Possible actions: {}.
+Available objects with their IDs: {}
 
-Based on the goal of the agent return the most appropriate action to take from the list of possible actions. Make sure the action you choose directly contributes to accomplishing the goal.
+Choose the single most appropriate action and return ONLY the controller.step(...) call — no explanation, no markdown, no other text.
 
-If there is object interacttion involved, identify the object and obtain the object ID from the object metadata. The object metadata can be obtained using controller.last_event.metadata["objects"]. 
-
-Use the object ID in the command. For example,
-controller.step(
-    action="PickupObject",
-    objectId="Apple|1|1|1",
-    forceAction=False,
-    manualInteract=False
-)
-\nMake sure to replace object_id with the actual ID of the object you want to interact with.
-
-You will be using the Controller from ai2thor to perform the actions. Return the command to take the given action using the Controller. For example, if the action is "MoveAhead", you would return "controller.step(action='MoveAhead')". Make sure to replace "MoveAhead" with the actual action you choose.
+For navigation actions use: controller.step(action='MoveAhead')
+For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 """
 
 class ActionAgent:
-    def __init__(self, 
-                 name, 
-                 role, 
-                 controller: Controller, 
-                 planning_agent: PlanningAgent = None):
+    def __init__(self,
+                 name,
+                 role,
+                 controller: Controller,
+                 planning_agent: PlanningAgent = None,
+                 save_dir: str = None,
+                 client=None,
+                 model=DEFAULT_TRITONAI_MODEL):
         self.name = name
         self.role = role
         self.controller = controller
         self.planning_agent = planning_agent
+        self.model = model
 
-        self.client = OpenAI(api_key=key)
+        if client is not None:
+            self.client = client
+        else:
+            load_dotenv(self._repo_env_path())
+            fallback_key = os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+            self.client = OpenAI(api_key=fallback_key)
 
         self.LLM = self.client.responses.create
-        
-        project_dir = os.path.dirname(os.path.abspath(__file__))
-        temp_dir = os.path.join(project_dir, "action_outputs")
-        os.makedirs(temp_dir, exist_ok=True)
-        self.save_dir = temp_dir
+
+        if save_dir is not None:
+            self.save_dir = save_dir
+        else:
+            project_dir = os.path.dirname(os.path.abspath(__file__))
+            self.save_dir = os.path.join(project_dir, "action_outputs")
+        os.makedirs(self.save_dir, exist_ok=True)
         
         self.navigation = [
             "MoveAhead",
@@ -116,6 +115,10 @@ class ActionAgent:
             "UseUpObject",
         ]
         
+    @staticmethod
+    def _repo_env_path():
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+
     @classmethod
     def from_tritonai(
         cls,
@@ -149,7 +152,7 @@ class ActionAgent:
         )
 
     def __call__(self, text_input):
-        response = self.LLM(model="gpt-5.5", input=[{
+        response = self.LLM(model=self.model, input=[{
             "role": "user",
             "content": [
                 { "type": "input_text", "text": text_input },
@@ -185,21 +188,47 @@ class ActionAgent:
         else:            
             possible_actions = self.object_state_change    
         
-        # Get available objects in the scene
-        available_objects = [obj["objectType"] for obj in self.controller.last_event.metadata["objects"]]
-        available_objects = list(set(available_objects))  # Remove duplicates
-        
+        # Pass objectId alongside type so the LLM can use real IDs
+        available_objects = [
+            {"objectType": obj["objectType"], "objectId": obj["objectId"]}
+            for obj in self.controller.last_event.metadata["objects"]
+        ]
+
         response = self.__call__(ACTION_CHOOSE_PROMPT.format(action_description, possible_actions, available_objects))
         response = response.strip()
-        
-        # Remove markdown code block formatting if present
-        if response.startswith("```"):
-            response = response.split("```")[1]
-            if response.startswith("python"):
-                response = response[6:]  # Remove "python" language specifier
-        response = response.strip()
-        
-        return response
+
+        # Extract a complete controller.step(...) call, which may span multiple lines
+        def extract_step_call(text):
+            lines = text.splitlines()
+            for i, line in enumerate(lines):
+                stripped = line.strip().lstrip("`").rstrip("`").strip()
+                if stripped.startswith("controller.step("):
+                    collected = stripped
+                    depth = collected.count("(") - collected.count(")")
+                    j = i + 1
+                    while depth > 0 and j < len(lines):
+                        next_line = lines[j].strip().rstrip("`").strip()
+                        collected += "\n" + next_line
+                        depth += next_line.count("(") - next_line.count(")")
+                        j += 1
+                    return collected
+            return None
+
+        command = extract_step_call(response)
+        if command:
+            return command
+
+        # Fallback: strip markdown code block and retry
+        if "```" in response:
+            inner = response.split("```")[1]
+            if inner.startswith("python"):
+                inner = inner[6:]
+            command = extract_step_call(inner)
+            if command:
+                return command
+
+        print(f"[ActionAgent] WARNING: could not extract controller.step() from response, defaulting to RotateRight.\nRaw response: {response}")
+        return "controller.step(action='RotateRight')"
     
     def perform_action(self, action_command):
         try:

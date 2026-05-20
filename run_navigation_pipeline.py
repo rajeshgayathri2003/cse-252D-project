@@ -6,10 +6,7 @@ This script wires together the agents that exist today:
 2. MappingAgent stores the current pose and Florence object labels.
 3. PlanningAgent proposes the next sub-goal/action.
 4. CriticAgent reviews the planner output before any execution.
-
-The Action Agent is intentionally a placeholder for now. If you run multiple
-steps, the script uses a simple RotateRight action between cycles so the map can
-accumulate a few observations.
+5. ActionAgent translates the approved subgoal into a concrete AI2-THOR action and executes it.
 
 Run from the repo root, after installing sim/perception dependencies:
     uv run python run_navigation_pipeline.py --task "find a flower vase"
@@ -23,6 +20,7 @@ import prior
 from ai2thor.controller import Controller
 from PIL import Image
 
+from act.base import ActionAgent
 from agents.critic_agent import CriticAgent
 from agents.mapping_agent import MappingAgent
 try:
@@ -30,8 +28,7 @@ try:
 except ImportError as e:
     print(f"Error importing FlorencePerceptionAgent: {e}")
     FlorencePerceptionAgent = None
-from act.base import ActionAgent
-from plan.base import PROCTHOR_REVISION, PlanningAgent, encode_image
+from plan.base import PlanningAgent, encode_image
 
 
 FLORENCE_MODEL_ID = "microsoft/Florence-2-base"
@@ -47,19 +44,13 @@ class PerceptionResult:
 
 def build_controller(scene_index):
     print("[Sim] Loading ProcTHOR house...")
-    dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
+    dataset = prior.load_dataset("procthor-10k")
     house = dataset["train"][scene_index]
     print("[Sim] Starting AI2-THOR controller with CloudRendering...")
     try:
         return Controller(scene=house, platform="CloudRendering")
     except:
         return Controller(scene=house)
-        
-
-
-def placeholder_action(step_index):
-    """Temporary stand-in until ActionAgent exists."""
-    return {"action": "RotateRight", "degrees": 30}
 
 
 def run_perception(perception_agent, image, frame_name):
@@ -119,34 +110,37 @@ def run_pipeline(args):
             save_dir=None,
         )
         critic = CriticAgent.from_tritonai()
-        actor = ActionAgent.from_tritonai(
+        action_agent = ActionAgent.from_tritonai(
             name="ActionAgent",
-            role="User",
+            role="action executor",
             controller=controller,
             planning_agent=planner,
-            save_dir=None,
+            save_dir=args.output_dir,
         )
-        
     else:
         project_dir = os.path.dirname(os.path.abspath(__file__))
         temp_dir = os.path.join(project_dir, "temp")
         os.makedirs(temp_dir, exist_ok=True)
         print(f"Created temp folder at: {temp_dir}")
-        
+
         planner = PlanningAgent(
-        name="Planner",
-        role="Planning",
-        controller=controller,
-        mapping_agent=None,
-        perception_agent=perception_agent,
-        save_dir=temp_dir
+            name="Planner",
+            role="Planning",
+            controller=controller,
+            mapping_agent=None,
+            perception_agent=perception_agent,
+            save_dir=temp_dir,
+        )
+        critic = CriticAgent.from_openai()
+        action_agent = ActionAgent(
+            name="ActionAgent",
+            role="User",
+            controller=controller,
+            planning_agent=planner,
         )
 
-        critic = CriticAgent.from_openai()
-        actor = ActionAgent(name="ActionAgent", role="User", controller=controller, planning_agent=planner)
-
     action_history = []
-    event = controller.last_event
+    event = controller.step("Pass")  # force a fresh render before reading frames
 
     try:
         for step in range(args.steps):
@@ -179,16 +173,18 @@ def run_pipeline(args):
                 perception_description=perception.description,
             )
             selected_subgoal = plan if verdict["approved"] else verdict.get("revised_subgoal") or plan
-            
-            action_command = actor.choose_action(selected_subgoal)
-            print(f"Action Command: {action_command}")
-            actor.perform_action(action_command)
 
             print("\n[Perception]\n" + perception.description)
             print("\n[Map]\n" + map_summary)
             print("\n[Planner proposed]\n" + plan)
             print("\n[Critic verdict]\n" + str(verdict))
-            print("\n[Selected subgoal for future ActionAgent]\n" + selected_subgoal)
+            print("\n[Selected subgoal]\n" + selected_subgoal)
+
+            action_command = action_agent.choose_action(selected_subgoal)
+            print(f"\n[ActionAgent] Executing: {action_command}")
+            action_agent.perform_action(action_command)
+            event = controller.last_event
+            action_history.append(action_command)
 
             with open(os.path.join(step_dir, "pipeline_result.txt"), "w") as f:
                 f.write(f"Task:\n{args.task}\n\n")
@@ -196,13 +192,8 @@ def run_pipeline(args):
                 f.write(f"Map:\n{map_summary}\n\n")
                 f.write(f"Planner proposed:\n{plan}\n\n")
                 f.write(f"Critic verdict:\n{verdict}\n\n")
-                f.write(f"Selected subgoal:\n{selected_subgoal}\n")
-
-            if step < args.steps - 1:
-                action = placeholder_action(step)
-                print(f"\n[Placeholder ActionAgent] Executing {action}")
-                event = controller.step(**action)
-                action_history.append(action["action"])
+                f.write(f"Selected subgoal:\n{selected_subgoal}\n\n")
+                f.write(f"Action executed:\n{action_command}\n")
     finally:
         controller.stop()
 
@@ -215,7 +206,7 @@ def parse_args():
     parser.add_argument("--output-dir", default="pipeline_outputs")
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
-    parser.add_argument("--trionai", type=bool, default=False, help="Use TritonAI-hosted models for planner and critic.")
+    parser.add_argument("--trionai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
     parser.add_argument(
         "--headless-perception",
         action="store_true",
