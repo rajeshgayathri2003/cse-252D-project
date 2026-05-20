@@ -14,7 +14,6 @@ import ai2thor_colab
 from unittest.mock import patch
 from transformers.dynamic_module_utils import get_imports
 
-#for cpu eval
 def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
     """Intercepts the dependency check and removes flash_attn."""
     if not str(filename).endswith("modeling_florence2.py"):
@@ -27,11 +26,24 @@ def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
 
 
 class FlorencePerceptionAgent:
-    def __init__(self, florence_model="microsoft/Florence-2-base", sam_weights="sam2_b.pt", save_dir="saved_agent_data", headless = True):
+    def __init__(
+        self, 
+        florence_model="microsoft/Florence-2-base", 
+        sam_weights="sam2_b.pt", 
+        save_dir="saved_agent_data", 
+        headless=True,
+        device=None # Added device parameter
+    ):
         if headless:
             ai2thor_colab.start_xserver()
         self.save_dir = save_dir
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        # Set device based on user input or auto-detect
+        if device:
+            self.device = device
+        else:
+            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            
         print(f"[PerceptionAgent] Initializing with device: {self.device}")
         
         # 1. Load Florence-2 (The Open-Vocabulary Detector)
@@ -47,8 +59,6 @@ class FlorencePerceptionAgent:
                 trust_remote_code=True,
                 attn_implementation="sdpa" # Fall back to standard PyTorch attention
             ).to(self.device)
-
-       # self.florence = AutoModelForCausalLM.from_pretrained(florence_model, trust_remote_code=True).to(self.device)
         
         # 2. Load SAM2 (The Segmenter)
         print("Loading SAM2...")
@@ -109,7 +119,6 @@ class FlorencePerceptionAgent:
         label_file = os.path.join(step_dir, "frame.txt")
         
         # --- STEP 1: Florence-2 Open Vocabulary Detection ---
-        # --- STEP 1: Florence-2 Open Vocabulary Detection ---
         prompt = "<OD>" # Switched to standard Object Detection
         inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
         
@@ -138,6 +147,7 @@ class FlorencePerceptionAgent:
         else:
             bboxes = []
             labels = []
+            
         # Handle Empty Detections
         if len(bboxes) == 0:
             open(label_file, 'w').close()
@@ -176,7 +186,8 @@ class FlorencePerceptionAgent:
                     
                     description_lines.append(f"- {label} located {spatial_loc}, covering roughly {area_ratio:.1%} of the view.")
 
-        if self.device == "cuda":
+        # Updated to safely check string prefix for CUDA devices (e.g. "cuda:0")
+        if self.device.startswith("cuda"):
             torch.cuda.empty_cache()
 
         return "\n".join(description_lines)
