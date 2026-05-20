@@ -1,14 +1,21 @@
 import base64
 import copy
+import os
 
 from ai2thor.controller import Controller
 from dotenv import load_dotenv
 from PIL import Image
 import networkx as nx
 import prior
-import os
 import matplotlib.pyplot as plt
+
 from agents.mapping_agent import MappingAgent
+
+# Import the perception agent. Wrapping in a try/except to maintain modularity.
+try:
+    from agents.perception.agent import FlorencePerceptionAgent
+except ImportError:
+    FlorencePerceptionAgent = None
 
 try:
     from openai import OpenAI
@@ -42,6 +49,7 @@ class PlanningAgent:
         role,
         controller: Controller,
         mapping_agent: MappingAgent = None,
+        perception_agent: FlorencePerceptionAgent = None,
         save_dir: str = None,
         client=None,
         model=DEFAULT_OPENAI_MODEL,
@@ -50,8 +58,12 @@ class PlanningAgent:
         self.role = role
         self.controller = controller
         self.mapping_agent = mapping_agent or MappingAgent()
+        self.perception_agent = perception_agent
         self.save_dir = save_dir
         self.model = model
+        
+        # Tracks steps to pass unique sequential frame identifiers to the perception agent
+        self.step_counter = 0
 
         if client is not None:
             self.client = client
@@ -61,7 +73,6 @@ class PlanningAgent:
             self.client = None
 
         self.LLM = self.client.responses.create if self.client is not None else None
-
         self.task_terminate = "Call to critic"
 
     @classmethod
@@ -71,6 +82,7 @@ class PlanningAgent:
         role,
         controller: Controller,
         mapping_agent: MappingAgent = None,
+        perception_agent: FlorencePerceptionAgent = None,
         save_dir: str = None,
         model=DEFAULT_TRITONAI_MODEL,
         api_key=None,
@@ -91,6 +103,7 @@ class PlanningAgent:
             role=role,
             controller=controller,
             mapping_agent=mapping_agent,
+            perception_agent=perception_agent,
             save_dir=save_dir,
             client=client,
             model=model,
@@ -107,8 +120,8 @@ class PlanningAgent:
             frame_path = os.path.join(self.save_dir, "visual_input.jpg")
             curr.save(frame_path)
             print(f"Visual input saved to {frame_path}")
-        
-        return frame_path
+            return frame_path
+        return None
     
     def get_top_down_frame(self):
         # Setup the top-down camera
@@ -124,7 +137,7 @@ class PlanningAgent:
         pose["farClippingPlane"] = 50
         del pose["orthographicSize"]
 
-        # add the camera to the scene
+        # Add the camera to the scene
         event = self.controller.step(
             action="AddThirdPartyCamera",
             **pose,
@@ -139,8 +152,9 @@ class PlanningAgent:
             frame_path = os.path.join(self.save_dir, "top_down.jpg")
             frame_image.save(frame_path)
             print(f"Top-down view saved to {frame_path}")
+            return frame_path
         
-        return frame_path
+        return None
     
     def create_graph(self, reachable_positions):
         reachable = self.get_reachable_positions()
@@ -201,7 +215,6 @@ class PlanningAgent:
         
         return graph_path
         
-        
     def __call__(self, text_input, visual_input=None, graph_view=None, top_down_view=None):
         content = [{"type": "input_text", "text": text_input}]
 
@@ -258,13 +271,27 @@ class PlanningAgent:
     def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None):
         map_summary = map_summary or self.mapping_agent.get_context_string()
         
-        if perception_description is None:
-            perception_description = "No perception description was provided."
-
+        # Convert simulator RGB frame to PIL for the perception agent
+        raw_frame_array = self.controller.last_event.frame
+        pil_image = Image.fromarray(raw_frame_array)
+        
         if visual_input is None and self.save_dir:
             visual_input_path = self.get_current_visual_input()
-            visual_input = encode_image(visual_input_path)
+            if visual_input_path:
+                visual_input = encode_image(visual_input_path)
         
+        # Intercept and fetch open-vocabulary + SAM segmentations from FlorencePerceptionAgent
+        if perception_description is None:
+            if self.perception_agent is not None:
+                frame_identity = f"frame_{self.step_counter}"
+                perception_description = self.perception_agent.perceive(
+                    image=pil_image, 
+                    frame_name=frame_identity
+                )
+                self.step_counter += 1
+            else:
+                perception_description = "No perception description was provided."
+
         graph_path = self.create_graph(self.get_reachable_positions())
         graph_view = encode_image(graph_path) if graph_path else None
 
@@ -279,7 +306,6 @@ class PlanningAgent:
         )
         plan = self.__call__(planner_input, visual_input, graph_view, top_down_view)
         return plan
-    
         
     def should_terminate(self, task):
         return self.task_terminate(task)["completed"]
@@ -299,10 +325,23 @@ if __name__ == "__main__":
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Created temp folder at: {temp_dir}")
     
+    # Optional testing wrapper if running script locally:
+    perception_module = None
+    if FlorencePerceptionAgent is not None:
+        print("Instantiating FlorencePerceptionAgent...")
+        perception_module = FlorencePerceptionAgent(
+            florence_model="microsoft/Florence-2-base",
+            sam_weights="sam2_b.pt",
+            save_dir=os.path.join(temp_dir, "perception_logs"),
+            headless=True
+        )
+
     planning_agent = PlanningAgent(
         name="Planner",
         role="Planning",
         controller=controller,
+        mapping_agent=None,
+        perception_agent=perception_module,
         save_dir=temp_dir
     )
     
