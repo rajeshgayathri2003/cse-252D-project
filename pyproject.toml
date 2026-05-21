@@ -21,8 +21,6 @@ perception = [
     # Florence-2's hosted modeling code targets transformers ~=4.41; 4.50+
     # can break PretrainedConfig attribute resolution.
     "transformers>=4.41,<4.50",
-    "ai2thor_colab",
-    # ai2thor_colab imports IPython.display but does not declare ipython.
     "ipython",
     "einops",
     "timm",

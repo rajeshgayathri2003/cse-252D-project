@@ -8,7 +8,11 @@ from ultralytics import SAM
 from transformers import AutoProcessor, AutoModelForCausalLM
 from IPython.display import display, clear_output
 import time
-import ai2thor_colab
+
+try:
+    import ai2thor_colab
+except ImportError:
+    ai2thor_colab = None
 
 # Import the patching tools needed for the fix
 from unittest.mock import patch
@@ -35,7 +39,13 @@ class FlorencePerceptionAgent:
         device=None # Added device parameter
     ):
         if headless:
-            ai2thor_colab.start_xserver()
+            if ai2thor_colab is not None:
+                ai2thor_colab.start_xserver()
+            else:
+                print(
+                    "[PerceptionAgent] ai2thor_colab unavailable; skipping start_xserver(). "
+                    "Use CloudRendering or set headless=False if you need an X server."
+                )
         self.save_dir = save_dir
         
         # Set device based on user input or auto-detect
