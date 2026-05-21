@@ -41,6 +41,10 @@ Here is a detailed description of the inputs you will receive:
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
+    
+#read key
+with open("key.txt", "r") as f:
+    key = f.read().strip()
 
 class PlanningAgent:
     def __init__(
@@ -68,7 +72,7 @@ class PlanningAgent:
         if client is not None:
             self.client = client
         elif OpenAI is not None:
-            self.client = OpenAI()
+            self.client = OpenAI(api_key=key)
         else:
             self.client = None
 
@@ -131,7 +135,7 @@ class PlanningAgent:
         bounds = event.metadata["sceneBounds"]["size"]
         max_bound = max(bounds["x"], bounds["z"])
 
-        pose["fieldOfView"] = 50
+        pose["fieldOfView"] = 90
         pose["position"]["y"] += 1.1 * max_bound
         pose["orthographic"] = False
         pose["farClippingPlane"] = 50
@@ -314,7 +318,7 @@ class PlanningAgent:
     
 
 if __name__ == "__main__":
-    dataset = prior.load_dataset("procthor-10k", revision=PROCTHOR_REVISION)
+    dataset = prior.load_dataset("procthor-10k")
     house = dataset["train"][0]
     controller = Controller(scene=house)
     
@@ -343,5 +347,5 @@ if __name__ == "__main__":
         save_dir=temp_dir
     )
     
-    plan = planning_agent.generate_plan("Find a flower vase")
+    plan = planning_agent.generate_plan("Find the fridge")
     print("Generated Plan:", plan)

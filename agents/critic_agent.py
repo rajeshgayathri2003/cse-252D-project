@@ -46,6 +46,9 @@ class CriticAgent:
 
     @classmethod
     def from_openai(cls, model=DEFAULT_OPENAI_MODEL, api_key=None):
+        if api_key is None:
+            with open("key.txt", "r") as f:
+                api_key = f.read().strip()
         client = OpenAI(api_key=api_key) if api_key else OpenAI()
         return cls(model=model, client=client)
 

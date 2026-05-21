@@ -202,7 +202,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run the current navigation agent integration pipeline.")
     parser.add_argument("--task", default="find a flower vase")
     parser.add_argument("--steps", type=int, default=1)
-    parser.add_argument("--scene-index", type=int, default=0)
+    parser.add_argument("--scene-index", type=int, default=5)
     parser.add_argument("--output-dir", default="pipeline_outputs")
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
