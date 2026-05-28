@@ -1,0 +1,36 @@
+Rooms: Kitchen, LivingRoom
+
+Objects:
+  Apple
+  Book
+  Boot
+  Bowl
+  Candle
+  Cellphone
+  Countertop_Island_10x3
+  CreditCard
+  Dining_Table
+  Dish_Sponge
+  Dog_Bed
+  Egg
+  Fridge
+  Houseplant
+  Lettuce
+  Mug
+  Pepper_Shaker
+  Remote
+  RoboTHOR_houseplant_ai2_2_v
+  Shelving_Unit
+  Soap_Bottle
+  Sofa
+  Spatula
+  Spoon
+  Spray_Bottle
+  Television
+  Tomato
+  Towel_Statue
+  Wall_Decor_Painting
+  Wall_Decor_Painting_3V
+  Wall_Decor_Photo
+  Wall_Decor_Photo_1V
+  bin

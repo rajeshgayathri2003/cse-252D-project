@@ -1,0 +1,20 @@
+Scene Index: 5
+T1	Navigate to the Television	
+T2	Navigate to the Fridge	
+T3	Navigate to the Vase	
+
+Scene Index: 120
+T1  Navigate to the Plunger 
+T2  Navigate to the Wash basin
+T3 Navigate to the Fridge
+
+Scene Index: 280
+T1 Navigate to the Toilet Seat
+T2 Navigate to the washing Machine
+T3 Navigate to the Painting
+
+Scene Index: 720
+T1 Navigate to the Couch
+T2 Navigate to the Notebook on the bed
+T3 Navigate to the Desk
+

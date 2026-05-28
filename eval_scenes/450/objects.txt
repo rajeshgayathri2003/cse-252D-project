@@ -1,0 +1,16 @@
+Rooms: Bedroom, Bathroom
+
+Objects:
+  Bed
+  Book
+  Plunger
+  RoboTHOR_dresser_aspelund
+  RoboTHOR_pen_signo_v
+  RoboTHOR_pencil_amazon_basics_v
+  Teddy_Bear
+  Toilet
+  Toilet_Paper_Used_Up
+  Wall_Decor_Painting
+  Wall_Decor_Photo
+  bin
+  pillow

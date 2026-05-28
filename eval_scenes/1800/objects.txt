@@ -1,0 +1,11 @@
+Rooms: Bathroom
+
+Objects:
+  Bathroom_Faucet
+  Dresser
+  Houseplant
+  Plunger
+  Sink
+  Soap_Bar
+  Toilet
+  Wall_Decor_Painting
