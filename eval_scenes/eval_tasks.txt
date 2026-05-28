@@ -1,20 +1,20 @@
 Scene Index: 5
-T1	Navigate to the Television	
-T2	Navigate to the Fridge	
-T3	Navigate to the Vase	
+T1 Navigate to the Television	
+T2 Navigate to the Refrigerator	
+T3 Navigate to the Trash bag on the floor	
 
 Scene Index: 120
-T1  Navigate to the Plunger 
-T2  Navigate to the Wash basin
-T3 Navigate to the Fridge
+T1 Navigate to the Plunger 
+T2 Navigate to the Wash basin
+T3 Navigate to the Refrigerator
 
 Scene Index: 280
 T1 Navigate to the Toilet Seat
-T2 Navigate to the washing Machine
-T3 Navigate to the Painting
+T2 Navigate to the Washing Machine
+T3 Navigate to the Painting on the wall
 
 Scene Index: 720
 T1 Navigate to the Couch
-T2 Navigate to the Notebook on the bed
-T3 Navigate to the Desk
+T2 Navigate to the Book on the bed
+T3 Navigate to the Study Desk
 
