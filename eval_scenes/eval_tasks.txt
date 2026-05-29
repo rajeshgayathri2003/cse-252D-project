@@ -10,7 +10,7 @@ T3 Navigate to the Refrigerator
 
 Scene Index: 280
 T1 Navigate to the Toilet Seat
-T2 Navigate to the Washing Machine
+T2 Navigate to the Clothes Dryer
 T3 Navigate to the Painting on the wall
 
 Scene Index: 720

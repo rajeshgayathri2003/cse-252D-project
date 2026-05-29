@@ -150,8 +150,9 @@ class PlanningAgent:
         )
         top_down_frame = event.third_party_camera_frames[-1]
         frame_image = Image.fromarray(top_down_frame)
-        
-        # Save the frame if save_dir is provided
+        if frame_image.mode == "RGBA":
+            frame_image = frame_image.convert("RGB")
+
         if self.save_dir:
             frame_path = os.path.join(self.save_dir, "top_down.jpg")
             frame_image.save(frame_path)

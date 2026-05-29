@@ -1,0 +1,16 @@
+SR=0.6667
+SPL=0.2751
+
+Per-episode:
+Scene 5 T1: success=True  l=3.2596012026013246  p=4.500  SPL_ep=0.724
+Scene 5 T2: success=False  l=4.8541219597369  p=14.000  SPL_ep=0.000
+Scene 5 T3: success=False  l=2.462214450449026  p=15.250  SPL_ep=0.000
+Scene 120 T1: success=True  l=0.25  p=1.000  SPL_ep=0.250
+Scene 120 T2: success=True  l=2.25  p=3.500  SPL_ep=0.643
+Scene 120 T3: success=False  l=3.181980515339464  p=5.750  SPL_ep=0.000
+Scene 280 T1: success=True  l=1.0307764064044151  p=2.250  SPL_ep=0.458
+Scene 280 T2: success=True  l=0.25  p=6.500  SPL_ep=0.038
+Scene 280 T3: success=True  l=3.547996721614033  p=1.250  SPL_ep=1.000
+Scene 720 T1: success=False  l=2.519009952039422  p=6.000  SPL_ep=0.000
+Scene 720 T2: success=True  l=0.25  p=11.750  SPL_ep=0.021
+Scene 720 T3: success=True  l=0.5  p=3.000  SPL_ep=0.167

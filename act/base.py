@@ -69,11 +69,15 @@ class ActionAgent:
             self.client = client
         else:
             load_dotenv(self._repo_env_path())
-            fallback_key = os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+            tritonai_key = os.environ.get("TRITONAI_API_KEY")
+            openai_key = os.environ.get("OPENAI_API_KEY")
             if not fallback_key:
                 with open("key.txt", "r") as f:
                     fallback_key = f.read().strip()
-            self.client = OpenAI(api_key=fallback_key)
+            if tritonai_key:
+                self.client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=tritonai_key)
+            else:
+                self.client = OpenAI(api_key=openai_key)
 
         self.LLM = self.client.responses.create
 
