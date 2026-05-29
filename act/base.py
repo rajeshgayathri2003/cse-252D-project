@@ -2,8 +2,10 @@ from ai2thor.controller import Controller
 from openai import OpenAI
 import prior
 import os
+import re
 from PIL import Image
 from dotenv import load_dotenv
+import argparse
 try:
     from agents.perception.agent import FlorencePerceptionAgent
 except ImportError:
@@ -25,17 +27,26 @@ This action can broadly be classified into navigation, object interaction, and o
 3. Object State Change: Actions that involve changing the state of objects, such as "OpenObject", "CleanObject", etc.
 
 Based on the description of the action, classify it into one of the three categories mentioned above and return the category name as the output.
-Your response should be only one of the following: "Navigation", "Object Interaction", or "Object State Change". Make sure to choose the category that best fits the action description provided.
+Your response should be in the following format:\n
+Action Type: [Category Name]
+Explanation: [A brief explanation of why you classified the action into this category, referencing specific keywords or aspects of the action description that led to your decision.]
+Where [Category Name] is one of "Navigation", "Object Interaction", or "Object State Change".\n 
 """
 
 ACTION_CHOOSE_PROMPT = """
 The agent's goal is: {}.
 Possible actions: {}.
-Available objects with their IDs: {}
+Available objects with their IDs and locations: {}
+Visible objects with their IDs and locations: {}
 
-Choose the single most appropriate action and return ONLY the controller.step(...) call — no explanation, no markdown, no other text.
+Note that you can interact with an object only if it is visible. If you can not interact with the object, return a message saying "Object not visible" instead of a controller command.
+
+You can use the locations given to move to a position near the object if needed using the Teleport action
+
+Note that the action you return MUST be one of the possible actions listed above, and if it requires an objectId, you should use one from the available objects list. The agent will execute exactly the command you return, so it must be a valid controller.step(...) call that can be executed in Python.
 
 For navigation actions use: controller.step(action='MoveAhead')
+For moving directly to a given location: controller.step(action='Teleport', position=dict(x=1, y=0.9, z=-1.5))
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 """
 
@@ -59,6 +70,9 @@ class ActionAgent:
         else:
             load_dotenv(self._repo_env_path())
             fallback_key = os.environ.get("TRITONAI_API_KEY") or os.environ.get("OPENAI_API_KEY")
+            if not fallback_key:
+                with open("key.txt", "r") as f:
+                    fallback_key = f.read().strip()
             self.client = OpenAI(api_key=fallback_key)
 
         self.LLM = self.client.responses.create
@@ -81,6 +95,7 @@ class ActionAgent:
             "LookDown",
             "Crouch",
             "Stand",
+            "Teleport",
         ]
         
         self.object_interaction = [
@@ -175,7 +190,26 @@ class ActionAgent:
         
     def choose_action_type(self, action_description):
         response = self.__call__(ACTION_TYPE_PROMPT.format(action_description))
-        return response.strip()
+        text = response.strip()
+        
+        print(f"Action type classification response:\n{text}\n")
+
+        # Extract the category that appears after the literal "Action Type" label
+        m = re.search(r"Action\s*Type\s*[:\-]\s*['\"]?\s*([^\n\r]+)", text, re.IGNORECASE)
+        if m:
+            cat = m.group(1).strip().strip('"').strip("'")
+            # Normalize common variants to the expected category names
+            if re.search(r"navigation", cat, re.IGNORECASE):
+                return "Navigation"
+            if re.search(r"object\s*interaction", cat, re.IGNORECASE):
+                return "Object Interaction"
+            if re.search(r"object\s*state|state\s*change", cat, re.IGNORECASE):
+                return "Object State Change"
+            # If it doesn't match expected labels, return the raw captured text
+            return cat
+
+        # If label not found, default to Navigation
+        return "Navigation"
     
     def choose_action(self, task_description):
         action_description = self.planning_agent.generate_plan(task_description)
@@ -190,11 +224,16 @@ class ActionAgent:
         
         # Pass objectId alongside type so the LLM can use real IDs
         available_objects = [
-            {"objectType": obj["objectType"], "objectId": obj["objectId"]}
+            {"objectType": obj["objectType"], "objectId": obj["objectId"], "Location": (obj["position"]["x"], obj["position"]["y"], obj["position"]["z"])}
             for obj in self.controller.last_event.metadata["objects"]
         ]
+        
+        visible_objects = [
+            {"objectType": obj["objectType"], "objectId": obj["objectId"], "Location": (obj["position"]["x"], obj["position"]["y"], obj["position"]["z"])} for obj in self.controller.last_event.metadata["objects"]
+            if obj["visible"] 
+        ]
 
-        response = self.__call__(ACTION_CHOOSE_PROMPT.format(action_description, possible_actions, available_objects))
+        response = self.__call__(ACTION_CHOOSE_PROMPT.format(action_description, possible_actions, available_objects, visible_objects))
         response = response.strip()
 
         # Extract a complete controller.step(...) call, which may span multiple lines
@@ -227,8 +266,8 @@ class ActionAgent:
             if command:
                 return command
 
-        print(f"[ActionAgent] WARNING: could not extract controller.step() from response, defaulting to RotateRight.\nRaw response: {response}")
-        return "controller.step(action='RotateRight')"
+        print(f"[ActionAgent] WARNING: could not extract controller.step() from response, defaulting to MoveAhead.\nRaw response: {response}")
+        return "controller.step(action='MoveAhead')"
     
     def perform_action(self, action_command):
         try:
@@ -241,11 +280,16 @@ class ActionAgent:
             raise
     
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the action agent with optional TritonAI models.")
+    parser.add_argument("--tritonai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
+    parser.add_argument("--task", type=str, default="Find the table and move towards it.", help="The task description for the agent.")
+    args = parser.parse_args()
+    
     dataset = prior.load_dataset("procthor-10k")
-    house = dataset["train"][5]
+    house = dataset["train"][280]
     controller = Controller(scene=house)
     
-    task = "Find the table and move towards it."
+    task = args.task
     
     project_dir = os.path.dirname(os.path.abspath(__file__))
     temp_dir = os.path.join(project_dir, "temp")
@@ -263,16 +307,33 @@ if __name__ == "__main__":
             headless=True
         )
 
-    planning_agent = PlanningAgent(
-        name="Planner",
-        role="Planning",
-        controller=controller,
-        mapping_agent=None,
-        perception_agent=perception_module,
-        save_dir=temp_dir
-    )
+    if not args.tritonai:
+        planning_agent = PlanningAgent(
+            name="Planner",
+            role="Planning",
+            controller=controller,
+            mapping_agent=None,
+            perception_agent=perception_module,
+            save_dir=temp_dir
+        )
+        agent = ActionAgent(name="ActionAgent", role="User", controller=controller, planning_agent=planning_agent)
     
-    agent = ActionAgent(name="ActionAgent", role="User", controller=controller, planning_agent=planning_agent)
+    else:
+        planner = PlanningAgent.from_tritonai(
+                name="Planner",
+                role="navigation planner",
+                controller=controller,
+                mapping_agent=None,
+                perception_agent=perception_module,
+                save_dir=temp_dir,
+            )
+        agent = ActionAgent.from_tritonai(
+                name="ActionAgent",
+                role="action executor",
+                controller=controller,
+                planning_agent=planner,
+            )
+    
     action_command = agent.choose_action(task)
     print(f"Action Command: {action_command}")
     agent.perform_action(action_command)
