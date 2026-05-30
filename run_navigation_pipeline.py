@@ -13,8 +13,11 @@ Run from the repo root, after installing sim/perception dependencies:
 """
 
 import argparse
+import json
 import os
+import re
 from dataclasses import dataclass
+from datetime import datetime
 
 import prior
 from ai2thor.controller import Controller
@@ -40,6 +43,50 @@ class PerceptionResult:
     description: str
     objects: list[dict]
     frame_path: str
+
+
+def _slugify(text, max_len=40):
+    """Turn a free-form task string into a filesystem-safe label."""
+    slug = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return slug[:max_len].strip("-") or "run"
+
+
+def make_run_dir(base_dir, task, scene_index, now=None):
+    """Return a unique, timestamped + labeled run directory under base_dir.
+
+    Example: pipeline_outputs/20260529_193045_find-a-flower-vase_scene5
+    Each run gets its own subdir so prior runs are retained instead of wiped.
+    """
+    now = now or datetime.now()
+    stamp = now.strftime("%Y%m%d_%H%M%S")
+    name = f"{stamp}_{_slugify(task)}_scene{scene_index}"
+    run_dir = os.path.join(base_dir, name)
+    suffix = 2
+    while os.path.exists(run_dir):  # guard against same-second reruns
+        run_dir = os.path.join(base_dir, f"{name}_{suffix}")
+        suffix += 1
+    return run_dir
+
+
+def write_run_meta(run_dir, args, extra=None):
+    """Write run_meta.json describing how this run was configured."""
+    meta = {
+        "run_dir": os.path.basename(run_dir),
+        "started_at": datetime.now().isoformat(timespec="seconds"),
+        "task": args.task,
+        "scene_index": args.scene_index,
+        "steps": args.steps,
+        "florence_model": args.florence_model,
+        "sam_weights": args.sam_weights,
+        "device": args.device,
+        "tritonai": args.trionai,
+        "headless_perception": args.headless_perception,
+    }
+    if extra:
+        meta.update(extra)
+    with open(os.path.join(run_dir, "run_meta.json"), "w") as f:
+        json.dump(meta, f, indent=2)
+    return meta
 
 
 def build_controller(scene_index):
@@ -95,13 +142,17 @@ def objects_from_label_file(label_path, class_map):
 def run_pipeline(args):
     controller = build_controller(args.scene_index)
     mapping_agent = MappingAgent()
+    run_dir = make_run_dir(args.output_dir, args.task, args.scene_index)
+    print(f"[Pipeline] Run outputs -> {run_dir}")
     perception_agent = FlorencePerceptionAgent(
         florence_model=args.florence_model,
         sam_weights=args.sam_weights,
-        save_dir=args.output_dir,
+        save_dir=run_dir,
         headless=args.headless_perception,
         device=args.device,
     )
+    # Written after the perception agent, which clears its own save_dir on init.
+    write_run_meta(run_dir, args)
     if args.trionai:
         planner = PlanningAgent.from_tritonai(
             name="Planner",
@@ -116,7 +167,7 @@ def run_pipeline(args):
             role="action executor",
             controller=controller,
             planning_agent=planner,
-            save_dir=args.output_dir,
+            save_dir=run_dir,
         )
     else:
         project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -141,6 +192,7 @@ def run_pipeline(args):
         )
 
     action_history = []
+    completed_steps = 0
     event = controller.step("Pass")  # force a fresh render before reading frames
 
     try:
@@ -148,7 +200,7 @@ def run_pipeline(args):
             print(f"\n{'=' * 72}\nCycle {step + 1}/{args.steps}: observe -> map -> plan -> critique\n{'=' * 72}")
 
             frame_name = f"step_{step:02d}"
-            step_dir = os.path.join(args.output_dir, frame_name)
+            step_dir = os.path.join(run_dir, frame_name)
             frame = Image.fromarray(event.frame)
             perception = run_perception(perception_agent, frame, frame_name)
 
@@ -195,7 +247,18 @@ def run_pipeline(args):
                 f.write(f"Critic verdict:\n{verdict}\n\n")
                 f.write(f"Selected subgoal:\n{selected_subgoal}\n\n")
                 f.write(f"Action executed:\n{action_command}\n")
+            completed_steps += 1
     finally:
+        write_run_meta(
+            run_dir,
+            args,
+            extra={
+                "completed_steps": completed_steps,
+                "finished_at": datetime.now().isoformat(timespec="seconds"),
+                "action_history": action_history,
+            },
+        )
+        print(f"[Pipeline] Completed {completed_steps}/{args.steps} steps -> {run_dir}")
         controller.stop()
 
 
@@ -204,7 +267,12 @@ def parse_args():
     parser.add_argument("--task", default="find a flower vase")
     parser.add_argument("--steps", type=int, default=1)
     parser.add_argument("--scene-index", type=int, default=5)
-    parser.add_argument("--output-dir", default="pipeline_outputs")
+    parser.add_argument(
+        "--output-dir",
+        default="pipeline_outputs",
+        help="Parent dir for run outputs. Each run is saved to a retained "
+        "timestamped+labeled subdir, e.g. pipeline_outputs/<ts>_<task>_scene<N>.",
+    )
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
     parser.add_argument("--trionai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
