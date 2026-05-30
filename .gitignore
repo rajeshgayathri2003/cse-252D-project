@@ -5,8 +5,12 @@ __pycache__/
 *.pyd
 .Python
 
-# Virtual environments
+# Secrets / API keys
 .env
+key.txt
+api-key.txt
+
+# Virtual environments
 .venv
 env/
 venv/
