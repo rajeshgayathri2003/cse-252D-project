@@ -48,11 +48,15 @@ class FlorencePerceptionAgent:
                 )
         self.save_dir = save_dir
         
-        # Set device based on user input or auto-detect
-        if device:
+        # Set device based on user input or auto-detect (prefer cuda > mps > cpu).
+        if device and device != "auto":
             self.device = device
+        elif torch.cuda.is_available():
+            self.device = "cuda"
+        elif getattr(torch.backends, "mps", None) is not None and torch.backends.mps.is_available():
+            self.device = "mps"
         else:
-            self.device = "cuda" if torch.cuda.is_available() else "cpu"
+            self.device = "cpu"
             
         print(f"[PerceptionAgent] Initializing with device: {self.device}")
         

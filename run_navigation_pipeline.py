@@ -100,6 +100,7 @@ def run_pipeline(args):
         sam_weights=args.sam_weights,
         save_dir=args.output_dir,
         headless=args.headless_perception,
+        device=args.device,
     )
     if args.trionai:
         planner = PlanningAgent.from_tritonai(
@@ -211,6 +212,12 @@ def parse_args():
         "--headless-perception",
         action="store_true",
         help="Start ai2thor_colab X server from the perception agent.",
+    )
+    parser.add_argument(
+        "--device",
+        choices=["auto", "cuda", "mps", "cpu"],
+        default="auto",
+        help="Torch device for Florence-2 and SAM2. 'auto' picks cuda > mps > cpu.",
     )
     return parser.parse_args()
 
