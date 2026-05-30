@@ -79,7 +79,7 @@ def write_run_meta(run_dir, args, extra=None):
         "florence_model": args.florence_model,
         "sam_weights": args.sam_weights,
         "device": args.device,
-        "tritonai": args.trionai,
+        "tritonai": args.tritonai,
         "headless_perception": args.headless_perception,
     }
     if extra:
@@ -96,7 +96,8 @@ def build_controller(scene_index):
     print("[Sim] Starting AI2-THOR controller with CloudRendering...")
     try:
         return Controller(scene=house, platform="CloudRendering")
-    except:
+    except Exception as e:
+        print(f"[Sim] CloudRendering failed ({e}); falling back to default platform.")
         return Controller(scene=house)
 
 
@@ -153,7 +154,7 @@ def run_pipeline(args):
     )
     # Written after the perception agent, which clears its own save_dir on init.
     write_run_meta(run_dir, args)
-    if args.trionai:
+    if args.tritonai:
         planner = PlanningAgent.from_tritonai(
             name="Planner",
             role="navigation planner",
@@ -275,7 +276,7 @@ def parse_args():
     )
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
-    parser.add_argument("--trionai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
+    parser.add_argument("--tritonai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
     parser.add_argument(
         "--headless-perception",
         action="store_true",

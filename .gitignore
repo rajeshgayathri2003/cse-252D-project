@@ -39,6 +39,6 @@ Thumbs.db
 *.h5
 *.pt
 *.pth
-/pipelines_outputs/
+/pipeline_outputs/
 /act/temp/
 /plan/temp/
