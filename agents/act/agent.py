@@ -10,7 +10,7 @@ try:
     from agents.perception.agent import FlorencePerceptionAgent
 except ImportError:
     FlorencePerceptionAgent = None
-from plan.base import PlanningAgent
+from agents.plan.agent import PlanningAgent
 from agents.mapping_agent import MappingAgent
 
 # Pinned to the pre-5.0-compatible revision; works with ai2thor==5.0.0 from PyPI.
@@ -41,13 +41,12 @@ Visible objects with their IDs and locations: {}
 
 Note that you can interact with an object only if it is visible. If you can not interact with the object, return a message saying "Object not visible" instead of a controller command.
 
-You can use the locations given to move to a position near the object if needed using the Teleport action
-
 Note that the action you return MUST be one of the possible actions listed above, and if it requires an objectId, you should use one from the available objects list. The agent will execute exactly the command you return, so it must be a valid controller.step(...) call that can be executed in Python.
 
 For navigation actions use: controller.step(action='MoveAhead')
-For moving directly to a given location: controller.step(action='Teleport', position=dict(x=1, y=0.9, z=-1.5))
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
+
+IMPORTANT: Always use y=0.9 for the Teleport action. Using y=0.0 will fail silently.
 """
 
 class ActionAgent:
@@ -57,6 +56,7 @@ class ActionAgent:
                  controller: Controller,
                  planning_agent: PlanningAgent = None,
                  save_dir: str = None,
+                 in_context_example: bool = True,
                  client=None,
                  model=DEFAULT_TRITONAI_MODEL):
         self.name = name
@@ -64,6 +64,7 @@ class ActionAgent:
         self.controller = controller
         self.planning_agent = planning_agent
         self.model = model
+        self.in_context_example = in_context_example
 
         if client is not None:
             self.client = client
@@ -85,7 +86,7 @@ class ActionAgent:
             self.save_dir = save_dir
         else:
             project_dir = os.path.dirname(os.path.abspath(__file__))
-            self.save_dir = os.path.join(project_dir, "action_outputs")
+            self.save_dir = os.path.join(project_dir, "..", "..", "action_outputs")
         os.makedirs(self.save_dir, exist_ok=True)
         
         self.navigation = [
@@ -146,6 +147,7 @@ class ActionAgent:
         controller: Controller,
         planning_agent: PlanningAgent = None,
         save_dir: str = None,
+        in_context_example: bool = True,
         model=DEFAULT_TRITONAI_MODEL,
         api_key=None,
     ):
@@ -166,6 +168,7 @@ class ActionAgent:
             controller=controller,
             planning_agent=planning_agent,
             save_dir=save_dir,
+            in_context_example=in_context_example,
             client=client,
             model=model,
         )
@@ -182,15 +185,41 @@ class ActionAgent:
         response = response.output_text
         return response
     
-    def get_current_visual_output(self):
+    def get_current_visual_output(self, frame_id=None):
         curr = Image.fromarray(self.controller.last_event.frame)
         
         if self.save_dir:
-            frame_path = os.path.join(self.save_dir, "visual_output.jpg")
+            if frame_id is not None:
+                frame_path = os.path.join(self.save_dir, f"visual_output_{frame_id}.jpg")
+            else:
+                frame_path = os.path.join(self.save_dir, "visual_output.jpg")
             curr.save(frame_path)
             print(f"Visual output saved to {frame_path}")
             return frame_path
         return None
+    
+    def generate_incontext_example(self):
+       
+        incontext_example = {"Navigation": 
+                                {"action_description": "Move towards the table on the right",
+                                "possible_actions": self.navigation,
+                                "check_visibility": "No need to check visibility for navigation actions",
+                                "action_command": "controller.step(action='MoveRight')"},
+                             
+                             "Object Interaction": 
+                                {"action_description": "Pick up the apple on the table",
+                                "possible_actions": self.object_interaction,
+                                "check_visibility": "Check if the apple is visible in the current view. If it is not visible, return 'Object not visible'.",
+                                "action_command": "controller.step(action='PickupObject', objectId='Apple|1|2|3')"},
+                                
+                             "Object State Change": 
+                                {"action_description": "Open the fridge",
+                                "possible_actions": self.object_state_change,
+                                "check_visibility": "Check if the fridge is visible in the current view. If it is not visible, return 'Object not visible'.",
+                                "action_command": "controller.step(action='OpenObject', objectId='Fridge|1|2|3')"}
+                            }
+        
+        return incontext_example
         
     def choose_action_type(self, action_description):
         response = self.__call__(ACTION_TYPE_PROMPT.format(action_description))
@@ -215,7 +244,7 @@ class ActionAgent:
         # If label not found, default to Navigation
         return "Navigation"
     
-    def choose_action(self, task_description):
+    def choose_action(self, task_description, failure_msg = None):
         action_description = self.planning_agent.generate_plan(task_description)
         print(f"Generated plan: {action_description}")
         type = self.choose_action_type(action_description)
@@ -237,7 +266,23 @@ class ActionAgent:
             if obj["visible"] 
         ]
 
-        response = self.__call__(ACTION_CHOOSE_PROMPT.format(action_description, possible_actions, available_objects, visible_objects))
+        action_choose_input = ACTION_CHOOSE_PROMPT.format(
+                                action_description,
+                                possible_actions,
+                                available_objects,
+                                visible_objects
+                            )
+        
+        if self.in_context_example:
+            example = self.generate_incontext_example()
+            action_choose_input += "\n\nHere are some examples of how to choose actions based on the type of action description:\n"
+            for cat, ex in example.items():
+                action_choose_input += f"\nCategory: {cat}\nAction Description: {ex['action_description']}\nPossible Actions: {ex['possible_actions']}\nVisibility Check: {ex['check_visibility']}\nExample Action Command: {ex['action_command']}\n"
+                
+        if failure_msg:
+            action_choose_input += f"\n\nPrevious action failed with message: {failure_msg}\nUse this information to inform your next action choice.\n"
+            
+        response = self.__call__(action_choose_input)
         response = response.strip()
 
         # Extract a complete controller.step(...) call, which may span multiple lines
@@ -276,6 +321,11 @@ class ActionAgent:
     def perform_action(self, action_command):
         try:
             exec(action_command, {"controller": self.controller})
+            event = self.controller.last_event
+            if not event.metadata.get("lastActionSuccess"):
+                print(f"Action failed: {event.metadata.get('errorMessage', 'unknown error')}")
+                return False
+            return True
         except StopIteration:
             print(f"Error: Object not found in scene. Available objects: {[obj['objectType'] for obj in self.controller.last_event.metadata['objects']]}")
             raise
@@ -296,7 +346,7 @@ if __name__ == "__main__":
     task = args.task
     
     project_dir = os.path.dirname(os.path.abspath(__file__))
-    temp_dir = os.path.join(project_dir, "temp")
+    temp_dir = os.path.join(project_dir, "..", "..", "temp")
     os.makedirs(temp_dir, exist_ok=True)
     print(f"Created temp folder at: {temp_dir}")
     
@@ -336,9 +386,26 @@ if __name__ == "__main__":
                 role="action executor",
                 controller=controller,
                 planning_agent=planner,
+                in_context_example=False,
             )
     
-    action_command = agent.choose_action(task)
-    print(f"Action Command: {action_command}")
-    agent.perform_action(action_command)
-    agent.get_current_visual_output()
+    done = False
+    
+    while not done:
+        action_command = agent.choose_action(task)
+        print(f"Action Command: {action_command}")
+        
+        agent_meta = controller.last_event.metadata["agent"]
+        start = (round(agent_meta["position"]["x"], 2),
+                    round(agent_meta["position"]["z"], 2))
+        
+        print(f"Agent starting position (x, z): {start}")
+        
+        done = agent.perform_action(action_command)
+        
+        agent_meta = controller.last_event.metadata["agent"]
+        final = (round(agent_meta["position"]["x"], 2),
+                    round(agent_meta["position"]["z"], 2))
+        
+        print(f"Agent final position (x, z): {final}")
+        agent.get_current_visual_output()

@@ -23,7 +23,7 @@ import prior
 from ai2thor.controller import Controller
 from PIL import Image
 
-from act.base import ActionAgent
+from agents.act.agent import ActionAgent
 from agents.critic_agent import CriticAgent
 from agents.mapping_agent import MappingAgent
 try:
@@ -31,7 +31,7 @@ try:
 except ImportError as e:
     print(f"Error importing FlorencePerceptionAgent: {e}")
     FlorencePerceptionAgent = None
-from plan.base import PlanningAgent, encode_image
+from agents.plan.agent import PlanningAgent, encode_image
 
 
 FLORENCE_MODEL_ID = "microsoft/Florence-2-base"
@@ -144,6 +144,9 @@ def run_pipeline(args):
     controller = build_controller(args.scene_index)
     mapping_agent = MappingAgent()
     run_dir = make_run_dir(args.output_dir, args.task, args.scene_index)
+    
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    incontext_dir = os.path.join(project_dir, "incontext_examples") if args.in_context else None
     print(f"[Pipeline] Run outputs -> {run_dir}")
     perception_agent = FlorencePerceptionAgent(
         florence_model=args.florence_model,
@@ -154,13 +157,20 @@ def run_pipeline(args):
     )
     # Written after the perception agent, which clears its own save_dir on init.
     write_run_meta(run_dir, args)
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    temp_dir = os.path.join(project_dir, "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+    print(f"Created temp folder at: {temp_dir}")
+    
     if args.tritonai:
         planner = PlanningAgent.from_tritonai(
             name="Planner",
             role="navigation planner",
             controller=controller,
             mapping_agent=mapping_agent,
-            save_dir=None,
+            save_dir=temp_dir,
+            incontext_dir=incontext_dir,
+            use_incontext_example=args.in_context
         )
         critic = CriticAgent.from_tritonai()
         action_agent = ActionAgent.from_tritonai(
@@ -168,13 +178,10 @@ def run_pipeline(args):
             role="action executor",
             controller=controller,
             planning_agent=planner,
-            save_dir=run_dir,
+            save_dir=temp_dir,
+            in_context_example=args.in_context,
         )
     else:
-        project_dir = os.path.dirname(os.path.abspath(__file__))
-        temp_dir = os.path.join(project_dir, "temp")
-        os.makedirs(temp_dir, exist_ok=True)
-        print(f"Created temp folder at: {temp_dir}")
 
         planner = PlanningAgent(
             name="Planner",
@@ -183,6 +190,8 @@ def run_pipeline(args):
             mapping_agent=None,
             perception_agent=perception_agent,
             save_dir=temp_dir,
+            incontext_dir=incontext_dir,
+            use_incontext_example=args.in_context
         )
         critic = CriticAgent.from_openai()
         action_agent = ActionAgent(
@@ -190,6 +199,7 @@ def run_pipeline(args):
             role="User",
             controller=controller,
             planning_agent=planner,
+            in_context_example=args.in_context,
         )
 
     action_history = []
@@ -226,19 +236,72 @@ def run_pipeline(args):
                 action_history=action_history,
                 perception_description=perception.description,
             )
-            selected_subgoal = plan if verdict["approved"] else verdict.get("revised_subgoal") or plan
+            
+            # critic loops 5 times
+            
+            if verdict["approved"]:
+                selected_subgoal = plan
+            
+            loop_count = 0
+            while not verdict["approved"] and loop_count < 5:
+                print("\nCritic rejected the proposed sub-goal. Requesting a revised plan from the planner.\n")
+                loop_count += 1
+                plan = planner.generate_plan(
+                    task=args.task,
+                    visual_input=encode_image(perception.frame_path),
+                    perception_description=perception.description,
+                    map_summary=map_summary,
+                    critic_feedback=verdict["reason"],
+                )
+                
+                verdict = critic.review(
+                task=args.task,
+                proposed_subgoal=plan,
+                map_summary=map_summary,
+                action_history=action_history,
+                perception_description=perception.description,
+                )
+                
+            selected_subgoal = plan
+
+                
+            # selected_subgoal = plan if verdict["approved"] else verdict.get("revised_subgoal") or plan
 
             print("\n[Perception]\n" + perception.description)
             print("\n[Map]\n" + map_summary)
             print("\n[Planner proposed]\n" + plan)
             print("\n[Critic verdict]\n" + str(verdict))
             print("\n[Selected subgoal]\n" + selected_subgoal)
+            
+            done = False
+            
+            while not done:
+                action_command = action_agent.choose_action(selected_subgoal)
+                print(f"\n[ActionAgent] Executing: {action_command}")
+                
+                agent_meta = controller.last_event.metadata["agent"]
+                start = (round(agent_meta["position"]["x"], 2),
+                            round(agent_meta["position"]["z"], 2))
+                
+                print(f"Agent starting position (x, z): {start}")
+                
+                done =  action_agent.perform_action(action_command)
+                
+                agent_meta = controller.last_event.metadata["agent"]
+                final = (round(agent_meta["position"]["x"], 2),
+                            round(agent_meta["position"]["z"], 2))
+                
+                print(f"Agent final position (x, z): {final}")
+                
+                action_history.append(action_command)
+                
+            action_agent.get_current_visual_output(frame_id=step)
 
-            action_command = action_agent.choose_action(selected_subgoal)
-            print(f"\n[ActionAgent] Executing: {action_command}")
-            action_agent.perform_action(action_command)
-            event = controller.last_event
-            action_history.append(action_command)
+            # action_command = action_agent.choose_action(selected_subgoal)
+            # print(f"\n[ActionAgent] Executing: {action_command}")
+            # action_agent.perform_action(action_command)
+            # event = controller.last_event
+            # action_history.append(action_command)
 
             with open(os.path.join(step_dir, "pipeline_result.txt"), "w") as f:
                 f.write(f"Task:\n{args.task}\n\n")
@@ -268,6 +331,7 @@ def parse_args():
     parser.add_argument("--task", default="find a flower vase")
     parser.add_argument("--steps", type=int, default=1)
     parser.add_argument("--scene-index", type=int, default=5)
+    parser.add_argument("--in-context", action="store_true", help="Use in-context example prompting for the planner (disabled by default for cleaner ablations).")
     parser.add_argument(
         "--output-dir",
         default="pipeline_outputs",

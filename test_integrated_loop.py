@@ -161,7 +161,7 @@ class RealPlanningAgentAdapter:
     """Uses plan.base.PlanningAgent with TritonAI."""
 
     def __init__(self, controller, mapping_agent):
-        from plan.base import PlanningAgent
+        from agents.plan.agent import PlanningAgent
 
         self.planner = PlanningAgent.from_tritonai(
             name="Planner",

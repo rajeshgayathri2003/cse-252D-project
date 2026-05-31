@@ -17,4 +17,5 @@ curr.save("test.png")
 # print(type(house), house.keys(), house)
 
 event = controller.step(action="RotateRight")
+
 Image.fromarray(event.frame).save("test2.png")

@@ -1,0 +1,1 @@
+initial scene -> perception [tell what you see] + current map -> plan

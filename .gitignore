@@ -42,3 +42,9 @@ Thumbs.db
 /pipeline_outputs/
 /act/temp/
 /plan/temp/
+action_outputs/
+nav_graph.png
+test.png
+test2.png
+test_ai2thor.py
+temp/
