@@ -1,6 +1,7 @@
 import ast
 import json
 import math
+import re
 
 import networkx as nx
 
@@ -38,6 +39,7 @@ class SpatialGraph:
                 objects_seen=[],
                 visit_count=0,
                 timestamp=self.step_count,
+                blocked_actions=set(),
             )
 
         node_data = self.graph.nodes[node_id]
@@ -114,14 +116,44 @@ class SpatialGraph:
 
         return best_node
 
+    def tag_blocked_action(self, node_id, action: str):
+        """Record that `action` failed (was physically blocked) at `node_id`."""
+        if node_id is not None and node_id in self.graph:
+            self.graph.nodes[node_id].setdefault("blocked_actions", set()).add(action)
+
+    def _dist(self, pos1: dict, pos2: dict) -> float:
+        dx = float(pos1.get("x", 0.0)) - float(pos2.get("x", 0.0))
+        dz = float(pos1.get("z", 0.0)) - float(pos2.get("z", 0.0))
+        return math.sqrt(dx * dx + dz * dz)
+
+    def _cardinal(self, from_pos: dict, to_pos: dict) -> str:
+        """Return an 8-point cardinal direction string from from_pos to to_pos."""
+        dx = float(to_pos.get("x", 0.0)) - float(from_pos.get("x", 0.0))
+        dz = float(to_pos.get("z", 0.0)) - float(from_pos.get("z", 0.0))
+        if dx == 0.0 and dz == 0.0:
+            return "here"
+        # atan2(dx, dz): 0 = North (+z), 90 = East (+x)
+        angle = math.degrees(math.atan2(dx, dz)) % 360.0
+        directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
+        return directions[int((angle + 22.5) / 45.0) % 8]
+
     def get_summary(self, current_node_id=None):
-        known_objects = {}
+        # Collect per-label: all observation node_ids and all stored AI2-THOR distances.
+        known_objects: dict[str, dict] = {}
         for node_id, node_data in self.graph.nodes(data=True):
             for obj in node_data.get("objects_seen", []):
                 label = self._object_label(obj)
                 if not label:
                     continue
-                known_objects.setdefault(label, []).append(str(node_id))
+                entry = known_objects.setdefault(label, {"node_ids": [], "distances": []})
+                if node_id not in entry["node_ids"]:
+                    entry["node_ids"].append(node_id)
+                if isinstance(obj, dict) and obj.get("distance") is not None:
+                    entry["distances"].append(float(obj["distance"]))
+
+        cur_pos = None
+        if current_node_id is not None and current_node_id in self.graph:
+            cur_pos = self.graph.nodes[current_node_id].get("position")
 
         lines = [
             "Spatial map summary:",
@@ -132,10 +164,31 @@ class SpatialGraph:
         ]
 
         if known_objects:
-            for label, node_ids in sorted(known_objects.items()):
-                lines.append(f"  - {label}: {', '.join(node_ids)}")
+            for label, info in sorted(known_objects.items()):
+                node_ids = info["node_ids"]
+                distances = info["distances"]
+                count = len(node_ids)
+                if distances:
+                    min_dist = min(distances)
+                    lines.append(f"  - {label}: closest observed {min_dist:.1f}m (seen at {count} location(s))")
+                elif cur_pos:
+                    closest = min(
+                        node_ids,
+                        key=lambda nid: self._dist(cur_pos, self.graph.nodes[nid].get("position", {})),
+                    )
+                    obj_pos = self.graph.nodes[closest].get("position", {})
+                    dist = self._dist(cur_pos, obj_pos)
+                    direction = self._cardinal(cur_pos, obj_pos)
+                    lines.append(f"  - {label}: seen from node {dist:.1f}m {direction} (seen at {count} location(s))")
+                else:
+                    lines.append(f"  - {label}: seen at {count} location(s)")
         else:
             lines.append("  - none")
+
+        if current_node_id is not None and current_node_id in self.graph:
+            blocked = self.graph.nodes[current_node_id].get("blocked_actions", set())
+            if blocked:
+                lines.append(f"- blocked_actions_at_current_node: {', '.join(sorted(blocked))}")
 
         return "\n".join(lines)
 
@@ -199,6 +252,9 @@ class MappingAgentCore(BaseAgentCore):
         """
         node_id = self.spatial_graph.add_or_update_node(position, rotation, semantic_observations)
 
+        if not action_success and action is not None and self.current_node_id is not None:
+            self.spatial_graph.tag_blocked_action(self.current_node_id, action)
+
         if action_success:
             self.spatial_graph.add_edge(self.current_node_id, node_id, action)
 
@@ -216,6 +272,11 @@ class MappingAgentCore(BaseAgentCore):
             action = metadata.get("lastAction")
 
         action_success = metadata.get("lastActionSuccess", True)
+
+        if perception_output:
+            thor_objects = metadata.get("objects", [])
+            perception_output = self._enrich_with_distances(perception_output, thor_objects)
+
         return self.update_pose(
             position=position,
             rotation=rotation,
@@ -223,6 +284,51 @@ class MappingAgentCore(BaseAgentCore):
             action_success=action_success,
             semantic_observations=perception_output,
         )
+
+    @staticmethod
+    def _normalize_label(text: str) -> str:
+        """Lowercase + split PascalCase + collapse whitespace: 'CoffeeTable' -> 'coffee table'."""
+        spaced = re.sub(r"(?<=[a-z])(?=[A-Z])", " ", text)
+        return re.sub(r"\s+", " ", spaced).lower().strip()
+
+    def _enrich_with_distances(self, perception_output: list[dict], thor_objects: list[dict]) -> list[dict]:
+        """Add 'distance' from the closest matching AI2-THOR object to each perception entry.
+
+        Matching is done by normalizing both the Florence label and the AI2-THOR
+        objectType to lowercase-with-spaces, then checking for substring overlap.
+        """
+        # Build a normalized lookup: normalized_type -> (distance, objectType)
+        thor_lookup: list[tuple[str, float]] = []
+        for obj in thor_objects:
+            norm = self._normalize_label(obj.get("objectType", ""))
+            dist = obj.get("distance")
+            if norm and dist is not None:
+                thor_lookup.append((norm, float(dist)))
+
+        enriched = []
+        for entry in perception_output:
+            label = entry.get("label", "")
+            norm_label = self._normalize_label(label)
+            best_dist = None
+            best_score = 0
+
+            for norm_type, dist in thor_lookup:
+                # Score by length of the longer common substring (simple word overlap)
+                label_words = set(norm_label.split())
+                type_words = set(norm_type.split())
+                overlap = len(label_words & type_words)
+                exact = (norm_label == norm_type)
+                score = overlap * 10 + (5 if norm_label in norm_type or norm_type in norm_label else 0) + (100 if exact else 0)
+                if score > best_score:
+                    best_score = score
+                    best_dist = dist
+
+            enriched_entry = dict(entry)
+            if best_score > 0 and best_dist is not None:
+                enriched_entry["distance"] = best_dist
+            enriched.append(enriched_entry)
+
+        return enriched
 
     def find_object(self, label):
         node_ids = self.spatial_graph.find_nodes_with_object(label)
