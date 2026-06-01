@@ -21,19 +21,40 @@ You will receive:
 1. Task: the original natural-language goal (e.g., "find a television").
 2. Proposed sub-goal: the plan text emitted by the Planning Agent.
 3. Map summary: a textual snapshot of the spatial memory built so far
-   (nodes visited, objects seen, current location).
+   (nodes visited, objects seen, current location). Per-object distances
+   here are the *closest ever observed*, not the current distance.
+4. Visual input: a textual description of what the agent currently sees.
 5. Action history: the most recent actions taken by the agent.
+6. Trajectory (optional): the agent's straight-line distance to the target
+   object after each recent action, e.g. "4.98m -> 4.74m -> 4.50m". A
+   monotonically decreasing trajectory is good; flat or increasing is bad.
 
-Audit the proposal against three criteria:
-- Goal alignment: does the sub-goal make progress toward the task?
-- Map consistency: is the sub-goal reachable / non-contradictory given the map?
-- Non-repetition: does the sub-goal avoid re-doing recent actions or
-  re-visiting already-explored locations without new justification?
+Audit the proposal against FOUR criteria, in order. **Reject (approved=false)
+if ANY criterion fails.** A reject is not a punishment — it is how you give
+the planner a chance to course-correct.
+
+(A) Goal alignment: does the sub-goal make progress toward the task?
+(B) Map consistency: is the sub-goal reachable / non-contradictory given the
+    map? Specifically: if the sub-goal says "move toward the <target>" but
+    the target is NOT in the current visual input AND the agent has no
+    inferred direction to it from the map, reject — demand the planner first
+    propose a *search* action (e.g., RotateLeft/RotateRight to look around,
+    or move to a known landmark) rather than a blind "MoveAhead".
+(C) Non-repetition: does the sub-goal avoid re-doing recent actions or
+    re-visiting already-explored locations without new justification?
+(D) Progress trend (HARD RULE): if the Trajectory is provided and the
+    agent has executed at least 3 *movement* actions (MoveAhead, Teleport)
+    in the recent history, AND the distance to target has NOT strictly
+    decreased over the last 3 such movements (i.e., the most recent
+    distance is >= the distance from 3 movements ago), reject. The agent
+    is drifting. In `revised_subgoal`, instruct the planner to STOP moving
+    forward, ROTATE to re-acquire the target visually, and re-plan from
+    what it then sees.
 
 Respond with a single JSON object and nothing else:
 {
   "approved": <true|false>,
-  "reason": "<one-sentence explanation>",
+  "reason": "<one-sentence explanation; cite the criterion letter (A/B/C/D)>",
   "revised_subgoal": "<if rejected, a corrected sub-goal; otherwise null>"
 }
 """.strip()
@@ -64,13 +85,24 @@ class CriticAgent:
         client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=key)
         return cls(model=model, client=client)
 
-    def review(self, task, proposed_subgoal, map_summary="", action_history=None, perception_description=""):
+    def review(
+        self,
+        task,
+        proposed_subgoal,
+        map_summary="",
+        action_history=None,
+        perception_description="",
+        distance_history=None,
+        target_type=None,
+    ):
         prompt = self._build_prompt(
             task,
             proposed_subgoal,
             map_summary,
             action_history or [],
             perception_description,
+            distance_history or [],
+            target_type,
         )
         raw = self._create_text_response(prompt)
         return self._parse_verdict(raw)
@@ -82,15 +114,37 @@ class CriticAgent:
         )
         return response.choices[0].message.content
 
-    def _build_prompt(self, task, proposed_subgoal, map_summary, action_history, perception_description):
-        history_text = "\n".join(f"- {a}" for a in action_history) if action_history else "(none)"
+    def _build_prompt(
+        self,
+        task,
+        proposed_subgoal,
+        map_summary,
+        action_history,
+        perception_description,
+        distance_history,
+        target_type,
+    ):
+        # Cap to last 8 entries to keep the prompt focused.
+        recent_actions = action_history[-8:] if action_history else []
+        history_text = "\n".join(f"- {a}" for a in recent_actions) if recent_actions else "(none)"
+
+        if distance_history:
+            recent_dists = distance_history[-9:]  # one more than actions: pre-action distances + final
+            dist_strs = [f"{d:.2f}m" if d is not None else "n/a" for d in recent_dists]
+            trajectory_text = " -> ".join(dist_strs)
+            if target_type:
+                trajectory_text = f"(distance to '{target_type}') {trajectory_text}"
+        else:
+            trajectory_text = "(not provided)"
+
         return (
             f"{CRITIC_SYSTEM_PROMPT}\n\n"
             f"Task:\n{task}\n\n"
             f"Proposed sub-goal:\n{proposed_subgoal}\n\n"
             f"Map summary:\n{map_summary or '(empty)'}\n\n"
             f"Visual input:\n{perception_description or '(not provided)'}\n\n"
-            f"Action history:\n{history_text}\n"
+            f"Action history (most recent {len(recent_actions)}):\n{history_text}\n\n"
+            f"Trajectory:\n{trajectory_text}\n"
         )
 
     def _parse_verdict(self, raw):

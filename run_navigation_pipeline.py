@@ -365,6 +365,11 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
     actual_path_length = 0.0
     episode_success = False
     action_history = []
+    # Seed distance_history with the pre-action distance so the critic sees the
+    # full trajectory (pre-action distance, post-action distance, ...).
+    _initial_targets = find_target_objects(event.metadata["objects"], target_type)
+    _initial_dist = min((o["distance"] for o in _initial_targets), default=None)
+    distance_history: list[float | None] = [_initial_dist]
     completed_steps = 0
     log_lines: list[str] = [f"Task: {task}\nScene: {scene_index}\nSteps: {args.steps}\n"]
 
@@ -397,6 +402,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 map_summary=map_summary,
                 action_history=action_history,
                 perception_description=perception.description,
+                distance_history=distance_history,
+                target_type=target_type,
             )
 
             if verdict["approved"]:
@@ -420,6 +427,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                     map_summary=map_summary,
                     action_history=action_history,
                     perception_description=perception.description,
+                    distance_history=distance_history,
+                    target_type=target_type,
                 )
 
             selected_subgoal = plan
@@ -465,6 +474,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             episode_success = check_success(event, target_type, SUCCESS_DISTANCE)
             target_objs = find_target_objects(event.metadata["objects"], target_type)
             dist_to_target = min((o["distance"] for o in target_objs), default=None)
+            distance_history.append(dist_to_target)
             dist_str = f"{dist_to_target:.3f}m" if dist_to_target is not None else "n/a"
 
             pos = event.metadata["agent"]["position"]
