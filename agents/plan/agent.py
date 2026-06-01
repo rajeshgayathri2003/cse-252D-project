@@ -415,7 +415,7 @@ class PlanningAgent:
 
     @staticmethod
     def _repo_env_path():
-        return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
     
 
 if __name__ == "__main__":
