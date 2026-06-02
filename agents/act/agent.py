@@ -244,7 +244,7 @@ class ActionAgent:
         # If label not found, default to Navigation
         return "Navigation"
     
-    def choose_action(self, task_description, failure_msg = None):
+    def choose_action(self, task_description, failure_msg = None, perception_description=None):
         action_description = self.planning_agent.generate_plan(task_description)
         print(f"Generated plan: {action_description}")
         type = self.choose_action_type(action_description)
@@ -273,16 +273,36 @@ class ActionAgent:
                                 visible_objects
                             )
         
+        if perception_description:
+            action_choose_input += (
+                "\n\nCurrent visual perception (camera-frame spatial language — "
+                "use this to choose RotateLeft vs RotateRight correctly: if a "
+                "target is in the 'top-left' or 'center-left' of view, "
+                "RotateLeft turns toward it; 'top-right' or 'center-right' "
+                "calls for RotateRight):\n"
+                f"{perception_description}\n"
+            )
+
         if self.in_context_example:
             example = self.generate_incontext_example()
             action_choose_input += "\n\nHere are some examples of how to choose actions based on the type of action description:\n"
             for cat, ex in example.items():
                 action_choose_input += f"\nCategory: {cat}\nAction Description: {ex['action_description']}\nPossible Actions: {ex['possible_actions']}\nVisibility Check: {ex['check_visibility']}\nExample Action Command: {ex['action_command']}\n"
-                
+
         if failure_msg:
             action_choose_input += f"\n\nPrevious action failed with message: {failure_msg}\nUse this information to inform your next action choice.\n"
             
         response = self.__call__(action_choose_input)
+        response = response.strip()
+
+        # Strip tool-call wrapper tokens that some LLMs (e.g. Gemma) emit
+        # instead of clean text. Observed:
+        #   <|tool_call>call:controller.step(action='RotateLeft')<tool_call|>
+        # Without this, the parser below sees a line starting with
+        # `<|tool_call>` (not `controller.step(`), fails, and the agent
+        # silently defaults to MoveAhead — masking correct rotation commands.
+        response = response.replace("<|tool_call>", "").replace("<tool_call|>", "")
+        response = re.sub(r"\bcall:", "", response)
         response = response.strip()
 
         # Extract a complete controller.step(...) call, which may span multiple lines

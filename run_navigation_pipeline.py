@@ -406,12 +406,13 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 target_type=target_type,
             )
 
+            critic_attempts = [verdict]
             if verdict["approved"]:
                 selected_subgoal = plan
 
             loop_count = 0
             while not verdict["approved"] and loop_count < 5:
-                print("\nCritic rejected the proposed sub-goal. Requesting a revised plan from the planner.\n")
+                print(f"\nCritic rejected (attempt {loop_count + 1}): {verdict['reason']}\n")
                 loop_count += 1
                 plan = planner.generate_plan(
                     task=task,
@@ -430,6 +431,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                     distance_history=distance_history,
                     target_type=target_type,
                 )
+                critic_attempts.append(verdict)
 
             selected_subgoal = plan
 
@@ -443,7 +445,10 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             action_command = None
 
             while not done:
-                action_command = action_agent.choose_action(selected_subgoal)
+                action_command = action_agent.choose_action(
+                    selected_subgoal,
+                    perception_description=perception.description,
+                )
                 print(f"\n[ActionAgent] Executing: {action_command}")
 
                 agent_meta = controller.last_event.metadata["agent"]
@@ -488,6 +493,11 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 f.write(f"Map:\n{map_summary}\n\n")
                 f.write(f"Planner proposed:\n{plan}\n\n")
                 f.write(f"Critic verdict:\n{verdict}\n\n")
+                if len(critic_attempts) > 1:
+                    f.write(f"Critic attempts ({len(critic_attempts)}):\n")
+                    for i, v in enumerate(critic_attempts):
+                        f.write(f"  [{i}] {v}\n")
+                    f.write("\n")
                 f.write(f"Selected subgoal:\n{selected_subgoal}\n\n")
                 f.write(f"Action executed:\n{action_command}\n")
                 f.write(f"Position: x={pos['x']:.3f} y={pos['y']:.3f} z={pos['z']:.3f}\n")
