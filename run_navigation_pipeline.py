@@ -364,6 +364,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
     prev_pos = agent_position(event)
     actual_path_length = 0.0
     episode_success = False
+    critic_aborted = False
     action_history = []
     # Seed distance_history with the pre-action distance so the critic sees the
     # full trajectory (pre-action distance, post-action distance, ...).
@@ -432,6 +433,35 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                     target_type=target_type,
                 )
                 critic_attempts.append(verdict)
+
+            # If the rejection loop exited because the ceiling was hit (not
+            # because the critic approved), terminate the episode cleanly
+            # instead of executing the rejected plan. The pipeline's
+            # safety-valve fall-through (execute the last rejected plan
+            # anyway) is a drift accelerator at long step budgets — the
+            # critic correctly identified that it cannot approve any plan,
+            # so the episode is unrecoverable from this state.
+            if not verdict["approved"]:
+                print(
+                    f"\n  [Critic] Ceiling hit after {loop_count} rejections "
+                    f"at cycle {step + 1}; terminating episode."
+                )
+                critic_aborted = True
+                with open(os.path.join(step_dir, "pipeline_result.txt"), "w") as f:
+                    f.write(f"Task:\n{task}\n\n")
+                    f.write(f"Perception:\n{perception.description}\n\n")
+                    f.write(f"Map:\n{map_summary}\n\n")
+                    f.write(f"Planner proposed:\n{plan}\n\n")
+                    f.write(f"Critic verdict:\n{verdict}\n\n")
+                    f.write(f"Critic attempts ({len(critic_attempts)}):\n")
+                    for i, v in enumerate(critic_attempts):
+                        f.write(f"  [{i}] {v}\n")
+                    f.write(
+                        f"\nAborted: critic rejected all {loop_count} plans "
+                        f"(ceiling hit).\n"
+                    )
+                completed_steps += 1
+                break
 
             selected_subgoal = plan
 
@@ -534,6 +564,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 "success": episode_success,
                 "actual_path_length": actual_path_length,
                 "shortest_path_length": shortest_path_length,
+                "critic_aborted": critic_aborted,
             },
         )
         print(f"[Pipeline] Completed {completed_steps}/{args.steps} cycles -> {run_dir}")
