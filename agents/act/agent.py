@@ -275,11 +275,22 @@ class ActionAgent:
         
         if perception_description:
             action_choose_input += (
-                "\n\nCurrent visual perception (camera-frame spatial language — "
-                "use this to choose RotateLeft vs RotateRight correctly: if a "
-                "target is in the 'top-left' or 'center-left' of view, "
-                "RotateLeft turns toward it; 'top-right' or 'center-right' "
-                "calls for RotateRight):\n"
+                "\n\nCurrent visual perception (camera-frame spatial language). "
+                "PERCEPTION IS AUTHORITATIVE for choosing direction: if the "
+                "plan's prose contains directional words ('to the left', 'on "
+                "the right side', etc.) that conflict with the perception "
+                "label below, TRUST THE PERCEPTION LABEL. The plan describes "
+                "intent (move toward X); perception tells you where X actually "
+                "is in the camera frame right now.\n"
+                "Spatial label -> action mapping for the target object:\n"
+                "  - 'top-center', 'center', 'center-center', 'bottom-center': "
+                "target is straight ahead -> MoveAhead\n"
+                "  - 'top-left' or 'center-left': RotateLeft turns toward target\n"
+                "  - 'top-right' or 'center-right': RotateRight turns toward target\n"
+                "  - 'bottom-left' / 'bottom-right': target is below and to the "
+                "side; usually MoveAhead first, then rotate as it shifts up\n"
+                "If perception does NOT list the target at all, treat it as "
+                "out-of-view and search (rotate) rather than MoveAhead.\n\n"
                 f"{perception_description}\n"
             )
 
