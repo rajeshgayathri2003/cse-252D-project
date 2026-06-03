@@ -47,6 +47,8 @@ For navigation actions use: controller.step(action='MoveAhead')
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 
 IMPORTANT: Always use y=0.9 for the Teleport action. Using y=0.0 will fail silently.
+
+ROTATION INCREMENT: The default rotation step is 90 degrees, which over-corrects for a target that is only slightly off-center. Prefer fine rotations: controller.step(action='RotateLeft', degrees=30) or controller.step(action='RotateRight', degrees=30). Use larger degrees (60-90) only when you need to scan/search for an out-of-view target, not when correcting heading toward a target already visible in the frame.
 """
 
 class ActionAgent:
@@ -246,7 +248,20 @@ class ActionAgent:
     
     def choose_action(self, task_description, failure_msg = None, perception_description=None):
         action_description = self.planning_agent.generate_plan(task_description)
-        print(f"Generated plan: {action_description}")
+        # The inner re-plan above is called with task_description only — no
+        # perception, no map. Any "turn"/"rotate" verbs it emits are uninformed
+        # and were observed biasing the action LLM into rotations even when
+        # perception said target was top-center. Neutralize those verbs so the
+        # action LLM chooses Rotate-vs-Move purely from the perception block.
+        def _neutralize(m):
+            return "Move" if m.group(0)[0].isupper() else "move"
+        action_description = re.sub(
+            r"\b(?:turn|rotate)\b",
+            _neutralize,
+            action_description,
+            flags=re.IGNORECASE,
+        )
+        print(f"Generated plan (neutralized): {action_description}")
         type = self.choose_action_type(action_description)
         if type == "Navigation":
             possible_actions = self.navigation
@@ -285,12 +300,21 @@ class ActionAgent:
                 "Spatial label -> action mapping for the target object:\n"
                 "  - 'top-center', 'center', 'center-center', 'bottom-center': "
                 "target is straight ahead -> MoveAhead\n"
-                "  - 'top-left' or 'center-left': RotateLeft turns toward target\n"
-                "  - 'top-right' or 'center-right': RotateRight turns toward target\n"
+                "  - 'top-left' or 'center-left': target is slightly off-center, "
+                "use a SMALL rotation: "
+                "controller.step(action='RotateLeft', degrees=30)\n"
+                "  - 'top-right' or 'center-right': use a SMALL rotation: "
+                "controller.step(action='RotateRight', degrees=30)\n"
                 "  - 'bottom-left' / 'bottom-right': target is below and to the "
                 "side; usually MoveAhead first, then rotate as it shifts up\n"
-                "If perception does NOT list the target at all, treat it as "
-                "out-of-view and search (rotate) rather than MoveAhead.\n\n"
+                "If perception does NOT list the target at all, the target is "
+                "OUT OF VIEW — use a LARGER rotation to scan/search: "
+                "controller.step(action='RotateLeft', degrees=90) or "
+                "controller.step(action='RotateRight', degrees=90).\n"
+                "Rationale: small rotations (~30 deg) when target is visible "
+                "let the agent approximate a smooth curved path toward the "
+                "target; large rotations (~90 deg) are only for searching "
+                "when the target is lost.\n\n"
                 f"{perception_description}\n"
             )
 
