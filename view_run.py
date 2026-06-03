@@ -23,6 +23,11 @@ from pathlib import Path
 STOPWORDS = {"find", "a", "an", "the", "for", "go", "to", "please", "locate", "get", "of"}
 _ACTION_RE = re.compile(r"action=['\"]([^'\"]+)['\"]")
 _STEP_RE = re.compile(r"controller\.step\([^\n]*\)")
+_POSITION_RE = re.compile(
+    r"^Position:\s*x=(-?\d+\.?\d*)\s+y=(-?\d+\.?\d*)\s+z=(-?\d+\.?\d*)",
+    re.MULTILINE,
+)
+_DISTANCE_RE = re.compile(r"^Distance to target:\s*(-?\d+\.?\d*)\s*m", re.MULTILINE)
 
 
 @dataclass
@@ -36,6 +41,8 @@ class StepData:
     selected_subgoal: str = ""
     action: str = ""
     has_overlay: bool = False
+    position: tuple | None = None  # (x, y, z) after the action executed
+    distance_m: float | None = None  # straight-line distance to target after the action
 
     @property
     def action_verb(self):
@@ -156,6 +163,22 @@ def _parse_result(result_path):
     return plan, critic, selected, action
 
 
+def _parse_position_distance(result_path):
+    """Extract (position, distance_m) from a step's pipeline_result.txt."""
+    if not result_path.exists():
+        return None, None
+    text = result_path.read_text()
+    position = None
+    m = _POSITION_RE.search(text)
+    if m:
+        position = (float(m.group(1)), float(m.group(2)), float(m.group(3)))
+    distance = None
+    md = _DISTANCE_RE.search(text)
+    if md:
+        distance = float(md.group(1))
+    return position, distance
+
+
 def parse_run(run_dir):
     run_dir = Path(run_dir)
     meta = None
@@ -171,7 +194,9 @@ def parse_run(run_dir):
         if not step_dir.is_dir():
             continue
         idx = int(step_dir.name.split("_")[-1])
-        plan, critic, selected, action = _parse_result(step_dir / "pipeline_result.txt")
+        result_path = step_dir / "pipeline_result.txt"
+        plan, critic, selected, action = _parse_result(result_path)
+        position, distance_m = _parse_position_distance(result_path)
         steps.append(StepData(
             index=idx,
             step_dir=step_dir,
@@ -182,6 +207,8 @@ def parse_run(run_dir):
             selected_subgoal=selected,
             action=action,
             has_overlay=(step_dir / "frame_overlay.jpg").exists(),
+            position=position,
+            distance_m=distance_m,
         ))
 
     return RunData(run_dir=run_dir, name=run_dir.name, meta=meta, steps=steps)
@@ -230,15 +257,20 @@ def render_cli(run_data):
     lines.append(f"RUN  {run_data.name}")
     lines.append(f"task  {run_data.task()}   {scene_str}   {backend}   "
                  f"{run_data.completed_steps()}/{run_data.requested_steps()} steps")
-    lines.append("-" * 60)
-    lines.append(f"{'#':<3}{'perception (labels)':<34}{'critic':<11}action")
+    lines.append("-" * 72)
+    lines.append(f"{'#':<3}{'perception (labels)':<30}{'critic':<10}{'action':<14}{'pos(x,z)':<14}dist")
     for s in run_data.steps:
         labs = ",".join(s.labels[:3]) or "-"
-        if len(labs) > 32:
-            labs = labs[:31] + "…"
+        if len(labs) > 28:
+            labs = labs[:27] + "…"
         verdict = "APPROVED" if s.approved else ("revised" if s.critic else "?")
-        lines.append(f"{s.index:<3}{labs:<34}{verdict:<11}{_short_action(s.action)}")
-    lines.append("-" * 60)
+        pos_str = f"{s.position[0]:.2f},{s.position[2]:.2f}" if s.position else "-"
+        dist_str = f"{s.distance_m:.2f}m" if s.distance_m is not None else "-"
+        lines.append(
+            f"{s.index:<3}{labs:<30}{verdict:<10}{_short_action(s.action):<14}"
+            f"{pos_str:<14}{dist_str}"
+        )
+    lines.append("-" * 72)
 
     bd = run_data.action_breakdown()
     bd_str = "  ".join(f"{v}:{n}" for v, n in sorted(bd.items()))
@@ -296,6 +328,8 @@ def render_html(run_data, overlays=False):
 
     perceived, keyword = target_perceived(run_data)
     scene = run_data.scene()
+    traj = [s.distance_m for s in run_data.steps if s.distance_m is not None]
+    traj_str = " → ".join(f"{d:.2f}m" for d in traj) if traj else "(no distance recorded)"
     parts = [
         "<!doctype html><html><head><meta charset='utf-8'>",
         f"<title>{_esc(run_data.name)}</title>",
@@ -304,6 +338,11 @@ def render_html(run_data, overlays=False):
         "padding:1rem;margin:1rem 0}.imgs img{max-width:300px;border-radius:4px;display:block;margin-bottom:.5rem}"
         ".meta{flex:1}.k{color:#666;font-size:.85rem}.approved{color:#197;font-weight:600}"
         ".revised{color:#c60;font-weight:600}pre{white-space:pre-wrap;font-size:.85rem}"
+        ".pose{font-family:ui-monospace,monospace;font-size:.85rem;color:#333;"
+        "background:#f3f3f5;padding:.3rem .5rem;border-radius:4px;display:inline-block}"
+        ".traj{font-family:ui-monospace,monospace;font-size:.85rem;background:#fff;"
+        "border:1px solid #ddd;border-radius:6px;padding:.5rem .75rem;margin-top:.5rem;"
+        "word-break:break-all}"
         "header{background:#fff;border:1px solid #ddd;border-radius:8px;padding:1rem 1.5rem}</style></head><body>",
         "<header>",
         f"<h2>{_esc(run_data.task())}</h2>",
@@ -311,6 +350,7 @@ def render_html(run_data, overlays=False):
         f"{run_data.completed_steps()}/{run_data.requested_steps()} steps · "
         f"critic {run_data.approval_count()}/{len(run_data.steps)} approved · "
         f"target '<b>{_esc(keyword)}</b>' perceived: <b>{'YES' if perceived else 'NO'}</b></p>",
+        f"<p class='k'>distance trajectory</p><div class='traj'>{traj_str}</div>",
         "</header>",
     ]
     for s in run_data.steps:
@@ -322,9 +362,21 @@ def render_html(run_data, overlays=False):
         verdict_cls = "approved" if s.approved else "revised"
         verdict_txt = "APPROVED" if s.approved else ("REVISED" if s.critic else "?")
         reason = _esc(s.critic.get("reason", "")) if s.critic else ""
+        pose_bits = []
+        if s.position:
+            pose_bits.append(
+                f"pos x={s.position[0]:.2f} y={s.position[1]:.2f} z={s.position[2]:.2f}"
+            )
+        if s.distance_m is not None:
+            pose_bits.append(f"dist {s.distance_m:.2f}m")
+        pose_html = (
+            f"<p><span class='pose'>{_esc(' · '.join(pose_bits))}</span></p>"
+            if pose_bits else ""
+        )
         parts.append(
             f"<div class='step'><div class='imgs'>{imgs or '<span class=k>(no frame)</span>'}</div>"
             f"<div class='meta'><h3>Step {s.index:02d}</h3>"
+            f"{pose_html}"
             f"<p class='k'>perception</p><pre>{_esc(s.perception)}</pre>"
             f"<p class='k'>planner</p><pre>{_esc(s.plan)}</pre>"
             f"<p class='k'>critic</p><p class='{verdict_cls}'>{verdict_txt}</p><pre>{reason}</pre>"
