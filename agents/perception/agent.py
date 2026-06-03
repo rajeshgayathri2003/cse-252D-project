@@ -129,8 +129,16 @@ class FlorencePerceptionAgent:
         img_path = os.path.join(step_dir, "frame.jpg")
         image.save(img_path)
         label_file = os.path.join(step_dir, "frame.txt")
-        
-        prompt = "<OD>" 
+
+        # JPEG round-trip before Florence inference. Diagnostic confirmed that
+        # the saved frame.jpg fed to Florence detects small distant objects
+        # (e.g. a 24x40 px TV) cleanly while the raw in-memory RGB does not.
+        # The lossy JPEG smoothing incidentally acts as a denoiser at our
+        # input resolution. Until we move to Florence-2-large, route through
+        # the JPEG to align inference with what was observed offline.
+        image = Image.open(img_path).convert("RGB")
+
+        prompt = "<OD>"
         inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
         
         with torch.no_grad():
