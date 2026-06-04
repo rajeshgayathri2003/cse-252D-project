@@ -28,6 +28,11 @@ You will receive:
 6. Trajectory (optional): the agent's straight-line distance to the target
    object after each recent action, e.g. "4.98m -> 4.74m -> 4.50m". A
    monotonically decreasing trajectory is good; flat or increasing is bad.
+7. Target recency (optional): how many cycles ago the target was last
+   detected by the perception model, and the actions executed since that
+   sighting. Used by criterion (B) to distinguish "target genuinely out of
+   view" from "target temporarily dropped by an unreliable detector while
+   still in the forward camera frustum".
 
 Audit the proposal against FOUR criteria, in order. **Reject (approved=false)
 if ANY criterion fails.** A reject is not a punishment — it is how you give
@@ -40,6 +45,16 @@ the planner a chance to course-correct.
     inferred direction to it from the map, reject — demand the planner first
     propose a *search* action (e.g., RotateLeft/RotateRight to look around,
     or move to a known landmark) rather than a blind "MoveAhead".
+    EXCEPTION (perception-recency carve-out): if the "Target recency" field
+    below shows the target was detected within the last 2 perception frames
+    AND no rotation actions (RotateLeft/RotateRight) have been executed
+    since that last sighting, treat the target as still in the forward
+    camera frustum. The perception model is known to drop small/distant
+    objects inconsistently between frames; without an intervening rotation,
+    a recent sighting remains a valid bearing. In this case, do NOT reject a
+    MoveAhead that continues toward the recently-seen target — approve it.
+    This carve-out does NOT apply if rotation has happened since the last
+    sighting (the prior bearing is stale) or if recency exceeds 2 cycles.
 (C) Non-repetition: does the sub-goal avoid re-doing recent actions or
     re-visiting already-explored locations without new justification?
 (D) Progress trend (HARD RULE): if the Trajectory is provided and the
@@ -94,6 +109,8 @@ class CriticAgent:
         perception_description="",
         distance_history=None,
         target_type=None,
+        cycles_since_target_seen=None,
+        actions_since_target_seen=None,
     ):
         prompt = self._build_prompt(
             task,
@@ -103,6 +120,8 @@ class CriticAgent:
             perception_description,
             distance_history or [],
             target_type,
+            cycles_since_target_seen,
+            actions_since_target_seen,
         )
         raw = self._create_text_response(prompt)
         return self._parse_verdict(raw)
@@ -123,6 +142,8 @@ class CriticAgent:
         perception_description,
         distance_history,
         target_type,
+        cycles_since_target_seen=None,
+        actions_since_target_seen=None,
     ):
         # Cap to last 8 entries to keep the prompt focused.
         recent_actions = action_history[-8:] if action_history else []
@@ -137,6 +158,10 @@ class CriticAgent:
         else:
             trajectory_text = "(not provided)"
 
+        recency_text = self._format_recency(
+            cycles_since_target_seen, actions_since_target_seen, target_type
+        )
+
         return (
             f"{CRITIC_SYSTEM_PROMPT}\n\n"
             f"Task:\n{task}\n\n"
@@ -144,7 +169,34 @@ class CriticAgent:
             f"Map summary:\n{map_summary or '(empty)'}\n\n"
             f"Visual input:\n{perception_description or '(not provided)'}\n\n"
             f"Action history (most recent {len(recent_actions)}):\n{history_text}\n\n"
-            f"Trajectory:\n{trajectory_text}\n"
+            f"Trajectory:\n{trajectory_text}\n\n"
+            f"Target recency:\n{recency_text}\n"
+        )
+
+    @staticmethod
+    def _format_recency(cycles_since, actions_since, target_type):
+        if cycles_since is None:
+            return "(target has not yet been detected by perception)"
+
+        actions_since = actions_since or []
+        has_rotation = any(
+            ("RotateLeft" in a) or ("RotateRight" in a) for a in actions_since
+        )
+        target_label = f"'{target_type}'" if target_type else "target"
+
+        if cycles_since == 0:
+            return f"{target_label} detected in the CURRENT perception frame."
+
+        rotation_note = (
+            "rotation HAS occurred since last sighting (prior bearing is stale)"
+            if has_rotation
+            else "NO rotation since last sighting (prior bearing still valid)"
+        )
+        actions_text = ", ".join(actions_since) if actions_since else "(none)"
+        return (
+            f"{target_label} last detected {cycles_since} cycle(s) ago. "
+            f"Actions executed since last sighting: {actions_text}. "
+            f"{rotation_note}."
         )
 
     def _parse_verdict(self, raw):
