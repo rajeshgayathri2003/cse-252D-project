@@ -60,13 +60,11 @@ class FlorencePerceptionAgent:
             
         print(f"[PerceptionAgent] Initializing with device: {self.device}")
         
-        # 1. Load Florence-2 (The Open-Vocabulary Detector)
+        # 1. Load Florence-2 
         print("Loading Florence-2... (This may take a moment)")
         self.processor = AutoProcessor.from_pretrained(florence_model, trust_remote_code=True)
 
-        # --- THE FIX ---
-        # We wrap the model loading step in the patch context manager.
-        # This forces the loader to use our modified dependency list.
+  
         with patch("transformers.dynamic_module_utils.get_imports", workaround_fixed_get_imports):
             self.florence = AutoModelForCausalLM.from_pretrained(
                 florence_model, 
@@ -74,7 +72,7 @@ class FlorencePerceptionAgent:
                 attn_implementation="sdpa" # Fall back to standard PyTorch attention
             ).to(self.device)
         
-        # 2. Load SAM2 (The Segmenter)
+        # 2. Load SAM2
         print("Loading SAM2...")
         self.sam = SAM(sam_weights)
         self.sam.to(self.device)
@@ -132,8 +130,7 @@ class FlorencePerceptionAgent:
         image.save(img_path)
         label_file = os.path.join(step_dir, "frame.txt")
         
-        # --- STEP 1: Florence-2 Open Vocabulary Detection ---
-        prompt = "<OD>" # Switched to standard Object Detection
+        prompt = "<OD>" 
         inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
         
         with torch.no_grad():
@@ -147,14 +144,12 @@ class FlorencePerceptionAgent:
         generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
         parsed_answer = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
         
-        # Print exactly what Florence sees to the console so we aren't flying blind
         print(f"\n[DEBUG] Florence Output: {parsed_answer}")
         
         detections = parsed_answer.get(prompt, {})
         
-        # --- THE FIX ---
+        
         # Check if Florence returned a proper dictionary. 
-        # If it panicked and returned a string, default to empty lists.
         if isinstance(detections, dict):
             bboxes = detections.get('bboxes', [])
             labels = detections.get('labels', [])
@@ -167,8 +162,7 @@ class FlorencePerceptionAgent:
             open(label_file, 'w').close()
             return "No distinct objects are visible in the current view."
 
-        # --- STEP 2: SAM2 Segmentation from Florence Boxes ---
-        # We pass the Florence bounding boxes directly to SAM as prompts
+        #  pass the Florence bounding boxes directly to SAM as prompts
         sam_results = self.sam(image, bboxes=bboxes, verbose=False)[0]
         
         description_lines = ["Visible Objects (Segmented):"]
@@ -185,12 +179,12 @@ class FlorencePerceptionAgent:
                     if len(polygon) < 3: 
                         continue # Skip invalid masks
                     
-                    # 1. Write to dataset txt file
+                    # Write to dataset txt file
                     class_id = self._get_class_id(label)
                     flat_coords = " ".join([f"{pt[0]:.5f} {pt[1]:.5f}" for pt in polygon])
                     f.write(f"{class_id} {flat_coords}\n")
                     
-                    # 2. Build Text Description for LLM
+                    # Build Text Description for LLM
                     spatial_loc = self._get_spatial_descriptor(polygon)
                     
                     # Calculate Area
