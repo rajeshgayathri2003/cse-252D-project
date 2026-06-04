@@ -371,6 +371,12 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
     _initial_targets = find_target_objects(event.metadata["objects"], target_type)
     _initial_dist = min((o["distance"] for o in _initial_targets), default=None)
     distance_history: list[float | None] = [_initial_dist]
+    # Perception-recency tracking: which step did the perception model last
+    # detect the target, and how many actions had been executed by then?
+    # Used by the critic's (B) carve-out: a target seen recently with no
+    # rotation since is still in the forward camera frustum.
+    target_last_seen_step: int | None = None
+    actions_at_last_sight: int = 0
     completed_steps = 0
     log_lines: list[str] = [f"Task: {task}\nScene: {scene_index}\nSteps: {args.steps}\n"]
 
@@ -382,6 +388,17 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             step_dir = os.path.join(run_dir, frame_name)
             frame = Image.fromarray(event.frame)
             perception = run_perception(perception_agent, frame, frame_name)
+
+            # Update perception-recency tracking before invoking the critic.
+            if target_type and target_type.lower() in perception.description.lower():
+                target_last_seen_step = step
+                actions_at_last_sight = len(action_history)
+            if target_last_seen_step is not None:
+                cycles_since_target_seen = step - target_last_seen_step
+                actions_since_target_seen = list(action_history[actions_at_last_sight:])
+            else:
+                cycles_since_target_seen = None
+                actions_since_target_seen = None
 
             mapping_agent.update(
                 event,
@@ -405,6 +422,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 perception_description=perception.description,
                 distance_history=distance_history,
                 target_type=target_type,
+                cycles_since_target_seen=cycles_since_target_seen,
+                actions_since_target_seen=actions_since_target_seen,
             )
 
             critic_attempts = [verdict]
@@ -431,6 +450,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                     perception_description=perception.description,
                     distance_history=distance_history,
                     target_type=target_type,
+                    cycles_since_target_seen=cycles_since_target_seen,
+                    actions_since_target_seen=actions_since_target_seen,
                 )
                 critic_attempts.append(verdict)
 
