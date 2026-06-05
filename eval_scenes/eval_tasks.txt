@@ -16,5 +16,5 @@ T3 Navigate to the Painting on the wall
 Scene Index: 720
 T1 Navigate to the Couch
 T2 Navigate to the Book on the bed
-T3 Navigate to the Study Desk
+T3 Navigate to the Study Desk with Shelf
 

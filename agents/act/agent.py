@@ -43,7 +43,10 @@ Note that you can interact with an object only if it is visible. If you can not 
 
 Note that the action you return MUST be one of the possible actions listed above, and if it requires an objectId, you should use one from the available objects list. The agent will execute exactly the command you return, so it must be a valid controller.step(...) call that can be executed in Python.
 
-For navigation actions use: controller.step(action='MoveAhead')
+For navigation actions:
+- If the target object is visible anywhere in the current view: MoveAhead closes distance regardless of left/right offset — use MoveAhead.
+- If the target is NOT visible and the goal is to explore, search, or navigate to a room: do NOT default to MoveAhead. Instead, rotate toward a door, opening, or unexplored direction. Alternate RotateLeft and RotateRight across steps to cover all directions rather than spinning the same way repeatedly.
+- Use MoveBack only if blocked or the agent needs to create distance.
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 
 IMPORTANT: Always use y=0.9 for the Teleport action. Using y=0.0 will fail silently.
@@ -72,9 +75,9 @@ class ActionAgent:
             load_dotenv(self._repo_env_path())
             tritonai_key = os.environ.get("TRITONAI_API_KEY")
             openai_key = os.environ.get("OPENAI_API_KEY")
-            if not fallback_key:
+            if not tritonai_key and not openai_key:
                 with open("key.txt", "r") as f:
-                    fallback_key = f.read().strip()
+                    openai_key = f.read().strip()
             if tritonai_key:
                 self.client = OpenAI(base_url=TRITONAI_BASE_URL, api_key=tritonai_key)
             else:
@@ -244,9 +247,8 @@ class ActionAgent:
         # If label not found, default to Navigation
         return "Navigation"
     
-    def choose_action(self, task_description, failure_msg = None, perception_description=None):
-        action_description = self.planning_agent.generate_plan(task_description)
-        print(f"Generated plan: {action_description}")
+    def choose_action(self, task_description, failure_msg=None, perception_description=None):
+        action_description = task_description
         type = self.choose_action_type(action_description)
         if type == "Navigation":
             possible_actions = self.navigation
@@ -283,14 +285,24 @@ class ActionAgent:
                 "intent (move toward X); perception tells you where X actually "
                 "is in the camera frame right now.\n"
                 "Spatial label -> action mapping for the target object:\n"
-                "  - 'top-center', 'center', 'center-center', 'bottom-center': "
-                "target is straight ahead -> MoveAhead\n"
-                "  - 'top-left' or 'center-left': RotateLeft turns toward target\n"
-                "  - 'top-right' or 'center-right': RotateRight turns toward target\n"
-                "  - 'bottom-left' / 'bottom-right': target is below and to the "
-                "side; usually MoveAhead first, then rotate as it shifts up\n"
-                "If perception does NOT list the target at all, treat it as "
-                "out-of-view and search (rotate) rather than MoveAhead.\n\n"
+                "  - 'center', 'center-center', 'top-center', 'bottom-center', "
+                "'center-left', 'center-right': target is visible and roughly "
+                "ahead — use MoveAhead to close distance.\n"
+                "  - 'top-left' or 'top-right': target is visible but far — MoveAhead to close distance.\n"
+                "  - 'bottom-left': target is very close and to the left — RotateLeft "
+                "to face it FIRST, then MoveAhead. MoveAhead alone will overshoot.\n"
+                "  - 'bottom-right': target is very close and to the right — RotateRight "
+                "to face it FIRST, then MoveAhead. MoveAhead alone will overshoot.\n"
+                "NEVER rotate when the target is at top-left, top-right, or center — that oscillates the view.\n"
+                "NEVER use MoveLeft or MoveRight to approach a target — these strafe sideways "
+                "and will rotate the view away from the target. Only use MoveLeft/MoveRight "
+                "to avoid an obstacle blocking a direct path, or when the plan explicitly says "
+                "'move laterally', 'move left', 'move right', or 'bypass obstacle'.\n"
+                "If the plan explicitly says 'move ahead', 'move forward', or 'move toward', "
+                "execute MoveAhead — even if perception does not list the target. The plan "
+                "has map context you do not; trust it and move forward.\n"
+                "Only rotate to search if the plan explicitly says 'rotate', 'look around', "
+                "or 'search'.\n\n"
                 f"{perception_description}\n"
             )
 
@@ -312,7 +324,7 @@ class ActionAgent:
         # Without this, the parser below sees a line starting with
         # `<|tool_call>` (not `controller.step(`), fails, and the agent
         # silently defaults to MoveAhead — masking correct rotation commands.
-        response = response.replace("<|tool_call>", "").replace("<tool_call|>", "")
+        response = re.sub(r"<\|[^|>]*\|>", "", response)  # strip all <|special_token|> variants
         response = re.sub(r"\bcall:", "", response)
         response = response.strip()
 
@@ -350,6 +362,7 @@ class ActionAgent:
         return "controller.step(action='MoveAhead')"
     
     def perform_action(self, action_command):
+        action_command = re.sub(r"<\|[^|>]*\|>", "", action_command).strip()
         try:
             exec(action_command, {"controller": self.controller})
             event = self.controller.last_event

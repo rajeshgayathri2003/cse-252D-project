@@ -60,11 +60,15 @@ OBJECT_SYNONYMS: dict[str, str] = {
     "refrigerator": "Fridge",
     "fridge": "Fridge",
     "trash bag": "GarbageBag",
+    "trash bag on the floor": "GarbageBag",
     "garbage bag": "GarbageBag",
     "painting on the wall": "Painting",
     "painting": "Painting",
     "study desk": "Desk",
+    "study desk with shelf": "Desk",
     "desk": "Desk",
+    "shelf": "Desk",
+    "drawer": "Desk",
 }
 
 
@@ -235,14 +239,14 @@ def build_controller(scene_index):
     house = dataset["train"][scene_index]
     print("[Sim] Starting AI2-THOR controller with CloudRendering...")
     try:
-        return Controller(scene=house, platform="CloudRendering")
+        return Controller(scene=house, platform="CloudRendering", rotateStepDegrees=45, snapToGrid=False)
     except Exception as e:
         print(f"[Sim] CloudRendering failed ({e}); falling back to default platform.")
-        return Controller(scene=house)
+        return Controller(scene=house, rotateStepDegrees=45, snapToGrid=False)
 
 
-def run_perception(perception_agent, image, frame_name):
-    description = perception_agent.perceive(image, frame_name)
+def run_perception(perception_agent, image, frame_name, target_label=None):
+    description = perception_agent.perceive(image, frame_name, target_label=target_label)
     step_dir = os.path.join(perception_agent.save_dir, frame_name)
     frame_path = os.path.join(step_dir, "frame.jpg")
     label_path = os.path.join(step_dir, "frame.txt")
@@ -365,7 +369,9 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
     actual_path_length = 0.0
     episode_success = False
     critic_aborted = False
+    last_action_ok = True
     action_history = []
+    position_history = []
     # Seed distance_history with the pre-action distance so the critic sees the
     # full trajectory (pre-action distance, post-action distance, ...).
     _initial_targets = find_target_objects(event.metadata["objects"], target_type)
@@ -381,7 +387,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             frame_name = f"step_{step:02d}"
             step_dir = os.path.join(run_dir, frame_name)
             frame = Image.fromarray(event.frame)
-            perception = run_perception(perception_agent, frame, frame_name)
+            perception = run_perception(perception_agent, frame, frame_name, target_label=target_type.lower())
 
             mapping_agent.update(
                 event,
@@ -395,6 +401,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 visual_input=encode_image(perception.frame_path),
                 perception_description=perception.description,
                 map_summary=map_summary,
+                last_action_failed=not last_action_ok,
+                position_history=position_history,
             )
 
             verdict = critic.review(
@@ -434,36 +442,18 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 )
                 critic_attempts.append(verdict)
 
-            # If the rejection loop exited because the ceiling was hit (not
-            # because the critic approved), terminate the episode cleanly
-            # instead of executing the rejected plan. The pipeline's
-            # safety-valve fall-through (execute the last rejected plan
-            # anyway) is a drift accelerator at long step budgets — the
-            # critic correctly identified that it cannot approve any plan,
-            # so the episode is unrecoverable from this state.
+            # If the rejection loop exited because the ceiling was hit,
+            # use the critic's own revised_subgoal (it is context-aware) rather
+            # than a hardcoded action that may face away from the target.
             if not verdict["approved"]:
+                fallback = verdict.get("revised_subgoal") or "Look around to reacquire the target."
                 print(
                     f"\n  [Critic] Ceiling hit after {loop_count} rejections "
-                    f"at cycle {step + 1}; terminating episode."
+                    f"at cycle {step + 1}; using critic's revised_subgoal: {fallback!r}"
                 )
-                critic_aborted = True
-                with open(os.path.join(step_dir, "pipeline_result.txt"), "w") as f:
-                    f.write(f"Task:\n{task}\n\n")
-                    f.write(f"Perception:\n{perception.description}\n\n")
-                    f.write(f"Map:\n{map_summary}\n\n")
-                    f.write(f"Planner proposed:\n{plan}\n\n")
-                    f.write(f"Critic verdict:\n{verdict}\n\n")
-                    f.write(f"Critic attempts ({len(critic_attempts)}):\n")
-                    for i, v in enumerate(critic_attempts):
-                        f.write(f"  [{i}] {v}\n")
-                    f.write(
-                        f"\nAborted: critic rejected all {loop_count} plans "
-                        f"(ceiling hit).\n"
-                    )
-                completed_steps += 1
-                break
-
-            selected_subgoal = plan
+                selected_subgoal = fallback
+            else:
+                selected_subgoal = plan
 
             print("\n[Perception]\n" + perception.description)
             print("\n[Map]\n" + map_summary)
@@ -473,10 +463,13 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
 
             done = False
             action_command = None
+            failure_msg = None
+            consecutive_failures = 0
 
             while not done:
                 action_command = action_agent.choose_action(
                     selected_subgoal,
+                    failure_msg=failure_msg,
                     perception_description=perception.description,
                 )
                 print(f"\n[ActionAgent] Executing: {action_command}")
@@ -487,6 +480,35 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 print(f"Agent starting position (x, z): {start}")
 
                 done = action_agent.perform_action(action_command)
+                if not done:
+                    err = controller.last_event.metadata.get("errorMessage", "")
+                    consecutive_failures += 1
+                    # If a door is blocking, try to open it directly
+                    door_match = re.search(r"(door\S+)\s+is blocking", err, re.IGNORECASE)
+                    if door_match:
+                        door_id = door_match.group(1)
+                        # First try opening the door
+                        open_cmd = f"controller.step(action='OpenObject', objectId='{door_id}')"
+                        print(f"[ActionAgent] Door blocking — trying OpenObject: {door_id}")
+                        action_agent.perform_action(open_cmd)
+                        open_ok = controller.last_event.metadata.get("lastActionSuccess", False)
+                        if open_ok:
+                            # Door opened — retry MoveAhead
+                            done = action_agent.perform_action(action_command)
+                            failure_msg = None
+                        else:
+                            # Door already open or locked — agent is colliding with the panel.
+                            # Force a rotation to unstick, alternate direction each time.
+                            rotate = "RotateLeft" if consecutive_failures % 2 == 1 else "RotateRight"
+                            print(f"[ActionAgent] OpenObject failed — forcing {rotate} to unstick.")
+                            action_agent.perform_action(f"controller.step(action='{rotate}')")
+                            done = True  # count this as the action for this cycle
+                            failure_msg = None
+                    else:
+                        failure_msg = f"Previous action failed ({consecutive_failures}x): {err}. Try a different action."
+                else:
+                    failure_msg = None
+                    consecutive_failures = 0
 
                 # Accumulate path length after each physical action
                 cur_pos = agent_position(controller.last_event)
@@ -501,6 +523,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 print(f"Agent final position (x, z): {final}")
 
                 action_history.append(action_command)
+                last_action_ok = controller.last_event.metadata.get("lastActionSuccess", True)
+                position_history.append(final)
 
             event = controller.last_event
             action_agent.get_current_visual_output(frame_id=step)

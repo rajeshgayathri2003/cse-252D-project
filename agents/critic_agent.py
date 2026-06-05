@@ -36,20 +36,27 @@ the planner a chance to course-correct.
 (A) Goal alignment: does the sub-goal make progress toward the task?
 (B) Map consistency: is the sub-goal reachable / non-contradictory given the
     map? Specifically: if the sub-goal says "move toward the <target>" but
-    the target is NOT in the current visual input AND the agent has no
-    inferred direction to it from the map, reject — demand the planner first
-    propose a *search* action (e.g., RotateLeft/RotateRight to look around,
-    or move to a known landmark) rather than a blind "MoveAhead".
+    the target is NOT in the current visual input AND is NOT in the map's
+    known_objects list, reject — demand the planner first propose a *search*
+    action (e.g., RotateLeft/RotateRight to look around, or move to a known
+    landmark) rather than a blind "MoveAhead".
+    IMPORTANT: if the target object (or a synonym/related object like
+    "desk", "shelf", "drawer" for a desk task) appears in known_objects in
+    the map — even if not currently visible — that counts as having a
+    direction. Accept plans that move toward it.
 (C) Non-repetition: does the sub-goal avoid re-doing recent actions or
     re-visiting already-explored locations without new justification?
-(D) Progress trend (HARD RULE): if the Trajectory is provided and the
-    agent has executed at least 3 *movement* actions (MoveAhead, Teleport)
-    in the recent history, AND the distance to target has NOT strictly
-    decreased over the last 3 such movements (i.e., the most recent
-    distance is >= the distance from 3 movements ago), reject. The agent
-    is drifting. In `revised_subgoal`, instruct the planner to STOP moving
-    forward, ROTATE to re-acquire the target visually, and re-plan from
-    what it then sees.
+(D) Progress trend (SOFT RULE): if the Trajectory is provided and the
+    agent has executed at least 4 *translational* actions (MoveAhead,
+    MoveBack, MoveLeft, MoveRight — NOT RotateLeft/RotateRight/LookUp/
+    LookDown) in the recent history, AND the distance to target has NOT
+    decreased at all over those 4 translational actions (i.e., the most
+    recent distance is >= the distance from 4 translational actions ago
+    by more than 0.1m), reject. Do NOT apply criterion D if the recent
+    history is dominated by rotation actions — those are legitimate
+    search behaviour, not drift. In `revised_subgoal`, instruct the
+    planner to move toward a known landmark or rotate further to find
+    the target.
 
 Respond with a single JSON object and nothing else:
 {

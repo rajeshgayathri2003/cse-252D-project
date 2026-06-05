@@ -18,6 +18,13 @@ except ImportError:
 from unittest.mock import patch
 from transformers.dynamic_module_utils import get_imports
 
+# Florence-2 commonly misnames certain objects; remap to the canonical label.
+LABEL_ALIASES: dict[str, str] = {
+    "drawer": "desk",
+    "chest of drawers": "desk",
+    "backpack": "garbage bag",
+}
+
 def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
     """Intercepts the dependency check and removes flash_attn."""
     if not str(filename).endswith("modeling_florence2.py"):
@@ -123,7 +130,75 @@ class FlorencePerceptionAgent:
             return "in the center"
         return f"in the {vertical}-{horizontal}"
 
-    def perceive(self, image: Image.Image, frame_name: str) -> str:
+    def _region_category(self, image: Image.Image, bbox: list) -> str:
+        """Ask Florence what object is in the given bbox region."""
+        x1, y1, x2, y2 = bbox
+        prompt = "<REGION_TO_CATEGORY>"
+        region_str = f"<loc_{int(x1/image.width*999)}><loc_{int(y1/image.height*999)}><loc_{int(x2/image.width*999)}><loc_{int(y2/image.height*999)}>"
+        inputs = self.processor(text=prompt + region_str, images=image, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            generated_ids = self.florence.generate(
+                input_ids=inputs["input_ids"],
+                pixel_values=inputs["pixel_values"],
+                max_new_tokens=64,
+                num_beams=3,
+            )
+        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
+        parsed = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
+        # Strip any residual <loc_XXXX> tokens from the category string
+        import re as _re
+        raw = str(parsed.get(prompt, ""))
+        return _re.sub(r"<[^>]+>", "", raw).strip().lower()
+
+    def _florence_ovd_pass(self, image: Image.Image, target_label: str, max_area_frac: float = 0.30):
+        """Run OPEN_VOCABULARY_DETECTION for a target label Florence's OD missed.
+
+        Each candidate bbox is validated with REGION_TO_CATEGORY — only kept if
+        Florence's region classifier agrees it plausibly matches the target.
+        """
+        # Keywords that count as a match for each target label
+        VALIDATION_KEYWORDS = {
+            "plunger": ["plunger", "toilet brush", "cleaning tool"],
+            "clothes dryer": ["dryer", "washer", "laundry", "washing machine", "appliance"],
+            "desk": ["desk", "shelf", "drawer", "cabinet", "furniture", "table"],
+            "television": ["television", "tv", "monitor", "screen", "display"],
+            "refrigerator": ["refrigerator", "fridge", "freezer", "appliance"],
+            "trash bag": ["bag", "trash", "garbage", "sack", "backpack"],
+        }
+        keywords = VALIDATION_KEYWORDS.get(target_label.lower(), [target_label.lower()])
+
+        prompt = "<OPEN_VOCABULARY_DETECTION>"
+        inputs = self.processor(text=prompt + target_label, images=image, return_tensors="pt").to(self.device)
+        with torch.no_grad():
+            generated_ids = self.florence.generate(
+                input_ids=inputs["input_ids"],
+                pixel_values=inputs["pixel_values"],
+                max_new_tokens=256,
+                num_beams=3,
+            )
+        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
+        parsed = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
+        result = parsed.get(prompt, {})
+        if not isinstance(result, dict):
+            return [], []
+        img_area = image.width * image.height
+        bboxes, labels = [], []
+        for bbox in result.get("bboxes", []):
+            x1, y1, x2, y2 = bbox
+            bbox_area = (x2 - x1) * (y2 - y1)
+            if bbox_area / img_area > max_area_frac:
+                continue
+            # Validate with region classification
+            region_cat = self._region_category(image, bbox)
+            if any(kw in region_cat for kw in keywords):
+                print(f"\n[DEBUG] OVD region validated as '{region_cat}' for target '{target_label}'")
+                bboxes.append(bbox)
+                labels.append(target_label)
+            else:
+                print(f"\n[DEBUG] OVD bbox rejected by region check: '{region_cat}' != '{target_label}'")
+        return bboxes, labels
+
+    def perceive(self, image: Image.Image, frame_name: str, target_label: str = None) -> str:
         step_dir = os.path.join(self.save_dir, frame_name)
         os.makedirs(step_dir, exist_ok=True)
         
@@ -162,6 +237,30 @@ class FlorencePerceptionAgent:
             bboxes = []
             labels = []
             
+        # OVD supplement: only for objects Florence's generic OD can't reliably detect.
+        # OVD can hallucinate small bboxes for absent objects, so we restrict it to a
+        # known list rather than running it for every target.
+        # Map camelCase target_type keys to human-readable OVD query strings.
+        OVD_NEEDED = {
+            "plunger": "plunger",
+            "clothesdryer": "clothes dryer",
+            "studydeskwithshelf": "desk",
+            "television": "television",
+            "fridge": "refrigerator",
+            "refrigerator": "refrigerator",
+            "garbagebag": "trash bag",
+        }
+        target_key = target_label.lower().replace(" ", "") if target_label else None
+        ovd_query = OVD_NEEDED.get(target_key)
+        if ovd_query and not any(ovd_query in l.lower() for l in labels):
+            extra_bboxes, extra_labels = self._florence_ovd_pass(image, ovd_query)
+            if extra_bboxes:
+                print(f"\n[DEBUG] OVD found '{ovd_query}': {extra_bboxes}")
+                bboxes = list(bboxes) + extra_bboxes
+                labels = list(labels) + extra_labels
+            else:
+                print(f"\n[DEBUG] OVD: '{ovd_query}' not in frame.")
+
         # Handle Empty Detections
         if len(bboxes) == 0:
             open(label_file, 'w').close()
@@ -179,12 +278,13 @@ class FlorencePerceptionAgent:
             if sam_results.masks is not None:
                 # Iterate through every object detected
                 for i, (bbox, label) in enumerate(zip(bboxes, labels)):
+                    label = LABEL_ALIASES.get(label.lower().strip(), label)
                     # Get normalized polygon coordinates from SAM2
-                    polygon = sam_results.masks.xyn[i] 
-                    
-                    if len(polygon) < 3: 
+                    polygon = sam_results.masks.xyn[i]
+
+                    if len(polygon) < 3:
                         continue # Skip invalid masks
-                    
+
                     # 1. Write to dataset txt file
                     class_id = self._get_class_id(label)
                     flat_coords = " ".join([f"{pt[0]:.5f} {pt[1]:.5f}" for pt in polygon])

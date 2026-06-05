@@ -1,6 +1,7 @@
 import base64
 import copy
 import os
+import warnings
 
 from ai2thor.controller import Controller
 from dotenv import load_dotenv
@@ -135,7 +136,6 @@ class PlanningAgent:
         if self.save_dir:
             frame_path = os.path.join(self.save_dir, "visual_input.jpg")
             curr.save(frame_path)
-            print(f"Visual input saved to {frame_path}")
             return frame_path
         return None
     
@@ -168,7 +168,6 @@ class PlanningAgent:
         if self.save_dir:
             frame_path = os.path.join(self.save_dir, "top_down.jpg")
             frame_image.save(frame_path)
-            print(f"Top-down view saved to {frame_path}")
             return frame_path
         
         return None
@@ -225,12 +224,13 @@ class PlanningAgent:
         
         plt.title("Reachable Positions Graph")
         plt.axis("equal")
-        plt.tight_layout()
-        
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            plt.tight_layout()
+
         graph_path = os.path.join(self.save_dir, "reachable_pos_graph.jpg")
         plt.savefig(graph_path, dpi=150, format="jpg")
         plt.close()
-        print(f"Graph saved to {graph_path}")
         
         return graph_path
         
@@ -361,7 +361,7 @@ class PlanningAgent:
             "warnings": warnings,
         }
 
-    def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None, critic_feedback=None):
+    def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None, critic_feedback=None, last_action_failed=False, position_history=None):
         map_summary = map_summary or self.mapping_agent.get_context_string()
         
         # Convert simulator RGB frame to PIL for the perception agent
@@ -407,6 +407,20 @@ class PlanningAgent:
         
         if critic_feedback is not None:
             planner_input += f"\nCritic Feedback on Previous Plan:\n{critic_feedback}\nEnsure that the new plan addresses the critic's concerns.\n"
+        if last_action_failed:
+            planner_input += "\nWARNING: The last action FAILED (blocked by a wall or obstacle). Do NOT repeat it — choose a different direction or action.\n"
+        if position_history and len(position_history) >= 6:
+            recent = position_history[-6:]
+            unique = {(round(p[0], 1), round(p[1], 1)) for p in recent}
+            if len(unique) <= 2:
+                planner_input += (
+                    "\nWARNING: The agent has been oscillating between the same "
+                    f"{len(unique)} position(s) for the last {len(recent)} steps — "
+                    "it is blocked by an obstacle (likely a counter or table). "
+                    "Do NOT suggest MoveAhead. Instead, suggest moving LATERALLY "
+                    "(MoveLeft or MoveRight) to navigate around the obstacle, then "
+                    "resume moving toward the target.\n"
+                )
         plan = self.__call__(planner_input, visual_input, graph_view, top_down_view)
         return plan
         
