@@ -1,0 +1,46 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the top-right, covering roughly 0.0% of the view.
+- trash bin/can located in the center-right, covering roughly 0.5% of the view.
+- trash bag located in the center-left, covering roughly 0.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 9
+- edges: 16
+- current_node: (3.5, 7.0, 2)
+- known_objects:
+  - bottle: closest observed 3.7m (seen at 4 location(s))
+  - chair: closest observed 3.4m (seen at 1 location(s))
+  - coffee cup: closest observed 4.1m (seen at 1 location(s))
+  - door: closest observed 2.8m (seen at 1 location(s))
+  - door handle: seen from node 0.5m NE (seen at 4 location(s))
+  - furniture: seen from node 1.1m SE (seen at 2 location(s))
+  - hinge: seen from node 1.0m E (seen at 2 location(s))
+  - house: seen from node 1.1m SE (seen at 1 location(s))
+  - sink: seen from node 0.3m NE (seen at 3 location(s))
+  - studio couch: seen from node 1.1m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - trash bag: closest observed 4.5m (seen at 2 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+  - vase: closest observed 3.1m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move towards the trash bag located on the floor in the center-left of the current view.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task, the target is visible in the current view, and the trajectory shows progress (A, B, D).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the trash bag located on the floor in the center-left of the current view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.366 y=0.901 z=6.927
+Distance to target: 4.257m
+episode_success=False

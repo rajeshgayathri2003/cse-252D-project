@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- sofa bed located in the center-right, covering roughly 3.9% of the view.
+- toilet located in the center, covering roughly 3.5% of the view.
+- trash bag located in the center, covering roughly 3.5% of the view.

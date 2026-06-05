@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- studio couch located in the bottom-center, covering roughly 37.5% of the view.

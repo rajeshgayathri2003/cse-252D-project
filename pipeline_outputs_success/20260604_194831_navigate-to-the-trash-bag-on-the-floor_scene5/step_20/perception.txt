@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- door located in the center-left, covering roughly 34.3% of the view.
+- mirror located in the top-right, covering roughly 3.0% of the view.
+- toilet located in the center-right, covering roughly 1.0% of the view.
+- trash bag located in the center-right, covering roughly 2.4% of the view.

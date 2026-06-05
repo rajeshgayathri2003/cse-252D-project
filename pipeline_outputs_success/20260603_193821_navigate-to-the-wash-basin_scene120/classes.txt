@@ -1,0 +1,8 @@
+0: cistern
+1: toilet
+2: door
+3: drawer
+4: sink
+5: trash bin/can
+6: door handle
+7: faucet

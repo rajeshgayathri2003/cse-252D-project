@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- coffee table located in the bottom-left, covering roughly 2.4% of the view.
+- drawer located in the top-right, covering roughly 0.4% of the view.
+- sofa bed located in the center-left, covering roughly 7.8% of the view.

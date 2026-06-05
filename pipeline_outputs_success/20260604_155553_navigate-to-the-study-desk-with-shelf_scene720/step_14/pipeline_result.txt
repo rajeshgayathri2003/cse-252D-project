@@ -1,0 +1,55 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- cabinetry located in the center-left, covering roughly 28.1% of the view.
+- door handle located in the center-left, covering roughly 0.3% of the view.
+- door handle located in the center-left, covering roughly 0.1% of the view.
+- television located in the top-center, covering roughly 3.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 11
+- edges: 20
+- current_node: (6.0, 6.5, 1)
+- known_objects:
+  - bed: closest observed 7.3m (seen at 1 location(s))
+  - cabinetry: seen from node 0.0m here (seen at 2 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 4 location(s))
+  - computer monitor: seen from node 1.1m SW (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 5 location(s))
+  - door: closest observed 5.2m (seen at 2 location(s))
+  - door handle: seen from node 0.0m here (seen at 4 location(s))
+  - furniture: seen from node 0.8m W (seen at 2 location(s))
+  - house: closest observed 0.9m (seen at 3 location(s))
+  - houseplant: seen from node 0.8m W (seen at 4 location(s))
+  - mobile phone: closest observed 1.8m (seen at 1 location(s))
+  - picture frame: seen from node 0.8m W (seen at 1 location(s))
+  - shelf: closest observed 5.2m (seen at 3 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.8m W (seen at 4 location(s))
+  - table: closest observed 6.7m (seen at 1 location(s))
+  - television: closest observed 1.2m (seen at 7 location(s))
+  - vase: closest observed 4.1m (seen at 3 location(s))
+  - window: closest observed 4.1m (seen at 4 location(s))
+
+Planner proposed:
+Plan: Move forward towards the study desk with shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': 'The sub-goal incorrectly states that the desk is visible in the current view, which contradicts the visual input (B).', 'revised_subgoal': 'Move towards the known desk and shelves.'}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move forward towards the study desk with shelf.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=6.250 y=0.901 z=6.500
+Distance to target: 1.571m
+episode_success=False

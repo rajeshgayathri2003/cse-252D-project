@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- cushion located in the bottom-left, covering roughly 12.8% of the view.
+- studio couch located in the center, covering roughly 30.2% of the view.
+- window located in the top-center, covering roughly 10.4% of the view.

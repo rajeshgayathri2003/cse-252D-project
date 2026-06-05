@@ -1,0 +1,35 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- sink located in the center-left, covering roughly 2.9% of the view.
+- sink located in the top-left, covering roughly 0.9% of the view.
+- trash bin/can located in the center-left, covering roughly 1.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (1.0, 8.25, 2)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - sink: closest observed 4.1m (seen at 1 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Leave the current room and navigate towards the kitchen area to locate and reach the refrigerator.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task (A), uses the map to infer a path via the kitchen area (B), does not repeat recent rotation actions (C), and does not violate the progress trend because recent actions were exclusively rotations (D).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Leave the current room and navigate towards the kitchen area to locate and reach the refrigerator.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=1.000 y=0.901 z=8.250
+Distance to target: 5.338m
+episode_success=False

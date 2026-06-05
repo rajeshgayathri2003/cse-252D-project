@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle located in the center, covering roughly 0.1% of the view.

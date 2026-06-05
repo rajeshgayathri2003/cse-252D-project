@@ -1,0 +1,42 @@
+Task:
+Navigate to the Wash basin
+
+Perception:
+Visible Objects (Segmented):
+- trash bin/can located in the bottom-left, covering roughly 6.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 6
+- edges: 10
+- current_node: (0.25, 7.5, 2)
+- known_objects:
+  - cistern: seen from node 1.0m NE (seen at 1 location(s))
+  - faucet: closest observed 3.4m (seen at 2 location(s))
+  - sink: closest observed 3.5m (seen at 3 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 1.0m NE (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 4 location(s))
+
+Planner proposed:
+Plan: Turn towards the wash basin visible in the upper-left of the current view and move towards it.
+
+Critic verdict:
+{'approved': False, 'reason': 'The sub-goal claims the wash basin is visible in the upper-left, but the visual input only reports a trash bin in the bottom-left (B).', 'revised_subgoal': 'Rotate to search for the sink or faucet.'}
+
+Critic attempts (6):
+  [0] {'approved': False, 'reason': 'The sub-goal claims the sink is visible in the current view, but only a trash bin is present in the visual input (B).', 'revised_subgoal': 'Rotate to locate the sink.'}
+  [1] {'approved': False, 'reason': 'The sub-goal claims the wash basin is in the current view, but the visual input only shows a trash bin (B).', 'revised_subgoal': 'Rotate to search for the wash basin.'}
+  [2] {'approved': False, 'reason': '(B) The sub-goal claims the sink is visible on the left, but the visual input only detects a trash bin.', 'revised_subgoal': 'Rotate to locate the sink, as it is not currently visible in the view.'}
+  [3] {'approved': False, 'reason': 'The sub-goal claims the sink is visible in the top-left corner, but the visual input does not list the sink as a visible object (B).', 'revised_subgoal': 'Rotate to search for the sink (wash basin).'}
+  [4] {'approved': False, 'reason': 'The sub-goal incorrectly claims the sink is visible in the upper-left, but the visual input only shows a trash bin (B).', 'revised_subgoal': 'Rotate to search for the sink that was previously observed in the vicinity.'}
+  [5] {'approved': False, 'reason': 'The sub-goal claims the wash basin is visible in the upper-left, but the visual input only reports a trash bin in the bottom-left (B).', 'revised_subgoal': 'Rotate to search for the sink or faucet.'}
+
+Selected subgoal:
+Rotate to search for the sink or faucet.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=0.293 y=0.901 z=7.543
+Distance to target: 3.185m
+episode_success=False

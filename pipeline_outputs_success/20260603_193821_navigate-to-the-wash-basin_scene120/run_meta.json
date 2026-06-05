@@ -1,0 +1,33 @@
+{
+  "run_dir": "20260603_193821_navigate-to-the-wash-basin_scene120",
+  "started_at": "2026-06-03T19:41:41",
+  "task": "Navigate to the Wash basin",
+  "scene_index": 120,
+  "steps": 100,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 13,
+  "finished_at": "2026-06-03T19:41:41",
+  "action_history": [
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 2.75,
+  "shortest_path_length": 2.25,
+  "critic_aborted": false
+}

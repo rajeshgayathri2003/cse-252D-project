@@ -1,0 +1,5 @@
+0: cistern
+1: toilet
+2: plunger
+3: bathtub
+4: candle

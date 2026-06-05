@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- bed located in the center, covering roughly 23.8% of the view.
+- book located in the center, covering roughly 0.6% of the view.
+- shelf located in the center-left, covering roughly 13.9% of the view.

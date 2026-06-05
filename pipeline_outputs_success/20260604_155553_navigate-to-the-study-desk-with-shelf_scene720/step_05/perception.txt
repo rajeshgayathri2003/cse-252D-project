@@ -1,0 +1,10 @@
+Visible Objects (Segmented):
+- desk located in the top-right, covering roughly 2.2% of the view.
+- desk located in the bottom-left, covering roughly 9.5% of the view.
+- desk located in the top-right, covering roughly 0.7% of the view.
+- desk located in the center-right, covering roughly 0.7% of the view.
+- house located in the center-left, covering roughly 99.3% of the view.
+- houseplant located in the bottom-left, covering roughly 0.6% of the view.
+- sofa bed located in the center-left, covering roughly 6.3% of the view.
+- television located in the bottom-left, covering roughly 9.5% of the view.
+- window located in the top-center, covering roughly 1.7% of the view.

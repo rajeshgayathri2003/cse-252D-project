@@ -1,0 +1,23 @@
+{
+  "run_dir": "20260603_193724_navigate-to-the-plunger_scene120",
+  "started_at": "2026-06-03T19:38:16",
+  "task": "Navigate to the Plunger",
+  "scene_index": 120,
+  "steps": 100,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 3,
+  "finished_at": "2026-06-03T19:38:16",
+  "action_history": [
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 0.75,
+  "shortest_path_length": 0.25,
+  "critic_aborted": false
+}

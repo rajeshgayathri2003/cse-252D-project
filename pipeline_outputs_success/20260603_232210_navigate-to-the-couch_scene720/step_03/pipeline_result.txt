@@ -1,0 +1,35 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- coffee table located in the center, covering roughly 9.7% of the view.
+- studio couch located in the center-right, covering roughly 8.8% of the view.
+- television located in the center, covering roughly 7.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 4
+- edges: 6
+- current_node: (5.25, 6.0, 0)
+- known_objects:
+  - coffee table: closest observed 2.8m (seen at 3 location(s))
+  - computer monitor: seen from node 0.4m S (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 3 location(s))
+  - television: closest observed 1.5m (seen at 3 location(s))
+
+Planner proposed:
+Plan: Turn to the right and move towards the studio couch located in the center-right of the scene.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Turn to the right and move towards the studio couch located in the center-right of the scene.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=5.250 y=0.901 z=6.104
+Distance to target: 4.252m
+episode_success=False

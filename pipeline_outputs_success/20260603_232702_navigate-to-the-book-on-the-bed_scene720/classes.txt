@@ -1,0 +1,7 @@
+0: computer monitor
+1: desk
+2: person
+3: mobile phone
+4: bed
+5: book
+6: shelf

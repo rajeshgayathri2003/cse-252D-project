@@ -1,0 +1,50 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- clock located in the center-left, covering roughly 0.2% of the view.
+- cushion located in the center-left, covering roughly 3.7% of the view.
+- cushion located in the center, covering roughly 2.3% of the view.
+- cushion located in the center-left, covering roughly 2.2% of the view.
+- cushion located in the center-left, covering roughly 1.6% of the view.
+- sofa bed located in the center-left, covering roughly 13.9% of the view.
+- vase located in the top-right, covering roughly 0.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 11
+- edges: 20
+- current_node: (5.25, 7.75, 0)
+- known_objects:
+  - book: closest observed 2.3m (seen at 2 location(s))
+  - bottle: closest observed 5.0m (seen at 1 location(s))
+  - chest of drawers: closest observed 3.9m (seen at 3 location(s))
+  - clock: closest observed 7.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 6 location(s))
+  - computer monitor: seen from node 2.1m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 4 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - drawer: closest observed 3.3m (seen at 6 location(s))
+  - house: closest observed 0.9m (seen at 2 location(s))
+  - houseplant: seen from node 0.2m S (seen at 3 location(s))
+  - sofa bed: closest observed 7.4m (seen at 3 location(s))
+  - studio couch: seen from node 0.5m S (seen at 7 location(s))
+  - television: closest observed 1.3m (seen at 4 location(s))
+  - vase: closest observed 3.3m (seen at 3 location(s))
+  - window: closest observed 4.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the sofa bed located in the center-left of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the sofa bed located in the center-left of the view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=8.104
+Distance to target: 2.454m
+episode_success=False

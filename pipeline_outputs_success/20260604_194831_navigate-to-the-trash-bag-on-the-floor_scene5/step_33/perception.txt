@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- window located in the top-left, covering roughly 20.3% of the view.

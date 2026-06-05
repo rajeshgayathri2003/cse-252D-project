@@ -1,0 +1,35 @@
+Task:
+Navigate to the Wash basin
+
+Perception:
+Visible Objects (Segmented):
+- sink located in the center-left, covering roughly 2.9% of the view.
+- sink located in the top-left, covering roughly 0.9% of the view.
+- trash bin/can located in the center-left, covering roughly 1.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (1.0, 8.25, 2)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - sink: closest observed 4.1m (seen at 1 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the sink visible in the scene.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the sink visible in the scene.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=0.823 y=0.901 z=8.073
+Distance to target: 3.748m
+episode_success=False

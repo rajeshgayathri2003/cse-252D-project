@@ -1,0 +1,17 @@
+0: computer monitor
+1: desk
+2: coffee table
+3: studio couch
+4: television
+5: chest of drawers
+6: drawer
+7: house
+8: book
+9: houseplant
+10: vase
+11: window
+12: sofa bed
+13: bottle
+14: cushion
+15: clock
+16: handbag

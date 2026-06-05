@@ -1,0 +1,48 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- desk located in the top-right, covering roughly 2.2% of the view.
+- desk located in the bottom-left, covering roughly 9.5% of the view.
+- desk located in the top-right, covering roughly 0.7% of the view.
+- desk located in the center-right, covering roughly 0.7% of the view.
+- house located in the center-left, covering roughly 99.3% of the view.
+- houseplant located in the bottom-left, covering roughly 0.6% of the view.
+- sofa bed located in the center-left, covering roughly 6.3% of the view.
+- television located in the bottom-left, covering roughly 9.5% of the view.
+- window located in the top-center, covering roughly 1.7% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (5.25, 6.5, 0)
+- known_objects:
+  - cabinetry: seen from node 0.2m S (seen at 1 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 3 location(s))
+  - computer monitor: seen from node 0.8m S (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 5 location(s))
+  - house: closest observed 0.9m (seen at 3 location(s))
+  - houseplant: seen from node 0.0m here (seen at 3 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.2m S (seen at 3 location(s))
+  - television: closest observed 1.2m (seen at 3 location(s))
+  - vase: closest observed 4.5m (seen at 2 location(s))
+  - window: closest observed 4.1m (seen at 3 location(s))
+
+Planner proposed:
+Plan: Move towards the desk located in the bottom-left of the current view to find the study desk with a shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the desk located in the bottom-left of the current view to find the study desk with a shelf.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=5.250 y=0.901 z=6.500
+Distance to target: 2.369m
+episode_success=False

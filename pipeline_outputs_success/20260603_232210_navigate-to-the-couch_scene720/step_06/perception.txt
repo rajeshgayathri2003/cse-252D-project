@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- chest of drawers located in the center-right, covering roughly 2.4% of the view.
+- coffee table located in the bottom-left, covering roughly 8.0% of the view.
+- house located in the center-left, covering roughly 99.3% of the view.
+- houseplant located in the bottom-left, covering roughly 0.8% of the view.
+- studio couch located in the center-left, covering roughly 6.8% of the view.
+- window located in the top-center, covering roughly 1.8% of the view.

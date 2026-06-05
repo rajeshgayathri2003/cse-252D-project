@@ -1,0 +1,10 @@
+Visible Objects (Segmented):
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the top-right, covering roughly 0.1% of the view.
+- chair located in the center-left, covering roughly 5.4% of the view.
+- chair located in the center-left, covering roughly 1.2% of the view.
+- chair located in the center-left, covering roughly 0.5% of the view.
+- chair located in the bottom-left, covering roughly 0.5% of the view.
+- chair located in the center-left, covering roughly 0.3% of the view.
+- refrigerator located in the top-center, covering roughly 3.1% of the view.
+- vase located in the center-left, covering roughly 0.5% of the view.

@@ -1,0 +1,8 @@
+Visible Objects (Segmented):
+- cabinetry located in the center-right, covering roughly 38.2% of the view.
+- door handle located in the center-right, covering roughly 0.8% of the view.
+- drawer located in the center-right, covering roughly 20.0% of the view.
+- house located in the center, covering roughly 99.3% of the view.
+- refrigerator located in the top-center, covering roughly 11.7% of the view.
+- refrigerator located in the top-center, covering roughly 3.3% of the view.
+- studio couch located in the top-left, covering roughly 1.1% of the view.

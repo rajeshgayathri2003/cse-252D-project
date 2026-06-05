@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 1.0% of the view.
+- cabinetry located in the center-right, covering roughly 15.2% of the view.
+- refrigerator located in the center, covering roughly 24.1% of the view.
+- refrigerator located in the top-left, covering roughly 5.8% of the view.
+- studio couch located in the top-left, covering roughly 2.0% of the view.

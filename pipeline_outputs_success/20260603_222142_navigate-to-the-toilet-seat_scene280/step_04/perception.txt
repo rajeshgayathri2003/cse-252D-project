@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- trash bin/can located in the center-left, covering roughly 3.0% of the view.

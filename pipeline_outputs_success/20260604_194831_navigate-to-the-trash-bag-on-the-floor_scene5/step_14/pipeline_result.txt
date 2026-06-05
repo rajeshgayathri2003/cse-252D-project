@@ -1,0 +1,51 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center, covering roughly 0.1% of the view.
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the center, covering roughly 0.0% of the view.
+- bowl located in the center, covering roughly 0.1% of the view.
+- refrigerator located in the top-left, covering roughly 3.6% of the view.
+- vase located in the center-left, covering roughly 0.7% of the view.
+- vase located in the top-right, covering roughly 0.2% of the view.
+- vase located in the top-right, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 10
+- edges: 18
+- current_node: (3.25, 7.0, 2)
+- known_objects:
+  - bottle: closest observed 3.5m (seen at 5 location(s))
+  - bowl: closest observed 2.7m (seen at 1 location(s))
+  - chair: closest observed 3.4m (seen at 1 location(s))
+  - coffee cup: closest observed 4.1m (seen at 1 location(s))
+  - door: closest observed 2.8m (seen at 1 location(s))
+  - door handle: seen from node 0.7m NE (seen at 4 location(s))
+  - furniture: seen from node 1.2m E (seen at 2 location(s))
+  - hinge: seen from node 1.1m E (seen at 2 location(s))
+  - house: seen from node 1.2m E (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 1 location(s))
+  - sink: seen from node 0.5m NE (seen at 3 location(s))
+  - studio couch: seen from node 1.2m E (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - trash bag: closest observed 4.5m (seen at 2 location(s))
+  - trash bin/can: seen from node 0.3m NE (seen at 1 location(s))
+  - vase: closest observed 2.6m (seen at 3 location(s))
+
+Planner proposed:
+Plan: Move towards the trash bag on the floor located to the left of the refrigerator.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the trash bag on the floor located to the left of the refrigerator.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=3.366 y=0.901 z=6.927
+Distance to target: 4.257m
+episode_success=False

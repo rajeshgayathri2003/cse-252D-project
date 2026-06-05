@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- coffee table located in the center-right, covering roughly 0.9% of the view.
+- painting located in the top-right, covering roughly 0.6% of the view.
+- sofa bed located in the center-right, covering roughly 2.8% of the view.
+- trash bin/can located in the center, covering roughly 2.0% of the view.
+- trash bag located in the center, covering roughly 2.0% of the view.

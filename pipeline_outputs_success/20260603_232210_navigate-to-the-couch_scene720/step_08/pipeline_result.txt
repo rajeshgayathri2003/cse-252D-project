@@ -1,0 +1,53 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- book located in the center-left, covering roughly 0.2% of the view.
+- bottle located in the top-right, covering roughly 0.3% of the view.
+- bottle located in the top-right, covering roughly 0.1% of the view.
+- cushion located in the center-left, covering roughly 1.8% of the view.
+- cushion located in the center, covering roughly 1.4% of the view.
+- cushion located in the center-left, covering roughly 1.4% of the view.
+- drawer located in the center-right, covering roughly 0.5% of the view.
+- drawer located in the center-right, covering roughly 0.5% of the view.
+- drawer located in the center-right, covering roughly 0.4% of the view.
+- drawer located in the center-right, covering roughly 0.4% of the view.
+- studio couch located in the center-left, covering roughly 9.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 8
+- edges: 14
+- current_node: (5.25, 7.0, 0)
+- known_objects:
+  - book: closest observed 2.3m (seen at 2 location(s))
+  - bottle: closest observed 5.0m (seen at 1 location(s))
+  - chest of drawers: closest observed 3.9m (seen at 3 location(s))
+  - coffee table: closest observed 2.8m (seen at 6 location(s))
+  - computer monitor: seen from node 1.4m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - drawer: closest observed 3.6m (seen at 4 location(s))
+  - house: closest observed 0.9m (seen at 2 location(s))
+  - houseplant: seen from node 0.5m S (seen at 2 location(s))
+  - sofa bed: closest observed 7.4m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 6 location(s))
+  - television: closest observed 1.3m (seen at 4 location(s))
+  - vase: closest observed 4.2m (seen at 1 location(s))
+  - window: closest observed 4.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move forward towards the studio couch visible in the center-left of the scene.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move forward towards the studio couch visible in the center-left of the scene.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=7.354
+Distance to target: 3.100m
+episode_success=False

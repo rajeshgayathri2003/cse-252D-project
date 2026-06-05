@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- faucet located in the top-left, covering roughly 0.4% of the view.
+- sink located in the center-left, covering roughly 4.3% of the view.
+- sink located in the center-left, covering roughly 0.7% of the view.
+- trash bin/can located in the center-left, covering roughly 3.0% of the view.

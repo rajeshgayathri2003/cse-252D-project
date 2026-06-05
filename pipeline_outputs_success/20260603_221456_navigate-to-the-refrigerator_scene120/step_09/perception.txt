@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- door located in the top-right, covering roughly 16.0% of the view.
+- house located in the center-right, covering roughly 99.3% of the view.
+- refrigerator located in the top-center, covering roughly 4.0% of the view.
+- refrigerator located in the top-center, covering roughly 1.7% of the view.

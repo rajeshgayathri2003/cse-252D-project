@@ -1,0 +1,67 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- coffee table located in the center-right, covering roughly 0.7% of the view.
+- painting located in the top-center, covering roughly 0.7% of the view.
+- painting located in the top-right, covering roughly 0.6% of the view.
+- sofa bed located in the center-right, covering roughly 3.1% of the view.
+- trash bin/can located in the center, covering roughly 2.3% of the view.
+- trash bag located in the center, covering roughly 2.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 19
+- edges: 38
+- current_node: (4.5, 7.5, 1)
+- known_objects:
+  - bottle: closest observed 3.4m (seen at 7 location(s))
+  - bowl: closest observed 2.5m (seen at 2 location(s))
+  - chair: closest observed 2.9m (seen at 4 location(s))
+  - coffee cup: closest observed 3.4m (seen at 2 location(s))
+  - coffee table: closest observed 7.2m (seen at 3 location(s))
+  - desk: seen from node 0.7m SW (seen at 1 location(s))
+  - door: closest observed 2.1m (seen at 4 location(s))
+  - door handle: seen from node 0.6m SW (seen at 5 location(s))
+  - furniture: seen from node 1.1m S (seen at 2 location(s))
+  - garbage bag: closest observed 4.3m (seen at 1 location(s))
+  - hinge: seen from node 0.8m S (seen at 2 location(s))
+  - house: seen from node 1.1m S (seen at 2 location(s))
+  - kitchen & dining room table: closest observed 7.5m (seen at 2 location(s))
+  - mirror: seen from node 0.9m SW (seen at 3 location(s))
+  - painting: closest observed 6.1m (seen at 3 location(s))
+  - refrigerator: seen from node 1.3m SW (seen at 2 location(s))
+  - sink: seen from node 0.6m SW (seen at 3 location(s))
+  - sofa bed: closest observed 5.7m (seen at 2 location(s))
+  - stool: closest observed 6.8m (seen at 1 location(s))
+  - studio couch: seen from node 1.1m S (seen at 2 location(s))
+  - table: closest observed 6.5m (seen at 2 location(s))
+  - television: closest observed 5.7m (seen at 2 location(s))
+  - toilet: seen from node 1.2m SW (seen at 1 location(s))
+  - trash bag: closest observed 4.0m (seen at 11 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 5 location(s))
+  - vase: closest observed 2.4m (seen at 5 location(s))
+
+Planner proposed:
+Plan: Move forward towards the trash bag located in the center of the room.
+
+Critic verdict:
+{'approved': False, 'reason': 'The distance to the target has increased over the last 4 translational actions, indicating a lack of progress (Criterion D).', 'revised_subgoal': 'Rotate to face the visible trash bag and move toward it.'}
+
+Critic attempts (6):
+  [0] {'approved': False, 'reason': 'The distance to the target has increased over the last 4 translational actions, indicating a lack of progress (D).', 'revised_subgoal': 'Rotate to align with the visible trash bag and move towards it.'}
+  [1] {'approved': False, 'reason': 'The distance to the target has increased over the last 4 translational actions (Criterion D).', 'revised_subgoal': 'Rotate to face the trash bag directly and move towards it.'}
+  [2] {'approved': False, 'reason': 'The distance to the target has increased over the last four translational actions, indicating the agent is moving away from the goal (Criterion D).', 'revised_subgoal': 'Rotate to re-orient towards the trash bag located in the center of the view.'}
+  [3] {'approved': False, 'reason': 'The distance to the target has steadily increased over the last 4 translational actions, indicating the agent is moving away from the goal (Criterion D).', 'revised_subgoal': 'Rotate to face the visible trash bag and move towards it.'}
+  [4] {'approved': False, 'reason': 'The distance to the target has increased over the last 4+ translational actions, violating criterion D.', 'revised_subgoal': 'Rotate to better align with the visible trash bag or move toward a known landmark to correct course.'}
+  [5] {'approved': False, 'reason': 'The distance to the target has increased over the last 4 translational actions, indicating a lack of progress (Criterion D).', 'revised_subgoal': 'Rotate to face the visible trash bag and move toward it.'}
+
+Selected subgoal:
+Rotate to face the visible trash bag and move toward it.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=4.750 y=0.901 z=7.561
+Distance to target: 5.253m
+episode_success=False

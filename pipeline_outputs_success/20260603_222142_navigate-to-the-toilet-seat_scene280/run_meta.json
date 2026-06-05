@@ -1,0 +1,29 @@
+{
+  "run_dir": "20260603_222142_navigate-to-the-toilet-seat_scene280",
+  "started_at": "2026-06-03T22:23:59",
+  "task": "Navigate to the Toilet Seat",
+  "scene_index": 280,
+  "steps": 100,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 9,
+  "finished_at": "2026-06-03T22:23:59",
+  "action_history": [
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 2.0000010787037903,
+  "shortest_path_length": 1.0307764064044151,
+  "critic_aborted": false
+}

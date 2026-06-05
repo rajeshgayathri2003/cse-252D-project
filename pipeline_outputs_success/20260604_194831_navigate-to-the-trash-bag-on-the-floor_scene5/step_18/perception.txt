@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- chair located in the center-right, covering roughly 2.8% of the view.
+- house located in the bottom-center, covering roughly 99.0% of the view.
+- studio couch located in the top-right, covering roughly 2.0% of the view.
+- table located in the top-right, covering roughly 1.0% of the view.

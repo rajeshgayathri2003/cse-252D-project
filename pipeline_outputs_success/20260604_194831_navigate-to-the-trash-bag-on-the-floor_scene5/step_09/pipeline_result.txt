@@ -1,0 +1,47 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle located in the center, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 6
+- edges: 10
+- current_node: (4.0, 7.25, 0)
+- known_objects:
+  - bottle: closest observed 4.2m (seen at 1 location(s))
+  - coffee cup: closest observed 4.1m (seen at 1 location(s))
+  - door: closest observed 2.8m (seen at 1 location(s))
+  - door handle: seen from node 0.0m here (seen at 4 location(s))
+  - furniture: seen from node 0.9m SE (seen at 2 location(s))
+  - hinge: seen from node 0.8m SE (seen at 2 location(s))
+  - house: seen from node 0.9m SE (seen at 1 location(s))
+  - sink: seen from node 0.0m here (seen at 2 location(s))
+  - studio couch: seen from node 0.9m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the center of the room to locate and reach the trash bag on the floor.
+
+Critic verdict:
+{'approved': False, 'reason': 'The distance to the target has increased over the last four translational actions, failing the progress trend criterion (D).', 'revised_subgoal': 'Rotate to search the area for the trash bag or move toward a known landmark like the sink to reorient.'}
+
+Critic attempts (6):
+  [0] {'approved': False, 'reason': 'The distance to the target has increased over the last four translational actions (D).', 'revised_subgoal': 'Rotate to scan the area or move toward a known landmark to reorient and locate the trash bag.'}
+  [1] {'approved': False, 'reason': 'The distance to the target has increased by 0.52m over the last four translational actions, violating the progress trend (D).', 'revised_subgoal': 'Rotate to search for the trash bag or move towards the sink to re-orient.'}
+  [2] {'approved': False, 'reason': 'The target trash bag is not in the visual input or the map, and the distance to the target has been increasing (B, D).', 'revised_subgoal': 'Move towards the door and rotate to search for the trash bag.'}
+  [3] {'approved': False, 'reason': 'The distance to the target has increased over the last four translational actions, failing the progress trend requirement (D).', 'revised_subgoal': 'Rotate to search the area or move toward a known landmark like the sink to reorient and find the trash bag.'}
+  [4] {'approved': False, 'reason': 'The distance to the target has increased by more than 0.1m over the last four translational actions (D).', 'revised_subgoal': 'Rotate to scan the surroundings or move toward the sink to locate the trash bag.'}
+  [5] {'approved': False, 'reason': 'The distance to the target has increased over the last four translational actions, failing the progress trend criterion (D).', 'revised_subgoal': 'Rotate to search the area for the trash bag or move toward a known landmark like the sink to reorient.'}
+
+Selected subgoal:
+Rotate to search the area for the trash bag or move toward a known landmark like the sink to reorient.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=3.970 y=0.901 z=7.280
+Distance to target: 4.729m
+episode_success=False

@@ -1,0 +1,8 @@
+Visible Objects (Segmented):
+- clock located in the center-left, covering roughly 0.2% of the view.
+- cushion located in the center-left, covering roughly 3.7% of the view.
+- cushion located in the center, covering roughly 2.3% of the view.
+- cushion located in the center-left, covering roughly 2.2% of the view.
+- cushion located in the center-left, covering roughly 1.6% of the view.
+- sofa bed located in the center-left, covering roughly 13.9% of the view.
+- vase located in the top-right, covering roughly 0.2% of the view.

@@ -1,0 +1,48 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- clock located in the center-left, covering roughly 0.6% of the view.
+- cushion located in the bottom-left, covering roughly 6.7% of the view.
+- cushion located in the center-left, covering roughly 3.4% of the view.
+- studio couch located in the center, covering roughly 24.1% of the view.
+- vase located in the top-right, covering roughly 0.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 15
+- edges: 28
+- current_node: (5.25, 8.75, 0)
+- known_objects:
+  - book: closest observed 2.3m (seen at 3 location(s))
+  - bottle: closest observed 5.0m (seen at 1 location(s))
+  - chest of drawers: closest observed 3.9m (seen at 3 location(s))
+  - clock: closest observed 7.8m (seen at 4 location(s))
+  - coffee table: closest observed 2.8m (seen at 6 location(s))
+  - computer monitor: seen from node 3.1m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 8 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - drawer: closest observed 3.3m (seen at 6 location(s))
+  - house: closest observed 0.9m (seen at 2 location(s))
+  - houseplant: seen from node 0.8m S (seen at 4 location(s))
+  - sofa bed: closest observed 7.4m (seen at 3 location(s))
+  - studio couch: seen from node 0.0m here (seen at 11 location(s))
+  - television: closest observed 1.3m (seen at 4 location(s))
+  - vase: closest observed 3.0m (seen at 7 location(s))
+  - window: closest observed 4.7m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move ahead towards the studio couch located in the center of the scene.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task, consistent with the visual input showing the couch in the center, and the trajectory confirms continuous progress (A/B).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move ahead towards the studio couch located in the center of the scene.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=9.104
+Distance to target: 1.731m
+episode_success=False

@@ -1,0 +1,20 @@
+0: computer monitor
+1: desk
+2: coffee table
+3: studio couch
+4: television
+5: coffee cup
+6: houseplant
+7: vase
+8: house
+9: window
+10: cabinetry
+11: sofa bed
+12: furniture
+13: picture frame
+14: table
+15: bed
+16: mobile phone
+17: door
+18: door handle
+19: shelf

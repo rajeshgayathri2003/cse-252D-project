@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- door located in the top-left, covering roughly 15.0% of the view.
+- sink located in the center, covering roughly 2.0% of the view.
+- sink located in the top-center, covering roughly 0.8% of the view.
+- sink located in the center, covering roughly 0.5% of the view.
+- trash bin/can located in the bottom-right, covering roughly 4.1% of the view.

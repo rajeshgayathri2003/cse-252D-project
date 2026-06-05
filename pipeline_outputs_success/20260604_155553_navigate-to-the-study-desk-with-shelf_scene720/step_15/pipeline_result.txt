@@ -1,0 +1,51 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- door handle located in the bottom-left, covering roughly 0.5% of the view.
+- desk located in the bottom-left, covering roughly 14.6% of the view.
+- desk located in the center-right, covering roughly 4.3% of the view.
+- television located in the top-left, covering roughly 5.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 22
+- current_node: (6.25, 6.5, 1)
+- known_objects:
+  - bed: closest observed 7.3m (seen at 1 location(s))
+  - cabinetry: seen from node 0.2m W (seen at 2 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 4 location(s))
+  - computer monitor: seen from node 1.2m SW (seen at 2 location(s))
+  - desk: closest observed 1.6m (seen at 6 location(s))
+  - door: closest observed 5.2m (seen at 2 location(s))
+  - door handle: seen from node 0.0m here (seen at 5 location(s))
+  - furniture: seen from node 1.0m W (seen at 2 location(s))
+  - house: closest observed 0.9m (seen at 3 location(s))
+  - houseplant: seen from node 1.0m W (seen at 4 location(s))
+  - mobile phone: closest observed 1.8m (seen at 1 location(s))
+  - picture frame: seen from node 1.0m W (seen at 1 location(s))
+  - shelf: closest observed 5.2m (seen at 3 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 1.0m W (seen at 4 location(s))
+  - table: closest observed 6.7m (seen at 1 location(s))
+  - television: closest observed 1.2m (seen at 8 location(s))
+  - vase: closest observed 4.1m (seen at 3 location(s))
+  - window: closest observed 4.1m (seen at 4 location(s))
+
+Planner proposed:
+Plan: Move towards the desk with the shelf located on the right side of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the desk with the shelf located on the right side of the view.
+
+Action executed:
+controller.step(action='MoveRight')
+Position: x=6.250 y=0.901 z=6.250
+Distance to target: 1.474m
+episode_success=True

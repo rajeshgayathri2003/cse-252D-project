@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- furniture located in the center-right, covering roughly 0.5% of the view.
+- houseplant located in the bottom-right, covering roughly 0.6% of the view.
+- picture frame located in the top-right, covering roughly 8.7% of the view.
+- table located in the bottom-right, covering roughly 15.4% of the view.

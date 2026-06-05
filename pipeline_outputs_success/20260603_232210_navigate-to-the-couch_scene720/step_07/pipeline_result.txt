@@ -1,0 +1,43 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- coffee table located in the bottom-left, covering roughly 2.4% of the view.
+- drawer located in the top-right, covering roughly 0.4% of the view.
+- sofa bed located in the center-left, covering roughly 7.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 7
+- edges: 12
+- current_node: (5.25, 6.75, 0)
+- known_objects:
+  - book: closest observed 2.3m (seen at 1 location(s))
+  - chest of drawers: closest observed 3.9m (seen at 3 location(s))
+  - coffee table: closest observed 2.8m (seen at 6 location(s))
+  - computer monitor: seen from node 1.1m S (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - drawer: closest observed 3.7m (seen at 3 location(s))
+  - house: closest observed 0.9m (seen at 2 location(s))
+  - houseplant: seen from node 0.2m S (seen at 2 location(s))
+  - sofa bed: closest observed 7.4m (seen at 1 location(s))
+  - studio couch: seen from node 0.2m S (seen at 5 location(s))
+  - television: closest observed 1.3m (seen at 4 location(s))
+  - vase: closest observed 4.2m (seen at 1 location(s))
+  - window: closest observed 4.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the sofa bed located in the center-left of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the sofa bed located in the center-left of the view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=7.104
+Distance to target: 3.324m
+episode_success=False

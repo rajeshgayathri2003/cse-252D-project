@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- bed located in the center, covering roughly 17.8% of the view.

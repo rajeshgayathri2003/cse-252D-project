@@ -1,0 +1,41 @@
+Task:
+Navigate to the Television
+
+Perception:
+Visible Objects (Segmented):
+- studio couch located in the bottom-center, covering roughly 37.5% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 19
+- edges: 36
+- current_node: (9.0, 6.5, 1)
+- known_objects:
+  - chair: closest observed 2.7m (seen at 1 location(s))
+  - coffee table: closest observed 5.4m (seen at 5 location(s))
+  - computer keyboard: seen from node 0.2m W (seen at 2 location(s))
+  - cushion: seen from node 0.2m W (seen at 9 location(s))
+  - furniture: seen from node 4.5m W (seen at 1 location(s))
+  - house: seen from node 4.2m W (seen at 2 location(s))
+  - laptop: closest observed 0.9m (seen at 3 location(s))
+  - painting: closest observed 2.6m (seen at 7 location(s))
+  - remote control: closest observed 2.2m (seen at 9 location(s))
+  - sofa bed: closest observed 2.9m (seen at 5 location(s))
+  - studio couch: seen from node 0.0m here (seen at 17 location(s))
+  - table: closest observed 6.3m (seen at 2 location(s))
+  - television: closest observed 1.6m (seen at 17 location(s))
+
+Planner proposed:
+Plan: Move towards the television located nearby.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the television located nearby.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=9.000 y=0.901 z=6.500
+Distance to target: 1.543m
+episode_success=False

@@ -1,0 +1,64 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- apple located in the bottom-left, covering roughly 0.3% of the view.
+- chair located in the bottom-left, covering roughly 9.6% of the view.
+- chair located in the center-left, covering roughly 6.4% of the view.
+- chair located in the center-left, covering roughly 2.5% of the view.
+- chair located in the center-left, covering roughly 0.7% of the view.
+- chair located in the center, covering roughly 0.4% of the view.
+- kitchen & dining room table located in the center-left, covering roughly 8.7% of the view.
+- trash bag located in the center-right, covering roughly 2.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 43
+- edges: 86
+- current_node: (3.5, 4.5, 2)
+- known_objects:
+  - apple: closest observed 0.7m (seen at 3 location(s))
+  - bathtub: seen from node 3.8m NE (seen at 1 location(s))
+  - bottle: closest observed 3.4m (seen at 21 location(s))
+  - bowl: closest observed 2.5m (seen at 2 location(s))
+  - chair: closest observed 1.1m (seen at 22 location(s))
+  - coffee cup: closest observed 3.4m (seen at 4 location(s))
+  - coffee table: closest observed 7.0m (seen at 4 location(s))
+  - desk: seen from node 2.8m N (seen at 1 location(s))
+  - door: closest observed 2.1m (seen at 4 location(s))
+  - door handle: seen from node 2.3m N (seen at 5 location(s))
+  - furniture: seen from node 2.3m NE (seen at 2 location(s))
+  - garbage bag: closest observed 2.5m (seen at 11 location(s))
+  - hinge: seen from node 2.3m NE (seen at 2 location(s))
+  - house: seen from node 2.3m N (seen at 2 location(s))
+  - kitchen & dining room table: closest observed 6.2m (seen at 13 location(s))
+  - mirror: seen from node 2.3m N (seen at 3 location(s))
+  - painting: closest observed 5.4m (seen at 5 location(s))
+  - refrigerator: seen from node 1.8m N (seen at 12 location(s))
+  - sink: seen from node 2.5m N (seen at 5 location(s))
+  - sofa bed: closest observed 5.0m (seen at 5 location(s))
+  - stool: closest observed 4.7m (seen at 6 location(s))
+  - studio couch: seen from node 2.3m N (seen at 2 location(s))
+  - table: closest observed 6.1m (seen at 5 location(s))
+  - television: closest observed 5.7m (seen at 2 location(s))
+  - toilet: seen from node 2.5m N (seen at 3 location(s))
+  - trash bag: closest observed 2.0m (seen at 30 location(s))
+  - trash bin/can: seen from node 2.7m N (seen at 6 location(s))
+  - vase: closest observed 2.1m (seen at 20 location(s))
+  - window: closest observed 2.2m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move ahead towards the trash bag located in the center-right of the scene.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move ahead towards the trash bag located in the center-right of the scene.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.586 y=0.901 z=4.146
+Distance to target: 1.847m
+episode_success=False

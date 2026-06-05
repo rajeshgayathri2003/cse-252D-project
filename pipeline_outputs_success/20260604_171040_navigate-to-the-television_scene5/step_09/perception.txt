@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- sofa bed located in the bottom-left, covering roughly 5.1% of the view.
+- studio couch located in the center-right, covering roughly 8.9% of the view.
+- television located in the top-left, covering roughly 4.4% of the view.

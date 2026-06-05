@@ -1,0 +1,25 @@
+{
+  "run_dir": "20260603_231928_navigate-to-the-painting-on-the-wall_scene280",
+  "started_at": "2026-06-03T23:22:05",
+  "task": "Navigate to the Painting on the wall",
+  "scene_index": 280,
+  "steps": 100,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 5,
+  "finished_at": "2026-06-03T23:22:05",
+  "action_history": [
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 1.25,
+  "shortest_path_length": 3.547996721614033,
+  "critic_aborted": false
+}

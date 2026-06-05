@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- refrigerator located in the top-center, covering roughly 7.7% of the view.
+- stool located in the center-left, covering roughly 0.6% of the view.
+- trash bag located in the center, covering roughly 2.8% of the view.

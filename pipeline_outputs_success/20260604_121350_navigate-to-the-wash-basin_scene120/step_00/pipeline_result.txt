@@ -1,0 +1,31 @@
+Task:
+Navigate to the Wash basin
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 3.5% of the view.
+- toilet located in the center-left, covering roughly 11.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 1
+- edges: 0
+- current_node: (1.0, 8.25, 0)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - toilet: closest observed 1.6m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Search for the wash basin in the current room by turning around or moving to explore the rest of the bathroom.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is a valid search strategy to locate the target within the current room (A).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Search for the wash basin in the current room by turning around or moving to explore the rest of the bathroom.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=1.000 y=0.901 z=8.250
+Distance to target: 3.949m
+episode_success=False

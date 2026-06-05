@@ -1,0 +1,36 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- furniture located in the center-left, covering roughly 3.1% of the view.
+- house located in the center, covering roughly 99.3% of the view.
+- studio couch located in the center-right, covering roughly 3.0% of the view.
+- table located in the center-right, covering roughly 1.7% of the view.
+- table located in the center, covering roughly 0.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 1
+- edges: 0
+- current_node: (4.5, 6.5, 1)
+- known_objects:
+  - furniture: seen from node 0.0m here (seen at 1 location(s))
+  - house: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Search the room to locate the trash bag on the floor, then navigate to its location.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal aligns with the task by proposing a search since the target object is not currently visible or in the map (A, B).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Search the room to locate the trash bag on the floor, then navigate to its location.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 4.206m
+episode_success=False

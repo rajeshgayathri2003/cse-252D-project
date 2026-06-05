@@ -1,0 +1,16 @@
+0: cistern
+1: toilet
+2: toothbrush
+3: sink
+4: trash bin/can
+5: door
+6: door handle
+7: drawer
+8: house
+9: refrigerator
+10: cabinetry
+11: studio couch
+12: bottle
+13: coffee table
+14: television
+15: bowl

@@ -1,0 +1,6 @@
+0: cistern
+1: toilet
+2: toothbrush
+3: sink
+4: trash bin/can
+5: faucet

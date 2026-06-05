@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- cushion located in the center-left, covering roughly 2.7% of the view.
+- cushion located in the center-left, covering roughly 1.6% of the view.
+- cushion located in the center, covering roughly 1.6% of the view.
+- drawer located in the center-right, covering roughly 0.5% of the view.
+- studio couch located in the center-left, covering roughly 10.9% of the view.

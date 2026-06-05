@@ -1,0 +1,10 @@
+Visible Objects (Segmented):
+- book located in the center-left, covering roughly 0.6% of the view.
+- clock located in the center-left, covering roughly 0.2% of the view.
+- cushion located in the center-left, covering roughly 2.7% of the view.
+- cushion located in the center, covering roughly 2.7% of the view.
+- cushion located in the center-left, covering roughly 2.3% of the view.
+- cushion located in the center-left, covering roughly 1.0% of the view.
+- houseplant located in the top-right, covering roughly 0.5% of the view.
+- studio couch located in the center-left, covering roughly 15.5% of the view.
+- vase located in the top-right, covering roughly 0.2% of the view.

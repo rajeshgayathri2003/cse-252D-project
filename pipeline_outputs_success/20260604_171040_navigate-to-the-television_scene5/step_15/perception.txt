@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- cushion located in the center, covering roughly 8.2% of the view.
+- laptop located in the center-right, covering roughly 1.0% of the view.
+- remote control located in the center-left, covering roughly 1.9% of the view.
+- studio couch located in the center, covering roughly 20.5% of the view.
+- television located in the center-left, covering roughly 6.9% of the view.

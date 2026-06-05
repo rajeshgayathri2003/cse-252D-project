@@ -1,0 +1,35 @@
+Task:
+Navigate to the Book on the bed
+
+Perception:
+Visible Objects (Segmented):
+- person located in the bottom-left, covering roughly 7.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (5.25, 5.75, 2)
+- known_objects:
+  - computer monitor: seen from node 0.0m here (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - person: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Explore the environment to locate the bed, and once the bed is found, navigate to the book on it.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': "The target 'bed' is not visible in the current view nor present in the map, so the agent cannot move towards it without first searching (B).", 'revised_subgoal': 'Rotate to search for the bed.'}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Explore the environment to locate the bed, and once the bed is found, navigate to the book on it.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=5.250 y=0.901 z=5.750
+Distance to target: 1.830m
+episode_success=False

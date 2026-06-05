@@ -1,0 +1,48 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- cushion located in the center-left, covering roughly 4.5% of the view.
+- cushion located in the center-left, covering roughly 3.1% of the view.
+- studio couch located in the center, covering roughly 20.3% of the view.
+- vase located in the top-right, covering roughly 0.3% of the view.
+- window located in the top-center, covering roughly 5.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 14
+- edges: 26
+- current_node: (5.25, 8.5, 0)
+- known_objects:
+  - book: closest observed 2.3m (seen at 3 location(s))
+  - bottle: closest observed 5.0m (seen at 1 location(s))
+  - chest of drawers: closest observed 3.9m (seen at 3 location(s))
+  - clock: closest observed 7.8m (seen at 3 location(s))
+  - coffee table: closest observed 2.8m (seen at 6 location(s))
+  - computer monitor: seen from node 2.9m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 7 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - drawer: closest observed 3.3m (seen at 6 location(s))
+  - house: closest observed 0.9m (seen at 2 location(s))
+  - houseplant: seen from node 0.5m S (seen at 4 location(s))
+  - sofa bed: closest observed 7.4m (seen at 3 location(s))
+  - studio couch: seen from node 0.0m here (seen at 10 location(s))
+  - television: closest observed 1.3m (seen at 4 location(s))
+  - vase: closest observed 3.0m (seen at 6 location(s))
+  - window: closest observed 4.7m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move ahead towards the studio couch located in the center of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move ahead towards the studio couch located in the center of the view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=8.854
+Distance to target: 1.888m
+episode_success=False

@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- door located in the center-left, covering roughly 18.6% of the view.
+- door handle located in the center-left, covering roughly 0.1% of the view.
+- door handle located in the center-left, covering roughly 0.0% of the view.
+- shelf located in the center-right, covering roughly 16.3% of the view.
+- television located in the top-center, covering roughly 2.3% of the view.

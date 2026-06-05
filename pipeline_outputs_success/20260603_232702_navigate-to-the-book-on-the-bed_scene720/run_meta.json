@@ -1,0 +1,25 @@
+{
+  "run_dir": "20260603_232702_navigate-to-the-book-on-the-bed_scene720",
+  "started_at": "2026-06-03T23:28:52",
+  "task": "Navigate to the Book on the bed",
+  "scene_index": 720,
+  "steps": 100,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 5,
+  "finished_at": "2026-06-03T23:28:52",
+  "action_history": [
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 0.5000005393518951,
+  "shortest_path_length": 0.25,
+  "critic_aborted": false
+}
