@@ -486,12 +486,20 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             while not verdict["approved"] and loop_count < 5:
                 print(f"\nCritic rejected (attempt {loop_count + 1}): {verdict['reason']}\n")
                 loop_count += 1
+                # Forward both the reason AND the revised_subgoal. The critic's
+                # imperative plan-shape guidance lives in revised_subgoal; the
+                # planner previously only saw reason and reverted to hybrid
+                # compromise plans on rotate-only feedback. Concatenating
+                # threads the critic's structured output through intact.
+                fb = verdict["reason"]
+                if verdict.get("revised_subgoal"):
+                    fb = f"{fb}\nRequired plan shape: {verdict['revised_subgoal']}"
                 plan = planner.generate_plan(
                     task=task,
                     visual_input=encode_image(perception.frame_path),
                     perception_description=perception.description,
                     map_summary=map_summary,
-                    critic_feedback=verdict["reason"],
+                    critic_feedback=fb,
                 )
 
                 verdict = critic.review(
