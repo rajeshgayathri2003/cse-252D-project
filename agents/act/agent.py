@@ -43,7 +43,7 @@ Note that you can interact with an object only if it is visible. If you can not 
 
 Note that the action you return MUST be one of the possible actions listed above, and if it requires an objectId, you should use one from the available objects list. The agent will execute exactly the command you return, so it must be a valid controller.step(...) call that can be executed in Python.
 
-For navigation actions use: controller.step(action='MoveAhead')
+For navigation actions use: controller.step(action='MoveAhead', moveMagnitude=<magnitude>) or any other action from the navigation category.
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 
 IMPORTANT: Always use y=0.9 for the Teleport action. Using y=0.0 will fail silently.
@@ -385,8 +385,8 @@ class ActionAgent:
             event = self.controller.last_event
             if not event.metadata.get("lastActionSuccess"):
                 print(f"Action failed: {event.metadata.get('errorMessage', 'unknown error')}")
-                return False
-            return True
+                return False, event.metadata.get("errorMessage", "unknown error")
+            return True, None
         except StopIteration:
             print(f"Error: Object not found in scene. Available objects: {[obj['objectType'] for obj in self.controller.last_event.metadata['objects']]}")
             raise

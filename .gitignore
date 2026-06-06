@@ -40,8 +40,8 @@ Thumbs.db
 *.pt
 *.pth
 /pipeline_outputs/
-/act/temp/
-/plan/temp/
+agents/act/temp/
+agents/plan/temp/
 action_outputs/
 nav_graph.png
 test.png

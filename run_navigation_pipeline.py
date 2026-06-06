@@ -20,6 +20,7 @@ import json
 import math
 import os
 import re
+import shutil
 from dataclasses import dataclass
 from datetime import datetime
 
@@ -380,6 +381,9 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
     completed_steps = 0
     log_lines: list[str] = [f"Task: {task}\nScene: {scene_index}\nSteps: {args.steps}\n"]
 
+    target_objs = find_target_objects(event.metadata["objects"], target_type)
+    dist_to_target = min((o["distance"] for o in target_objs), default=None)
+    prev_dist_to_target = None
     try:
         for step in range(args.steps):
             print(f"\n{'=' * 72}\nCycle {step + 1}/{args.steps}: observe -> map -> plan -> critique\n{'=' * 72}")
@@ -412,6 +416,8 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 visual_input=encode_image(perception.frame_path),
                 perception_description=perception.description,
                 map_summary=map_summary,
+                prev_dist_to_target=prev_dist_to_target,
+                curr_dist_to_target=dist_to_target,
             )
 
             verdict = critic.review(
@@ -494,10 +500,12 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
 
             done = False
             action_command = None
+            error_message = None
 
             while not done:
                 action_command = action_agent.choose_action(
                     selected_subgoal,
+                    failure_msg= error_message,
                     perception_description=perception.description,
                 )
                 print(f"\n[ActionAgent] Executing: {action_command}")
@@ -507,7 +515,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                          round(agent_meta["position"]["z"], 2))
                 print(f"Agent starting position (x, z): {start}")
 
-                done = action_agent.perform_action(action_command)
+                done, error_message = action_agent.perform_action(action_command)
 
                 # Accumulate path length after each physical action
                 cur_pos = agent_position(controller.last_event)
@@ -526,6 +534,9 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             event = controller.last_event
             action_agent.get_current_visual_output(frame_id=step)
 
+            #update distance to target
+            prev_dist_to_target = dist_to_target
+            
             # Check navigation success
             episode_success = check_success(event, target_type, SUCCESS_DISTANCE)
             target_objs = find_target_objects(event.metadata["objects"], target_type)
@@ -590,6 +601,9 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
         )
         print(f"[Pipeline] Completed {completed_steps}/{args.steps} cycles -> {run_dir}")
         controller.stop()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
+            print(f"[Pipeline] Removed temp dir: {temp_dir}")
 
     log_lines.append(
         f"\nFinal: success={episode_success}  "

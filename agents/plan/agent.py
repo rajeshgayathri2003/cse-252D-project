@@ -35,7 +35,11 @@ Here is a detailed description of the inputs you will receive:
 1. Task: A natural language description of the task that needs to be accomplished. For example, "Go to the kitchen and pick up the apple on the table."
 2. Visual Input: A description of the current visual scene from the agent's perspective. This may include objects in view, their locations, and any relevant details. For example, "You see a table with an apple on it, a chair, and a door leading to the kitchen."
 3. Map Summary: The Mapping Agent's spatial memory, including visited nodes, known objects, and current location.
-4. Graph Representation: A graph representation of the environment, where nodes represent reachable positions and edges represent possible movements between those positions. 
+4. Graph Representation: A graph representation of the environment, where nodes represent reachable positions and edges represent possible movements between those positions. The graph uses the following color coding:
+   - BLUE node: The agent's current position.
+   - RED nodes: Positions that have already been visited.
+   - GREEN nodes: Positions that have not yet been visited (unexplored areas).
+   Prioritize navigating towards GREEN (unvisited) nodes to explore new areas of the environment, unless the target object has already been located.
 
 Give your output in the following format:
 Plan: <Your plan here based on the task and inputs>
@@ -207,31 +211,60 @@ class PlanningAgent:
     def _save_graph(self, G):
         """Save the graph visualization to a JPG file."""
         pos_2d = {node: node for node in G.nodes}   # (x, z) doubles as plot coords
-        
-        plt.figure(figsize=(10, 10))
-        nx.draw(
-            G, pos=pos_2d,
-            node_size=30, node_color="steelblue",
-            edge_color="gray", width=0.8, with_labels=False
-        )
-        
-        # Mark the agent's starting position
+
+        # Determine current and visited positions from the mapping agent
         agent_meta = self.controller.last_event.metadata["agent"]
-        start = (round(agent_meta["position"]["x"], 2),
-                 round(agent_meta["position"]["z"], 2))
-        
-        nx.draw_networkx_nodes(G, pos=pos_2d, nodelist=[start],
-                               node_color="red", node_size=120)
-        
-        plt.title("Reachable Positions Graph")
+        current_pos = (round(agent_meta["position"]["x"], 2),
+                       round(agent_meta["position"]["z"], 2))
+
+        visited_snapped = set()
+        spatial_graph = None
+        if self.mapping_agent is not None:
+            if hasattr(self.mapping_agent, "spatial_graph"):
+                spatial_graph = self.mapping_agent.spatial_graph
+            elif hasattr(self.mapping_agent, "core") and hasattr(self.mapping_agent.core, "spatial_graph"):
+                spatial_graph = self.mapping_agent.core.spatial_graph
+        if spatial_graph is not None:
+            for node_id, data in spatial_graph.graph.nodes(data=True):
+                snapped = data.get("snapped_position")
+                if snapped:
+                    visited_snapped.add((round(snapped["x"], 2), round(snapped["z"], 2)))
+
+        current_nodes = [current_pos] if current_pos in G.nodes else []
+        visited_nodes = [
+            n for n in G.nodes
+            if n != current_pos and n in visited_snapped
+        ]
+        unvisited_nodes = [
+            n for n in G.nodes
+            if n != current_pos and n not in visited_snapped
+        ]
+
+        plt.figure(figsize=(10, 10))
+        # Draw edges first
+        nx.draw_networkx_edges(G, pos=pos_2d, edge_color="gray", width=0.8)
+        # Unvisited nodes — green
+        if unvisited_nodes:
+            nx.draw_networkx_nodes(G, pos=pos_2d, nodelist=unvisited_nodes,
+                                   node_color="green", node_size=30)
+        # Visited nodes — red
+        if visited_nodes:
+            nx.draw_networkx_nodes(G, pos=pos_2d, nodelist=visited_nodes,
+                                   node_color="red", node_size=60)
+        # Current position — blue
+        if current_nodes:
+            nx.draw_networkx_nodes(G, pos=pos_2d, nodelist=current_nodes,
+                                   node_color="blue", node_size=120)
+
+        plt.title("Reachable Positions Graph\n(Blue=Current, Red=Visited, Green=Unvisited)")
         plt.axis("equal")
         plt.tight_layout()
-        
+
         graph_path = os.path.join(self.save_dir, "reachable_pos_graph.jpg")
         plt.savefig(graph_path, dpi=150, format="jpg")
         plt.close()
         print(f"Graph saved to {graph_path}")
-        
+
         return graph_path
         
     def __call__(self, text_input, visual_input=None, graph_view=None, top_down_view=None):
@@ -361,7 +394,7 @@ class PlanningAgent:
             "warnings": warnings,
         }
 
-    def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None, critic_feedback=None):
+    def generate_plan(self, task, visual_input=None, perception_description=None, map_summary=None, critic_feedback=None, prev_dist_to_target=None, curr_dist_to_target=None):
         map_summary = map_summary or self.mapping_agent.get_context_string()
         
         # Convert simulator RGB frame to PIL for the perception agent
@@ -396,10 +429,17 @@ class PlanningAgent:
             incontext_example = self.generate_incontext_example()
             incontext_block = self._format_incontext_prompt_block(incontext_example)
         
+        if prev_dist_to_target is None:
+            dist_feedback = "The current distance of the target from the agent is {}. Take an action such that you get closer to it.".format(curr_dist_to_target if curr_dist_to_target is not None else "")
+            
+        else:
+            dist_feedback = "The previous distance of the target from the agent was {}. The current distance is {}. Take an action such that you get closer to it.".format(prev_dist_to_target, curr_dist_to_target if curr_dist_to_target is not None else "")
+            
         
         planner_input = (
             f"{PROMPT}\n\n"
             f"{incontext_block}\n"
+            f"{dist_feedback}\n\n"
             f"Task:\n{task}\n\n"
             f"Visual Input:\n{perception_description}\n\n"
             f"Map Summary:\n{map_summary}\n"
