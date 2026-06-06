@@ -453,10 +453,15 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 verdict = {
                     "approved": False,
                     "reason": (
-                        f"Wedge: {n_fails} consecutive movement actions blocked "
-                        f"at this node. Propose a sub-goal that rotates the "
-                        f"agent by 90 degrees or more to face a different "
-                        f"direction, then re-plan from the new view."
+                        f"WEDGE STATE: {n_fails} consecutive movement actions "
+                        f"have been blocked at this node — the agent CANNOT "
+                        f"translate from here. Your next plan MUST be "
+                        f"rotation-only. Acceptable plan shape: 'Rotate left "
+                        f"90 degrees to face a different direction.' Movement "
+                        f"verbs (move, navigate, approach, go toward, advance, "
+                        f"head) are FORBIDDEN in this plan and will cause "
+                        f"re-rejection. Do NOT combine rotation with movement "
+                        f"in one plan."
                     ),
                     "revised_subgoal": None,
                 }

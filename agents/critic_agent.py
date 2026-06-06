@@ -61,9 +61,10 @@ the planner a chance to course-correct.
     sub-goal is movement-shaped (uses verbs like "move", "navigate",
     "approach", "go to", "head toward"), reject. The current node is
     physically obstructed in the direction(s) the agent has tried. In
-    `revised_subgoal`, instruct the planner to rotate by 90 degrees or
-    more to attempt a fundamentally different heading before any further
-    translation.
+    `revised_subgoal`, write the EXACT imperative form: "ROTATION-ONLY:
+    Rotate left or right 90 degrees to face an unblocked direction. Do
+    NOT include any movement verb (move, navigate, approach, go toward,
+    advance) in this plan."
 (C) Non-repetition: does the sub-goal avoid re-doing recent actions or
     re-visiting already-explored locations without new justification?
     NOTE on failure tags: entries in Action history that end with
@@ -72,9 +73,10 @@ the planner a chance to course-correct.
     consecutive [FAILED] entries (regardless of which specific action
     was attempted) are a strong signal that the agent is wedged at the
     current position. Reject any movement-shaped sub-goal in this state.
-    In `revised_subgoal`, instruct the planner to rotate by 90 degrees
-    or more to face a different direction, then re-plan from the new
-    view.
+    In `revised_subgoal`, write the EXACT imperative form: "ROTATION-ONLY:
+    Rotate left or right 90 degrees to face a different direction. Do
+    NOT include any movement verb (move, navigate, approach, go toward,
+    advance) in this plan."
 (D) Progress trend (HARD RULE): if the Trajectory is provided and the
     agent has successfully executed at least 3 *movement* actions
     (MoveAhead, Teleport) in the recent history, AND the distance to
