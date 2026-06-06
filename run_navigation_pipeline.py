@@ -119,6 +119,20 @@ def get_shortest_path_length(controller: Controller, target_obj_id: str) -> floa
     return total
 
 
+WEDGE_THRESHOLD = 3
+
+
+def consecutive_trailing_failures(history: list[str]) -> int:
+    """Count [FAILED]-tagged entries at the end of action_history."""
+    n = 0
+    for entry in reversed(history):
+        if "[FAILED:" in entry:
+            n += 1
+        else:
+            break
+    return n
+
+
 def agent_position(event) -> tuple[float, float]:
     pos = event.metadata["agent"]["position"]
     return pos["x"], pos["z"]
@@ -420,17 +434,44 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 curr_dist_to_target=dist_to_target,
             )
 
-            verdict = critic.review(
-                task=task,
-                proposed_subgoal=plan,
-                map_summary=map_summary,
-                action_history=action_history,
-                perception_description=perception.description,
-                distance_history=distance_history,
-                target_type=target_type,
-                cycles_since_target_seen=cycles_since_target_seen,
-                actions_since_target_seen=actions_since_target_seen,
-            )
+            # Wedge guard: if the agent has accumulated >=3 consecutive
+            # failed movement actions, the LLM critic has historically not
+            # caught this signal even when it appears in both action_history
+            # ([FAILED] tags) and map_summary (blocked_actions_at_current_node).
+            # Skip the critic LLM and inject a verdict-shaped rejection that
+            # routes through the existing planner-feedback channel. The next
+            # planner call receives this rejection's reason as critic_feedback
+            # and is expected to emit a rotation-shaped plan, which the real
+            # critic then reviews normally.
+            n_fails = consecutive_trailing_failures(action_history)
+            if n_fails >= WEDGE_THRESHOLD:
+                print(
+                    f"\n  [Pipeline guard] Wedge detected "
+                    f"({n_fails} consecutive failed moves); "
+                    f"injecting critic rejection."
+                )
+                verdict = {
+                    "approved": False,
+                    "reason": (
+                        f"Wedge: {n_fails} consecutive movement actions blocked "
+                        f"at this node. Propose a sub-goal that rotates the "
+                        f"agent by 90 degrees or more to face a different "
+                        f"direction, then re-plan from the new view."
+                    ),
+                    "revised_subgoal": None,
+                }
+            else:
+                verdict = critic.review(
+                    task=task,
+                    proposed_subgoal=plan,
+                    map_summary=map_summary,
+                    action_history=action_history,
+                    perception_description=perception.description,
+                    distance_history=distance_history,
+                    target_type=target_type,
+                    cycles_since_target_seen=cycles_since_target_seen,
+                    actions_since_target_seen=actions_since_target_seen,
+                )
 
             critic_attempts = [verdict]
             if verdict["approved"]:

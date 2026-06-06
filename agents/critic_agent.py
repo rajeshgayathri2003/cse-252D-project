@@ -55,16 +55,26 @@ the planner a chance to course-correct.
     MoveAhead that continues toward the recently-seen target — approve it.
     This carve-out does NOT apply if rotation has happened since the last
     sighting (the prior bearing is stale) or if recency exceeds 2 cycles.
+    BLOCKED-NODE RULE: if the Map summary contains a field
+    `blocked_actions_at_current_node:` with one or more movement actions
+    listed (MoveAhead / MoveBack / MoveLeft / MoveRight) AND the proposed
+    sub-goal is movement-shaped (uses verbs like "move", "navigate",
+    "approach", "go to", "head toward"), reject. The current node is
+    physically obstructed in the direction(s) the agent has tried. In
+    `revised_subgoal`, instruct the planner to rotate by 90 degrees or
+    more to attempt a fundamentally different heading before any further
+    translation.
 (C) Non-repetition: does the sub-goal avoid re-doing recent actions or
     re-visiting already-explored locations without new justification?
     NOTE on failure tags: entries in Action history that end with
     "[FAILED: <reason>]" mean the simulator rejected the action (typically
     a collision with furniture) and the agent did NOT move. Two or more
-    consecutive [FAILED] entries of the same action are a strong signal
-    that the current heading is blocked; reject any sub-goal that asks
-    for that same action again. In `revised_subgoal`, instruct the
-    planner to ROTATE to find an alternate path around the obstacle
-    named in the failure reason.
+    consecutive [FAILED] entries (regardless of which specific action
+    was attempted) are a strong signal that the agent is wedged at the
+    current position. Reject any movement-shaped sub-goal in this state.
+    In `revised_subgoal`, instruct the planner to rotate by 90 degrees
+    or more to face a different direction, then re-plan from the new
+    view.
 (D) Progress trend (HARD RULE): if the Trajectory is provided and the
     agent has successfully executed at least 3 *movement* actions
     (MoveAhead, Teleport) in the recent history, AND the distance to
