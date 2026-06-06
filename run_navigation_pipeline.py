@@ -502,7 +502,15 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             action_command = None
             error_message = None
 
-            while not done:
+            # Cap inner action loop. perform_action returns False on collision
+            # (lastActionSuccess=False) so an LLM that keeps picking the same
+            # blocked MoveAhead would loop forever. Three attempts gives the
+            # LLM room to try alternatives within the cycle; past that, break
+            # and let the next cycle's planner+critic see the failure tags in
+            # action_history and re-strategize.
+            MAX_ACTION_ATTEMPTS = 3
+            attempt = 0
+            while not done and attempt < MAX_ACTION_ATTEMPTS:
                 action_command = action_agent.choose_action(
                     selected_subgoal,
                     failure_msg= error_message,
@@ -516,6 +524,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 print(f"Agent starting position (x, z): {start}")
 
                 done, error_message = action_agent.perform_action(action_command)
+                attempt += 1
 
                 # Accumulate path length after each physical action
                 cur_pos = agent_position(controller.last_event)
@@ -529,7 +538,21 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                          round(agent_meta["position"]["z"], 2))
                 print(f"Agent final position (x, z): {final}")
 
-                action_history.append(action_command)
+                # Tag failures so the next cycle's critic can see them via the
+                # action_history field and apply criteria (C) non-repetition
+                # and (D) progress-trend correctly. A bare action string would
+                # be indistinguishable from a successful execution.
+                if done:
+                    action_history.append(action_command)
+                else:
+                    err = error_message or "unknown error"
+                    action_history.append(f"{action_command} [FAILED: {err}]")
+
+            if not done:
+                print(
+                    f"  [ActionAgent] {MAX_ACTION_ATTEMPTS} attempts failed; "
+                    f"breaking to next cycle for re-plan."
+                )
 
             event = controller.last_event
             action_agent.get_current_visual_output(frame_id=step)

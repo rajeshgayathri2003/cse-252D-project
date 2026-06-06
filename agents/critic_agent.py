@@ -57,14 +57,25 @@ the planner a chance to course-correct.
     sighting (the prior bearing is stale) or if recency exceeds 2 cycles.
 (C) Non-repetition: does the sub-goal avoid re-doing recent actions or
     re-visiting already-explored locations without new justification?
+    NOTE on failure tags: entries in Action history that end with
+    "[FAILED: <reason>]" mean the simulator rejected the action (typically
+    a collision with furniture) and the agent did NOT move. Two or more
+    consecutive [FAILED] entries of the same action are a strong signal
+    that the current heading is blocked; reject any sub-goal that asks
+    for that same action again. In `revised_subgoal`, instruct the
+    planner to ROTATE to find an alternate path around the obstacle
+    named in the failure reason.
 (D) Progress trend (HARD RULE): if the Trajectory is provided and the
-    agent has executed at least 3 *movement* actions (MoveAhead, Teleport)
-    in the recent history, AND the distance to target has NOT strictly
-    decreased over the last 3 such movements (i.e., the most recent
-    distance is >= the distance from 3 movements ago), reject. The agent
-    is drifting. In `revised_subgoal`, instruct the planner to STOP moving
-    forward, ROTATE to re-acquire the target visually, and re-plan from
-    what it then sees.
+    agent has successfully executed at least 3 *movement* actions
+    (MoveAhead, Teleport) in the recent history, AND the distance to
+    target has NOT strictly decreased over the last 3 such movements
+    (i.e., the most recent distance is >= the distance from 3 movements
+    ago), reject. The agent is drifting. In `revised_subgoal`, instruct
+    the planner to STOP moving forward, ROTATE to re-acquire the target
+    visually, and re-plan from what it then sees.
+    Note: action history entries marked "[FAILED: ...]" did NOT execute
+    (the simulator rejected them) and do NOT count toward the 3-movement
+    threshold here. Use (C) to handle repeated [FAILED] entries.
 
 Respond with a single JSON object and nothing else:
 {
