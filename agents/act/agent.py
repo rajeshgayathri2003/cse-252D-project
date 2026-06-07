@@ -43,6 +43,12 @@ Note that you can interact with an object only if it is visible. If you can not 
 
 Note that the action you return MUST be one of the possible actions listed above, and if it requires an objectId, you should use one from the available objects list. The agent will execute exactly the command you return, so it must be a valid controller.step(...) call that can be executed in Python.
 
+IMPORTANT — exact API names only. The action name passed to controller.step(action=...) must match one of the listed actions EXACTLY, character-for-character. Do NOT substitute English variants. Specifically:
+- Use 'RotateLeft' / 'RotateRight', NOT 'TurnLeft' / 'TurnRight'.
+- Use 'MoveAhead', NOT 'MoveForward' / 'GoForward' / 'WalkForward'.
+- Use 'MoveBack', NOT 'MoveBackward' / 'StepBack'.
+Invalid action names crash the simulator and waste a cycle.
+
 For navigation actions use: controller.step(action='MoveAhead', moveMagnitude=<magnitude>) or any other action from the navigation category.
 For object interactions use the exact objectId from the list above: controller.step(action='OpenObject', objectId='Fridge|1|2|3')
 
@@ -390,6 +396,15 @@ class ActionAgent:
         except StopIteration:
             print(f"Error: Object not found in scene. Available objects: {[obj['objectType'] for obj in self.controller.last_event.metadata['objects']]}")
             raise
+        except (ValueError, KeyError) as e:
+            # The action LLM occasionally hallucinates English-y variants
+            # like 'TurnLeft' / 'MoveForward' that AI2-THOR rejects with
+            # ValueError before lastActionSuccess is ever set. Treat these
+            # as a failed action so the pipeline's [FAILED] tagging,
+            # intra-cycle retry with failure_msg, and wedge guard handle
+            # recovery — rather than crashing the whole run.
+            print(f"Invalid action command: {e}")
+            return False, f"Invalid action: {e}"
         except Exception as e:
             print(f"Error executing action: {e}")
             raise
