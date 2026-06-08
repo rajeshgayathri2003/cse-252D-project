@@ -4,7 +4,7 @@ import torch
 import prior
 from ai2thor.controller import Controller
 from PIL import Image
-from ultralytics import SAM
+from ultralytics import SAM, YOLO
 from transformers import AutoProcessor, AutoModelForCausalLM
 from IPython.display import display, clear_output
 import time
@@ -32,11 +32,13 @@ def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
 class FlorencePerceptionAgent:
     def __init__(
         self, 
+        perception_type="florence", # Added perception type parameter
+        yolo_model="yolo11n.pt",    # Added yolo model parameter
         florence_model="microsoft/Florence-2-base", 
         sam_weights="sam2_b.pt", 
         save_dir="saved_agent_data", 
         headless=True,
-        device=None # Added device parameter
+        device=None
     ):
         if headless:
             if ai2thor_colab is not None:
@@ -47,6 +49,7 @@ class FlorencePerceptionAgent:
                     "Use CloudRendering or set headless=False if you need an X server."
                 )
         self.save_dir = save_dir
+        self.perception_type = perception_type.lower()
         
         # Set device based on user input or auto-detect (prefer cuda > mps > cpu).
         if device and device != "auto":
@@ -60,17 +63,22 @@ class FlorencePerceptionAgent:
             
         print(f"[PerceptionAgent] Initializing with device: {self.device}")
         
-        # 1. Load Florence-2 
-        print("Loading Florence-2... (This may take a moment)")
-        self.processor = AutoProcessor.from_pretrained(florence_model, trust_remote_code=True)
-
-  
-        with patch("transformers.dynamic_module_utils.get_imports", workaround_fixed_get_imports):
-            self.florence = AutoModelForCausalLM.from_pretrained(
-                florence_model, 
-                trust_remote_code=True,
-                attn_implementation="sdpa" # Fall back to standard PyTorch attention
-            ).to(self.device)
+        # 1. Load the Primary Detection Model
+        if self.perception_type == "florence":
+            print("Loading Florence-2... (This may take a moment)")
+            self.processor = AutoProcessor.from_pretrained(florence_model, trust_remote_code=True)
+            with patch("transformers.dynamic_module_utils.get_imports", workaround_fixed_get_imports):
+                self.florence = AutoModelForCausalLM.from_pretrained(
+                    florence_model, 
+                    trust_remote_code=True,
+                    attn_implementation="sdpa" # Fall back to standard PyTorch attention
+                ).to(self.device)
+        elif self.perception_type == "yolo":
+            print(f"Loading YOLO... ({yolo_model})")
+            self.yolo = YOLO(yolo_model)
+            self.yolo.to(self.device)
+        else:
+            raise ValueError("perception_type must be either 'florence' or 'yolo'")
         
         # 2. Load SAM2
         print("Loading SAM2...")
@@ -87,7 +95,7 @@ class FlorencePerceptionAgent:
         os.makedirs(self.save_dir, exist_ok=True)
 
     def _get_class_id(self, text_label: str) -> int:
-        """Dynamically assigns an integer ID to new object strings discovered by Florence."""
+        """Dynamically assigns an integer ID to new object strings discovered by Florence or YOLO."""
         clean_label = text_label.lower().strip()
         if clean_label not in self.class_map:
             self.class_map[clean_label] = self.next_class_id
@@ -130,47 +138,55 @@ class FlorencePerceptionAgent:
         image.save(img_path)
         label_file = os.path.join(step_dir, "frame.txt")
 
-        # JPEG round-trip before Florence inference. Diagnostic confirmed that
-        # the saved frame.jpg fed to Florence detects small distant objects
-        # (e.g. a 24x40 px TV) cleanly while the raw in-memory RGB does not.
-        # The lossy JPEG smoothing incidentally acts as a denoiser at our
-        # input resolution. Until we move to Florence-2-large, route through
-        # the JPEG to align inference with what was observed offline.
+        # JPEG round-trip smoothing
         image = Image.open(img_path).convert("RGB")
 
-        prompt = "<OD>"
-        inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
-        
-        with torch.no_grad():
-            generated_ids = self.florence.generate(
-                input_ids=inputs["input_ids"],
-                pixel_values=inputs["pixel_values"],
-                max_new_tokens=1024,
-                num_beams=3
-            )
+        bboxes = []
+        labels = []
+
+        if self.perception_type == "florence":
+            prompt = "<OD>"
+            inputs = self.processor(text=prompt, images=image, return_tensors="pt").to(self.device)
             
-        generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
-        parsed_answer = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
-        
-        print(f"\n[DEBUG] Florence Output: {parsed_answer}")
-        
-        detections = parsed_answer.get(prompt, {})
-        
-        
-        # Check if Florence returned a proper dictionary. 
-        if isinstance(detections, dict):
-            bboxes = detections.get('bboxes', [])
-            labels = detections.get('labels', [])
-        else:
-            bboxes = []
-            labels = []
+            with torch.no_grad():
+                generated_ids = self.florence.generate(
+                    input_ids=inputs["input_ids"],
+                    pixel_values=inputs["pixel_values"],
+                    max_new_tokens=1024,
+                    num_beams=3
+                )
+                
+            generated_text = self.processor.batch_decode(generated_ids, skip_special_tokens=False)[0]
+            parsed_answer = self.processor.post_process_generation(generated_text, task=prompt, image_size=(image.width, image.height))
             
+            print(f"\n[DEBUG] Florence Output: {parsed_answer}")
+            detections = parsed_answer.get(prompt, {})
+            
+            if isinstance(detections, dict):
+                bboxes = detections.get('bboxes', [])
+                labels = detections.get('labels', [])
+                
+        elif self.perception_type == "yolo":
+            results = self.yolo(image, verbose=False)[0]
+            
+            if results.boxes:
+                # Extract coordinates in [x1, y1, x2, y2] format
+                boxes_xyxy = results.boxes.xyxy.cpu().numpy()
+                classes = results.boxes.cls.cpu().numpy()
+                names = self.yolo.names
+                
+                for box, cls_id in zip(boxes_xyxy, classes):
+                    bboxes.append(box.tolist())
+                    labels.append(names[int(cls_id)])
+                    
+            print(f"\n[DEBUG] YOLO Output: {len(bboxes)} distinct objects detected.")
+
         # Handle Empty Detections
         if len(bboxes) == 0:
             open(label_file, 'w').close()
             return "No distinct objects are visible in the current view."
 
-        #  pass the Florence bounding boxes directly to SAM as prompts
+        # Pass the extracted bounding boxes directly to SAM as prompts
         sam_results = self.sam(image, bboxes=bboxes, verbose=False)[0]
         
         description_lines = ["Visible Objects (Segmented):"]
@@ -202,7 +218,7 @@ class FlorencePerceptionAgent:
                     
                     description_lines.append(f"- {label} located {spatial_loc}, covering roughly {area_ratio:.1%} of the view.")
 
-        # Updated to safely check string prefix for CUDA devices (e.g. "cuda:0")
+        # Safely check string prefix for CUDA devices
         if self.device.startswith("cuda"):
             torch.cuda.empty_cache()
 
