@@ -32,8 +32,8 @@ def workaround_fixed_get_imports(filename: str | os.PathLike) -> list[str]:
 class FlorencePerceptionAgent:
     def __init__(
         self, 
-        perception_type="florence", # Added perception type parameter
-        yolo_model="yolo11n.pt",    # Added yolo model parameter
+        perception_type="florence", 
+        yolo_model="yolo11n.pt",    
         florence_model="microsoft/Florence-2-base", 
         sam_weights="sam2_b.pt", 
         save_dir="saved_agent_data", 
