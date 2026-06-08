@@ -1,5 +1,5 @@
-SR=1.0000
-SPL=0.1667
+SR=0.75
+SPL=0.4225
 
 Per-episode:
 Scene 5 T1: success=True  l=3.2596012026013246  p=4.387
