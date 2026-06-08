@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.3% of the view.

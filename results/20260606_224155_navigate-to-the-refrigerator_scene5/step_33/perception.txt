@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- backpack located in the center, covering roughly 1.2% of the view.
+- chair located in the center-right, covering roughly 2.6% of the view.
+- chair located in the bottom-left, covering roughly 0.5% of the view.
+- sink located in the center-right, covering roughly 7.7% of the view.
+- sink located in the center-right, covering roughly 1.4% of the view.
+- trash bin/can located in the center-right, covering roughly 0.6% of the view.

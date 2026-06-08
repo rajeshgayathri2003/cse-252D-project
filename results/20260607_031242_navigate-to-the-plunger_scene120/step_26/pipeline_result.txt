@@ -1,0 +1,50 @@
+Task:
+Navigate to the Plunger
+
+Perception:
+Visible Objects (Segmented):
+- trash bin/can located in the bottom-center, covering roughly 5.2% of the view.
+- toilet located in the center, covering roughly 0.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 24
+- current_node: (0.5, 5.75, 0)
+- known_objects:
+  - cistern: seen from node 1.6m N (seen at 2 location(s))
+  - coffee cup: seen from node 1.6m N (seen at 1 location(s))
+  - door: closest observed 5.1m (seen at 2 location(s))
+  - door handle: seen from node 0.0m here (seen at 4 location(s))
+  - drawer: closest observed 9.6m (seen at 5 location(s))
+  - faucet: closest observed 1.7m (seen at 2 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - house: closest observed 10.3m (seen at 1 location(s))
+  - mirror: seen from node 2.5m N (seen at 1 location(s))
+  - painting: closest observed 1.9m (seen at 3 location(s))
+  - person: seen from node 1.1m NE (seen at 2 location(s))
+  - refrigerator: seen from node 1.6m N (seen at 2 location(s))
+  - sink: closest observed 1.8m (seen at 4 location(s))
+  - toilet: closest observed 1.6m (seen at 3 location(s))
+  - toothbrush: seen from node 2.5m N (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 4 location(s))
+- blocked_actions_at_current_node: MoveAhead
+
+Planner proposed:
+Plan: Rotate left 90 degrees.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': "WEDGE STATE: 3 consecutive movement actions have been blocked at this node — the agent CANNOT translate from here. Your next plan MUST be rotation-only. Acceptable plan shape: 'Rotate left 90 degrees to face a different direction.' Movement verbs (move, navigate, approach, go toward, advance, head) are FORBIDDEN in this plan and will cause re-rejection. Do NOT combine rotation with movement in one plan.", 'revised_subgoal': None}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate left 90 degrees.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=0.500 y=0.901 z=5.750
+Distance to target: 4.365m
+episode_success=False

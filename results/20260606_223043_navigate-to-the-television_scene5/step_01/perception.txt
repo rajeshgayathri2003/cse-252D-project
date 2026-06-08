@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- painting located in the top-left, covering roughly 1.4% of the view.
+- painting located in the top-center, covering roughly 0.7% of the view.
+- sofa bed located in the center-right, covering roughly 3.3% of the view.
+- studio couch located in the center-left, covering roughly 3.8% of the view.
+- television located in the top-center, covering roughly 0.8% of the view.

@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- chair located in the center-right, covering roughly 14.9% of the view.

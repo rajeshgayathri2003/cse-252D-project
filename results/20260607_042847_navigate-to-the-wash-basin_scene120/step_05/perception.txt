@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- drawer located in the center-left, covering roughly 1.8% of the view.
+- drawer located in the center-left, covering roughly 1.6% of the view.
+- drawer located in the center-left, covering roughly 1.6% of the view.
+- sink located in the center, covering roughly 1.9% of the view.
+- sink located in the center, covering roughly 0.5% of the view.
+- trash bin/can located in the bottom-right, covering roughly 7.2% of the view.

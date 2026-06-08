@@ -1,0 +1,29 @@
+{
+  "run_dir": "20260606_223043_navigate-to-the-television_scene5",
+  "started_at": "2026-06-06T22:41:45",
+  "task": "Navigate to the Television",
+  "scene_index": 5,
+  "steps": 50,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 8,
+  "finished_at": "2026-06-06T22:41:45",
+  "action_history": [
+    "controller.step(action='MoveAhead', moveMagnitude=0.2)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0)",
+    "controller.step(action='RotateLeft', degrees=30)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0) [FAILED: ArmChair|3|3 is blocking Agent 0 from moving by (0.8660, 0.0000, 0.5000).]",
+    "controller.step(action='MoveRight', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)"
+  ],
+  "success": true,
+  "actual_path_length": 4.387455796365787,
+  "shortest_path_length": 3.2596012026013246,
+  "critic_aborted": false
+}

@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- cistern located in the center, covering roughly 2.0% of the view.
+- toilet located in the center, covering roughly 5.8% of the view.
+- toilet located in the center, covering roughly 2.7% of the view.
+- toothbrush located in the top-center, covering roughly 0.1% of the view.

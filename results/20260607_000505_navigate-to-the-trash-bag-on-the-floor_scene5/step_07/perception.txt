@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- suitcase located in the center-right, covering roughly 3.9% of the view.
+- television located in the top-center, covering roughly 1.1% of the view.
+- television located in the top-center, covering roughly 0.7% of the view.

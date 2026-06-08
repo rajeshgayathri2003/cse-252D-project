@@ -1,0 +1,49 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the top-left, covering roughly 0.2% of the view.
+- coffee cup located in the top-left, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 9
+- edges: 20
+- current_node: (5.75, 7.25, 3)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 3 location(s))
+  - bathtub: seen from node 0.0m here (seen at 1 location(s))
+  - bottle: closest observed 4.3m (seen at 5 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 2.6m (seen at 6 location(s))
+  - coffee cup: closest observed 4.4m (seen at 2 location(s))
+  - coffee table: closest observed 6.1m (seen at 2 location(s))
+  - hinge: seen from node 1.5m SW (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 6.1m (seen at 3 location(s))
+  - mirror: seen from node 0.0m here (seen at 1 location(s))
+  - painting: closest observed 4.9m (seen at 3 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 3 location(s))
+  - sink: seen from node 0.0m here (seen at 3 location(s))
+  - sofa bed: closest observed 4.5m (seen at 2 location(s))
+  - studio couch: seen from node 0.0m here (seen at 3 location(s))
+  - suitcase: seen from node 1.5m SW (seen at 1 location(s))
+  - television: closest observed 3.8m (seen at 3 location(s))
+  - trash bin/can: seen from node 0.6m SW (seen at 2 location(s))
+  - vase: closest observed 3.2m (seen at 2 location(s))
+  - wine glass: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: The trash bag is not currently visible in the visual input. However, the map summary indicates that a trash bin/can was previously seen 0.6m SW of a node. I will move towards the unvisited (GREEN) nodes, specifically heading in a southwest direction to locate the trash bin/can, which is likely near the target trash bag.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal aligns with the task (A), utilizes an inferred direction from the map summary despite the target not being in view (B), does not repeat the recent rotation actions (C), and does not violate the progress trend rule as no movement actions were executed (D).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: The trash bag is not currently visible in the visual input. However, the map summary indicates that a trash bin/can was previously seen 0.6m SW of a node. I will move towards the unvisited (GREEN) nodes, specifically heading in a southwest direction to locate the trash bin/can, which is likely near the target trash bag.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=5.750 y=0.901 z=7.250
+Distance to target: 5.470m
+episode_success=False

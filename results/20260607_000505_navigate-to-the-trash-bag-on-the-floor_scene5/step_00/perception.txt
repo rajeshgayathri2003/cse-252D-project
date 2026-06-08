@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- painting located in the top-left, covering roughly 2.0% of the view.
+- sink located in the top-center, covering roughly 0.2% of the view.
+- television located in the top-center, covering roughly 0.6% of the view.

@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- knob located in the center-left, covering roughly 0.1% of the view.
+- oven located in the center-left, covering roughly 7.2% of the view.

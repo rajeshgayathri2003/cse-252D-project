@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- computer keyboard located in the center-right, covering roughly 2.0% of the view.
+- desk located in the bottom-right, covering roughly 11.0% of the view.
+- television located in the top-right, covering roughly 5.8% of the view.
+- television located in the center-right, covering roughly 2.9% of the view.

@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- chair located in the center, covering roughly 6.4% of the view.
+- television located in the top-center, covering roughly 1.2% of the view.

@@ -1,0 +1,10 @@
+0: painting
+1: sink
+2: television
+3: sofa bed
+4: studio couch
+5: chair
+6: coffee table
+7: cushion
+8: drawer
+9: remote control

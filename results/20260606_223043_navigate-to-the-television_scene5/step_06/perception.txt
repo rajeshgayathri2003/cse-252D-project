@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- chair located in the bottom-left, covering roughly 11.2% of the view.
+- remote control located in the center, covering roughly 0.1% of the view.
+- studio couch located in the center-right, covering roughly 9.0% of the view.
+- television located in the top-center, covering roughly 3.8% of the view.

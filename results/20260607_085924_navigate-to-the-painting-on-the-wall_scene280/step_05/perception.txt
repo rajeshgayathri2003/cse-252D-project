@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- refrigerator located in the center-left, covering roughly 7.4% of the view.

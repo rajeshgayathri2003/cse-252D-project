@@ -1,0 +1,35 @@
+Task:
+Navigate to the Painting on the wall
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-right, covering roughly 2.5% of the view.
+- toilet located in the center-right, covering roughly 7.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (10.75, 12.25, 0)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 2 location(s))
+  - faucet: closest observed 2.9m (seen at 1 location(s))
+  - painting: closest observed 4.2m (seen at 1 location(s))
+  - sink: closest observed 2.9m (seen at 1 location(s))
+  - toilet: closest observed 2.2m (seen at 2 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 2 location(s))
+
+Planner proposed:
+Plan: I will turn to scan the room and locate the painting on the wall. Once the painting is visible, I will navigate towards it to fulfill the task.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task and is a valid way to re-acquire the target given the stale bearing and lack of visual confirmation (A, B).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will turn to scan the room and locate the painting on the wall. Once the painting is visible, I will navigate towards it to fulfill the task.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=10.750 y=0.901 z=12.250
+Distance to target: 1.661m
+episode_success=False

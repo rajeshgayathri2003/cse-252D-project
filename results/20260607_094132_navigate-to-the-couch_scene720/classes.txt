@@ -1,0 +1,12 @@
+0: computer keyboard
+1: desk
+2: television
+3: coffee cup
+4: drawer
+5: studio couch
+6: cushion
+7: sink
+8: sofa bed
+9: book
+10: toothbrush
+11: bottle

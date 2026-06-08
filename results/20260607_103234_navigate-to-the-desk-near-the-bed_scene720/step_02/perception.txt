@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- laptop located in the center-right, covering roughly 0.6% of the view.

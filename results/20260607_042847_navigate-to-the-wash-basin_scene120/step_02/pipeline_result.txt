@@ -1,0 +1,38 @@
+Task:
+Navigate to the Wash basin
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 3.7% of the view.
+- toilet located in the center-left, covering roughly 11.2% of the view.
+- toothbrush located in the center-left, covering roughly 0.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (1.0, 8.25, 0)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - painting: closest observed 1.9m (seen at 1 location(s))
+  - toilet: closest observed 1.6m (seen at 1 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Rotate right to search for the wash basin.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': 'The target wash basin is not visible in the current view and no direction to it is known, so the agent should rotate to search for it rather than moving toward unexplored areas (B).', 'revised_subgoal': 'Rotate left or right to search for the wash basin.'}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate right to search for the wash basin.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=1.000 y=0.901 z=8.250
+Distance to target: 3.949m
+episode_success=False

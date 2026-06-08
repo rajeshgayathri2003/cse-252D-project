@@ -1,0 +1,34 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- computer keyboard located in the center-right, covering roughly 2.0% of the view.
+- desk located in the bottom-right, covering roughly 11.0% of the view.
+- television located in the top-right, covering roughly 5.8% of the view.
+- television located in the center-right, covering roughly 2.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 1
+- edges: 0
+- current_node: (5.25, 5.75, 3)
+- known_objects:
+  - computer keyboard: seen from node 0.0m here (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - television: closest observed 1.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: The couch is not currently visible in the immediate view. Based on the top-down view, a blue object that is likely the couch can be seen in the adjacent room to the right. I will explore the environment by moving towards the unvisited (green) nodes in that direction to locate and navigate to the couch.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: The couch is not currently visible in the immediate view. Based on the top-down view, a blue object that is likely the couch can be seen in the adjacent room to the right. I will explore the environment by moving towards the unvisited (green) nodes in that direction to locate and navigate to the couch.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=5.250 y=0.901 z=5.750
+Distance to target: 4.587m
+episode_success=False

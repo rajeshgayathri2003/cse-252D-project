@@ -1,0 +1,59 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- backpack located in the center-right, covering roughly 0.5% of the view.
+- bottle located in the top-center, covering roughly 0.0% of the view.
+- chair located in the center-right, covering roughly 1.9% of the view.
+- chair located in the center, covering roughly 1.2% of the view.
+- chair located in the center-right, covering roughly 1.0% of the view.
+- chair located in the center-right, covering roughly 0.6% of the view.
+- chair located in the top-right, covering roughly 0.1% of the view.
+- chair located in the top-center, covering roughly 0.1% of the view.
+- kitchen & dining room table located in the center, covering roughly 2.1% of the view.
+- kitchen & dining room table located in the center-right, covering roughly 1.0% of the view.
+- painting located in the top-center, covering roughly 0.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 9
+- edges: 16
+- current_node: (4.0, 7.75, 2)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 2 location(s))
+  - bathtub: seen from node 0.9m SE (seen at 1 location(s))
+  - bottle: closest observed 4.3m (seen at 4 location(s))
+  - cabinetry: seen from node 0.0m here (seen at 1 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 3.8m (seen at 1 location(s))
+  - coffee cup: closest observed 4.5m (seen at 1 location(s))
+  - door handle: seen from node 0.9m SE (seen at 1 location(s))
+  - hinge: seen from node 0.0m here (seen at 4 location(s))
+  - kitchen & dining room table: closest observed 7.7m (seen at 1 location(s))
+  - mirror: seen from node 0.0m here (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 2 location(s))
+  - sink: seen from node 0.0m here (seen at 4 location(s))
+  - studio couch: seen from node 1.3m S (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 2 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Rotate left to search the environment for the refrigerator.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task (A) and correctly proposes a search action as required when the target is not visible and no direction is known (B).', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': 'The target refrigerator is not visible in the current view and is not present in the map summary, so the agent should perform a search action rather than navigating blindly (B).', 'revised_subgoal': 'Rotate left or right to search the environment for the refrigerator.'}
+  [1] {'approved': True, 'reason': 'The sub-goal is aligned with the task (A) and correctly proposes a search action as required when the target is not visible and no direction is known (B).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate left to search the environment for the refrigerator.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=4.000 y=0.901 z=7.750
+Distance to target: 7.966m
+episode_success=False

@@ -1,0 +1,41 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- cushion located in the center-left, covering roughly 2.2% of the view.
+- drawer located in the center-right, covering roughly 1.2% of the view.
+- drawer located in the center-right, covering roughly 0.8% of the view.
+- sink located in the top-right, covering roughly 0.2% of the view.
+- sofa bed located in the center-left, covering roughly 10.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 4
+- edges: 6
+- current_node: (5.25, 7.25, 0)
+- known_objects:
+  - coffee cup: closest observed 2.8m (seen at 2 location(s))
+  - computer keyboard: seen from node 1.5m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - drawer: closest observed 3.5m (seen at 3 location(s))
+  - sink: closest observed 8.7m (seen at 1 location(s))
+  - sofa bed: closest observed 7.6m (seen at 1 location(s))
+  - studio couch: seen from node 0.5m S (seen at 2 location(s))
+  - television: closest observed 1.1m (seen at 3 location(s))
+
+Planner proposed:
+Plan: Move towards the sofa bed visible in the center-left of the visual input to reach the target couch.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the sofa bed visible in the center-left of the visual input to reach the target couch.
+
+Action executed:
+controller.step(action='MoveAhead', moveMagnitude=0.5)
+Position: x=5.250 y=0.901 z=7.750
+Distance to target: 2.752m
+episode_success=False

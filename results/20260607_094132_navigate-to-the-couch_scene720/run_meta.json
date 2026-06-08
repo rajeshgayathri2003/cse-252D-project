@@ -1,0 +1,28 @@
+{
+  "run_dir": "20260607_094132_navigate-to-the-couch_scene720",
+  "started_at": "2026-06-07T09:47:43",
+  "task": "Navigate to the Couch",
+  "scene_index": 720,
+  "steps": 50,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 7,
+  "finished_at": "2026-06-07T09:47:43",
+  "action_history": [
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.0) [FAILED: Sofa|6|0|1 is blocking Agent 0 from moving by (0.0000, 0.0000, 1.0000).]",
+    "controller.step(action='MoveLeft', moveMagnitude=0.5)"
+  ],
+  "success": true,
+  "actual_path_length": 4.0,
+  "shortest_path_length": 2.519009952039422,
+  "critic_aborted": false
+}

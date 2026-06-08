@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- bowl located in the center-right, covering roughly 1.0% of the view.
+- cabinetry located in the center-left, covering roughly 11.8% of the view.
+- drawer located in the top-left, covering roughly 2.2% of the view.
+- refrigerator located in the center, covering roughly 40.5% of the view.

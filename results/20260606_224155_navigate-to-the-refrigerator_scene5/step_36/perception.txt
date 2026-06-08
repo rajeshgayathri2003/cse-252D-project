@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 1.2% of the view.
+- refrigerator located in the top-center, covering roughly 15.5% of the view.

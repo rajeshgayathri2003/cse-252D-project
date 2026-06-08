@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- painting located in the top-left, covering roughly 10.7% of the view.
+- refrigerator located in the top-center, covering roughly 71.0% of the view.

@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- painting located in the top-left, covering roughly 10.7% of the view.

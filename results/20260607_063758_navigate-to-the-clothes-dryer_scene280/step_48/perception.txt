@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 0.6% of the view.
+- sink located in the center-right, covering roughly 2.5% of the view.
+- sink located in the top-right, covering roughly 0.9% of the view.
+- toilet located in the center-left, covering roughly 1.7% of the view.
+- toilet located in the center, covering roughly 0.7% of the view.
+- trash bin/can located in the center, covering roughly 0.5% of the view.

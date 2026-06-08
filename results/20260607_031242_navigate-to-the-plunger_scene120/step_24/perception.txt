@@ -1,0 +1,10 @@
+Visible Objects (Segmented):
+- door located in the center-left, covering roughly 9.8% of the view.
+- door located in the top-left, covering roughly 4.2% of the view.
+- door handle located in the center-left, covering roughly 0.1% of the view.
+- drawer located in the center-left, covering roughly 4.8% of the view.
+- drawer located in the center-left, covering roughly 4.0% of the view.
+- drawer located in the center-left, covering roughly 2.0% of the view.
+- drawer located in the top-left, covering roughly 0.7% of the view.
+- hinge located in the center, covering roughly 0.0% of the view.
+- painting located in the top-center, covering roughly 0.8% of the view.

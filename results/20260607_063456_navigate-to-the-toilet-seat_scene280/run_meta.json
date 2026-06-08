@@ -1,0 +1,25 @@
+{
+  "run_dir": "20260607_063456_navigate-to-the-toilet-seat_scene280",
+  "started_at": "2026-06-07T06:37:47",
+  "task": "Navigate to the Toilet Seat",
+  "scene_index": 280,
+  "steps": 50,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 4,
+  "finished_at": "2026-06-07T06:37:47",
+  "action_history": [
+    "controller.step(action='MoveLeft', moveMagnitude=1.0)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=0.5)",
+    "controller.step(action='MoveAhead', moveMagnitude=1.5) [FAILED: GarbageCan|3|4 is blocking Agent 0 from moving by (1.5000, 0.0000, 0.0000).]",
+    "controller.step(action='MoveLeft', moveMagnitude=0.5)"
+  ],
+  "success": true,
+  "actual_path_length": 2.5,
+  "shortest_path_length": 1.0307764064044151,
+  "critic_aborted": false
+}

@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- cushion located in the center-left, covering roughly 2.2% of the view.
+- drawer located in the center-right, covering roughly 1.2% of the view.
+- drawer located in the center-right, covering roughly 0.8% of the view.
+- sink located in the top-right, covering roughly 0.2% of the view.
+- sofa bed located in the center-left, covering roughly 10.2% of the view.

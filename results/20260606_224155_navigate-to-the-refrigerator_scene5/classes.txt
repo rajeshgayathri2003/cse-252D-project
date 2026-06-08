@@ -1,0 +1,25 @@
+0: painting
+1: sink
+2: studio couch
+3: television
+4: hinge
+5: bottle
+6: candle
+7: coffee cup
+8: toothbrush
+9: bathtub
+10: door handle
+11: cabinetry
+12: trash bin/can
+13: backpack
+14: chair
+15: kitchen & dining room table
+16: mirror
+17: refrigerator
+18: vase
+19: bowl
+20: cat
+21: power plugs and sockets
+22: drawer
+23: person
+24: boat

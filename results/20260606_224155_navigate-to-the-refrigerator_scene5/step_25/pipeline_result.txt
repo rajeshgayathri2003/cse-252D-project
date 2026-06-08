@@ -1,0 +1,54 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- backpack located in the center, covering roughly 0.6% of the view.
+- bottle located in the center, covering roughly 0.3% of the view.
+- bottle located in the center-right, covering roughly 0.2% of the view.
+- bowl located in the center, covering roughly 0.1% of the view.
+- chair located in the center-left, covering roughly 1.8% of the view.
+- chair located in the center-left, covering roughly 0.7% of the view.
+- refrigerator located in the top-center, covering roughly 3.0% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 22
+- current_node: (3.25, 6.25, 2)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 4 location(s))
+  - bathtub: seen from node 1.5m NE (seen at 1 location(s))
+  - bottle: closest observed 3.0m (seen at 7 location(s))
+  - bowl: closest observed 2.1m (seen at 1 location(s))
+  - cabinetry: seen from node 1.7m NE (seen at 1 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 2.6m (seen at 4 location(s))
+  - coffee cup: closest observed 3.9m (seen at 2 location(s))
+  - door handle: seen from node 1.5m NE (seen at 1 location(s))
+  - hinge: seen from node 1.3m E (seen at 4 location(s))
+  - kitchen & dining room table: closest observed 7.5m (seen at 3 location(s))
+  - mirror: seen from node 1.7m NE (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 2 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 4 location(s))
+  - sink: seen from node 1.3m E (seen at 5 location(s))
+  - studio couch: seen from node 1.3m E (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - toothbrush: seen from node 1.5m NE (seen at 2 location(s))
+  - trash bin/can: seen from node 1.7m NE (seen at 2 location(s))
+  - vase: closest observed 2.5m (seen at 2 location(s))
+
+Planner proposed:
+Plan: I can see the refrigerator in the visual input, located in the top-center of the scene. To accomplish the task of navigating to the refrigerator, I will move forward towards it to reduce the distance.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I can see the refrigerator in the visual input, located in the top-center of the scene. To accomplish the task of navigating to the refrigerator, I will move forward towards it to reduce the distance.
+
+Action executed:
+controller.step(action='MoveAhead', moveMagnitude=0.5)
+Position: x=3.000 y=0.901 z=5.750
+Distance to target: 5.750m
+episode_success=False

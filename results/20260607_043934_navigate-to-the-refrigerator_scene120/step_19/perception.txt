@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- refrigerator located in the center-right, covering roughly 26.7% of the view.
+- refrigerator located in the top-center, covering roughly 4.5% of the view.
+- studio couch located in the top-left, covering roughly 1.8% of the view.

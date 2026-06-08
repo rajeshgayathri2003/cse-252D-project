@@ -1,0 +1,40 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center-left, covering roughly 0.2% of the view.
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the top-left, covering roughly 0.1% of the view.
+- candle located in the top-center, covering roughly 0.0% of the view.
+- sink located in the center-left, covering roughly 5.7% of the view.
+- sink located in the center-left, covering roughly 2.4% of the view.
+- sink located in the top-center, covering roughly 0.5% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (4.5, 6.5, 3)
+- known_objects:
+  - bottle: closest observed 4.3m (seen at 1 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 1 location(s))
+  - sink: seen from node 0.0m here (seen at 2 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: I have not yet located the trash bag. I will explore the unvisited areas of the environment to find it. I will start by moving towards the adjacent unvisited nodes to search for the trash bag on the floor.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I have not yet located the trash bag. I will explore the unvisited areas of the environment to find it. I will start by moving towards the adjacent unvisited nodes to search for the trash bag on the floor.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 4.206m
+episode_success=False

@@ -1,0 +1,56 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- backpack located in the center-left, covering roughly 0.3% of the view.
+- bottle located in the top-right, covering roughly 0.1% of the view.
+- chair located in the center-left, covering roughly 4.0% of the view.
+- chair located in the center-left, covering roughly 2.8% of the view.
+- chair located in the center-left, covering roughly 1.3% of the view.
+- chair located in the center-left, covering roughly 0.4% of the view.
+- chair located in the center-left, covering roughly 0.1% of the view.
+- kitchen & dining room table located in the center-left, covering roughly 1.8% of the view.
+- refrigerator located in the top-left, covering roughly 2.6% of the view.
+- vase located in the top-right, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 8
+- edges: 16
+- current_node: (5.75, 7.25, 3)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 2 location(s))
+  - bathtub: seen from node 0.0m here (seen at 1 location(s))
+  - bottle: closest observed 4.3m (seen at 4 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 2.6m (seen at 4 location(s))
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - coffee table: closest observed 6.5m (seen at 1 location(s))
+  - hinge: seen from node 1.5m SW (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 6.1m (seen at 2 location(s))
+  - mirror: seen from node 0.0m here (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 2 location(s))
+  - sink: seen from node 0.0m here (seen at 3 location(s))
+  - sofa bed: closest observed 5.4m (seen at 1 location(s))
+  - studio couch: seen from node 1.5m SW (seen at 1 location(s))
+  - suitcase: seen from node 1.5m SW (seen at 1 location(s))
+  - television: closest observed 3.8m (seen at 3 location(s))
+  - trash bin/can: seen from node 0.6m SW (seen at 2 location(s))
+  - vase: closest observed 3.2m (seen at 2 location(s))
+
+Planner proposed:
+Plan: The target "trash bag" is likely near the "trash bin/can" which the map summary indicates is located 0.6m to the southwest of my current position. I will move towards the southwest to locate and reach the trash bag.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: The target "trash bag" is likely near the "trash bin/can" which the map summary indicates is located 0.6m to the southwest of my current position. I will move towards the southwest to locate and reach the trash bag.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=5.750 y=0.901 z=7.250
+Distance to target: 5.470m
+episode_success=False

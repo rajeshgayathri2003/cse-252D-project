@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- door handle located in the bottom-center, covering roughly 2.0% of the view.
+- refrigerator located in the top-center, covering roughly 10.5% of the view.
+- refrigerator located in the top-center, covering roughly 2.7% of the view.
+- studio couch located in the top-left, covering roughly 1.4% of the view.

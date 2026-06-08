@@ -1,0 +1,48 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the top-left, covering roughly 0.2% of the view.
+- bottle located in the top-left, covering roughly 0.1% of the view.
+- coffee cup located in the top-center, covering roughly 0.1% of the view.
+- hinge located in the center-right, covering roughly 0.3% of the view.
+- sink located in the center-left, covering roughly 2.3% of the view.
+- sink located in the top-center, covering roughly 0.6% of the view.
+- toothbrush located in the top-center, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (4.5, 7.0, 3)
+- known_objects:
+  - bottle: closest observed 4.3m (seen at 2 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - coffee cup: closest observed 4.5m (seen at 1 location(s))
+  - hinge: seen from node 0.0m here (seen at 3 location(s))
+  - painting: closest observed 5.9m (seen at 1 location(s))
+  - sink: seen from node 0.0m here (seen at 3 location(s))
+  - studio couch: seen from node 0.5m S (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Rotate right to search for the refrigerator.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (3):
+  [0] {'approved': False, 'reason': 'The refrigerator is not in the visual input and no direction to it is provided in the map summary, so the agent must search via rotation rather than navigating blindly (B).', 'revised_subgoal': 'Rotate left or right to search the environment for the refrigerator.'}
+  [1] {'approved': False, 'reason': 'The proposed sub-goal repeats the most recent action (C).', 'revised_subgoal': 'Rotate right to search for the refrigerator.'}
+  [2] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate right to search for the refrigerator.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=4.500 y=0.901 z=7.000
+Distance to target: 7.557m
+episode_success=False

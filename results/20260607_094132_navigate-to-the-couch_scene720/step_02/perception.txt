@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- coffee cup located in the center-left, covering roughly 0.1% of the view.
+- drawer located in the center-right, covering roughly 0.9% of the view.
+- drawer located in the center-right, covering roughly 0.8% of the view.
+- studio couch located in the center-left, covering roughly 7.5% of the view.
+- television located in the bottom-left, covering roughly 6.1% of the view.

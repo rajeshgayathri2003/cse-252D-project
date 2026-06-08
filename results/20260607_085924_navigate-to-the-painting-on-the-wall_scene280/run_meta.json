@@ -1,0 +1,32 @@
+{
+  "run_dir": "20260607_085924_navigate-to-the-painting-on-the-wall_scene280",
+  "started_at": "2026-06-07T09:13:28",
+  "task": "Navigate to the Painting on the wall",
+  "scene_index": 280,
+  "steps": 50,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "completed_steps": 12,
+  "finished_at": "2026-06-07T09:13:28",
+  "action_history": [
+    "controller.step(action='MoveAhead', moveMagnitude=1.0)",
+    "controller.step(action='RotateLeft', degrees=90)",
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='RotateLeft', degrees=90)",
+    "controller.step(action='RotateLeft', degrees=90)",
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='RotateLeft', degrees=90)",
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='RotateLeft', degrees=90)",
+    "controller.step(action='RotateRight', degrees=90)",
+    "controller.step(action='RotateLeft', degrees=90)"
+  ],
+  "success": false,
+  "actual_path_length": 1.0,
+  "shortest_path_length": 3.547996721614033,
+  "critic_aborted": false
+}

@@ -1,0 +1,49 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.2% of the view.
+- chair located in the center-right, covering roughly 6.0% of the view.
+- chair located in the center-left, covering roughly 1.2% of the view.
+- coffee table located in the top-center, covering roughly 1.0% of the view.
+- painting located in the top-left, covering roughly 0.8% of the view.
+- painting located in the top-center, covering roughly 0.4% of the view.
+- sofa bed located in the center-left, covering roughly 4.2% of the view.
+- trash bin/can located in the center-right, covering roughly 0.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 4
+- edges: 8
+- current_node: (4.5, 6.5, 1)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 1 location(s))
+  - bottle: closest observed 4.3m (seen at 3 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 2.6m (seen at 2 location(s))
+  - coffee table: closest observed 6.5m (seen at 1 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 6.5m (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 1 location(s))
+  - sink: seen from node 0.0m here (seen at 2 location(s))
+  - sofa bed: closest observed 5.4m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+  - vase: closest observed 3.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: The trash bin/can is visible in the center-right of the current view. Since the task is to navigate to the trash bag on the floor, and the trash bin/can is likely where it is located, I will move towards the trash bin/can.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: The trash bin/can is visible in the center-right of the current view. Since the task is to navigate to the trash bag on the floor, and the trash bin/can is likely where it is located, I will move towards the trash bin/can.
+
+Action executed:
+controller.step(action='RotateRight', degrees=30)
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 4.206m
+episode_success=False

@@ -1,0 +1,58 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center, covering roughly 0.1% of the view.
+- chair located in the center-right, covering roughly 4.1% of the view.
+- chair located in the center, covering roughly 2.9% of the view.
+- chair located in the center-right, covering roughly 1.9% of the view.
+- chair located in the center-right, covering roughly 0.2% of the view.
+- coffee cup located in the center-right, covering roughly 0.1% of the view.
+- kitchen & dining room table located in the center, covering roughly 4.2% of the view.
+- kitchen & dining room table located in the center-right, covering roughly 2.8% of the view.
+- kitchen & dining room table located in the top-left, covering roughly 1.2% of the view.
+- studio couch located in the center-left, covering roughly 2.7% of the view.
+- vase located in the top-left, covering roughly 0.5% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 4
+- edges: 8
+- current_node: (4.5, 6.5, 2)
+- known_objects:
+  - backpack: seen from node 0.0m here (seen at 1 location(s))
+  - bottle: closest observed 4.3m (seen at 3 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - chair: closest observed 2.6m (seen at 2 location(s))
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - coffee table: closest observed 6.5m (seen at 1 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 6.5m (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 1 location(s))
+  - sink: seen from node 0.0m here (seen at 2 location(s))
+  - sofa bed: closest observed 5.4m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+  - vase: closest observed 3.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Rotate left to search for the trash bag on the floor.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': 'The target is not in the visual input and the map provides no direction, so the agent should rotate to search for the target instead of moving forward (B).', 'revised_subgoal': 'Rotate left or right to look around and search for the trash bag.'}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate left to search for the trash bag on the floor.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 4.206m
+episode_success=False

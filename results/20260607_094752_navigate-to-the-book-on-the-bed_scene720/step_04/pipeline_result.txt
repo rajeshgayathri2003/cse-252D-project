@@ -1,0 +1,45 @@
+Task:
+Navigate to the Book on the bed
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center-left, covering roughly 0.1% of the view.
+- cabinetry located in the center-right, covering roughly 16.5% of the view.
+- coffee cup located in the center-left, covering roughly 0.2% of the view.
+- studio couch located in the center-left, covering roughly 4.4% of the view.
+- television located in the center-left, covering roughly 4.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (5.75, 5.75, 0)
+- known_objects:
+  - bed: closest observed 7.1m (seen at 1 location(s))
+  - bottle: closest observed 6.0m (seen at 1 location(s))
+  - cabinetry: seen from node 0.0m here (seen at 2 location(s))
+  - chair: closest observed 6.9m (seen at 1 location(s))
+  - coffee cup: closest observed 2.6m (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - door handle: seen from node 0.5m W (seen at 1 location(s))
+  - drawer: closest observed 4.3m (seen at 2 location(s))
+  - mobile phone: closest observed 2.2m (seen at 1 location(s))
+  - oven: seen from node 0.0m here (seen at 1 location(s))
+  - remote control: closest observed 4.2m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - television: closest observed 1.7m (seen at 4 location(s))
+
+Planner proposed:
+Plan: To reach the book on the bed, I first need to locate the bed, which is currently known to be approximately 7.1m away. I will navigate through the environment, prioritizing the exploration of unvisited areas (GREEN nodes) to find the room containing the bed. Once the bed is identified, I will move towards it and then proceed to the book located on the bed.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: To reach the book on the bed, I first need to locate the bed, which is currently known to be approximately 7.1m away. I will navigate through the environment, prioritizing the exploration of unvisited areas (GREEN nodes) to find the room containing the bed. Once the bed is identified, I will move towards it and then proceed to the book located on the bed.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=5.750 y=0.901 z=5.750
+Distance to target: 1.537m
+episode_success=False

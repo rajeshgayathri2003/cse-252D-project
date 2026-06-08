@@ -1,0 +1,7 @@
+0: cistern
+1: faucet
+2: painting
+3: sink
+4: toilet
+5: trash bin/can
+6: refrigerator

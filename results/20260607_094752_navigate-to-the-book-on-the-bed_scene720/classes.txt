@@ -1,0 +1,13 @@
+0: desk
+1: television
+2: mobile phone
+3: bed
+4: door handle
+5: drawer
+6: cabinetry
+7: chair
+8: oven
+9: remote control
+10: bottle
+11: coffee cup
+12: studio couch

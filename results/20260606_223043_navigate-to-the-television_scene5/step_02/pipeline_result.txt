@@ -1,0 +1,42 @@
+Task:
+Navigate to the Television
+
+Perception:
+Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 7.8% of the view.
+- coffee table located in the center-right, covering roughly 1.2% of the view.
+- cushion located in the center-left, covering roughly 2.1% of the view.
+- drawer located in the center, covering roughly 0.0% of the view.
+- drawer located in the center, covering roughly 0.0% of the view.
+- television located in the top-left, covering roughly 1.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (5.75, 6.5, 1)
+- known_objects:
+  - chair: closest observed 3.0m (seen at 1 location(s))
+  - coffee table: closest observed 5.6m (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 1 location(s))
+  - drawer: closest observed 4.4m (seen at 1 location(s))
+  - painting: closest observed 5.6m (seen at 2 location(s))
+  - sink: seen from node 1.2m W (seen at 1 location(s))
+  - sofa bed: closest observed 5.2m (seen at 1 location(s))
+  - studio couch: seen from node 1.0m W (seen at 1 location(s))
+  - television: closest observed 4.0m (seen at 3 location(s))
+
+Planner proposed:
+Plan: I can see the television in the top-left corner of my current view, sitting on a white cabinet. My current distance to it is approximately 4.03m. To reach the television, I need to move towards the top-left part of the room. I will move forward and towards the left to approach the television.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I can see the television in the top-left corner of my current view, sitting on a white cabinet. My current distance to it is approximately 4.03m. To reach the television, I need to move towards the top-left part of the room. I will move forward and towards the left to approach the television.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=30)
+Position: x=5.750 y=0.901 z=6.500
+Distance to target: 4.031m
+episode_success=False

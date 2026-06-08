@@ -1,0 +1,19 @@
+0: cistern
+1: toilet
+2: toothbrush
+3: painting
+4: door handle
+5: drawer
+6: sink
+7: trash bin/can
+8: refrigerator
+9: mirror
+10: coffee cup
+11: house
+12: person
+13: faucet
+14: door
+15: hinge
+16: cabinetry
+17: bed
+18: chair

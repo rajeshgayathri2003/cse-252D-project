@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- toilet located in the center, covering roughly 3.8% of the view.

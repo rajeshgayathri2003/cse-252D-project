@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- cabinetry located in the center-left, covering roughly 27.0% of the view.
+- door located in the center-right, covering roughly 25.4% of the view.
+- door handle located in the center-right, covering roughly 0.6% of the view.
+- door handle located in the center-left, covering roughly 0.3% of the view.
+- house located in the center, covering roughly 96.0% of the view.

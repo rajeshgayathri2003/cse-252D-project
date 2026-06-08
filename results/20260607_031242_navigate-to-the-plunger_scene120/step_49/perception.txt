@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- bed located in the bottom-center, covering roughly 37.5% of the view.
+- chair located in the top-right, covering roughly 0.3% of the view.
+- painting located in the top-left, covering roughly 7.9% of the view.

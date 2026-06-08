@@ -1,0 +1,9 @@
+Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.2% of the view.
+- chair located in the center-right, covering roughly 6.0% of the view.
+- chair located in the center-left, covering roughly 1.2% of the view.
+- coffee table located in the top-center, covering roughly 1.0% of the view.
+- painting located in the top-left, covering roughly 0.8% of the view.
+- painting located in the top-center, covering roughly 0.4% of the view.
+- sofa bed located in the center-left, covering roughly 4.2% of the view.
+- trash bin/can located in the center-right, covering roughly 0.8% of the view.

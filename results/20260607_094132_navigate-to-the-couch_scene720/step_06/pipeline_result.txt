@@ -1,0 +1,43 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- cushion located in the bottom-left, covering roughly 10.9% of the view.
+- cushion located in the center, covering roughly 10.0% of the view.
+- cushion located in the bottom-left, covering roughly 1.4% of the view.
+- studio couch located in the bottom-center, covering roughly 30.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 7
+- edges: 12
+- current_node: (5.25, 9.25, 0)
+- known_objects:
+  - book: closest observed 3.5m (seen at 1 location(s))
+  - bottle: closest observed 4.1m (seen at 1 location(s))
+  - coffee cup: closest observed 2.8m (seen at 3 location(s))
+  - computer keyboard: seen from node 3.5m S (seen at 1 location(s))
+  - cushion: seen from node 0.0m here (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - drawer: closest observed 3.0m (seen at 5 location(s))
+  - sink: closest observed 8.5m (seen at 2 location(s))
+  - sofa bed: closest observed 7.6m (seen at 2 location(s))
+  - studio couch: seen from node 0.0m here (seen at 4 location(s))
+  - television: closest observed 1.1m (seen at 3 location(s))
+  - toothbrush: seen from node 1.5m S (seen at 1 location(s))
+
+Planner proposed:
+Plan: I can see the studio couch directly in front of me. I will move forward towards the couch to reach it.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task, consistent with visual and map evidence, and follows a strictly decreasing distance trajectory (A, B, C, D).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I can see the studio couch directly in front of me. I will move forward towards the couch to reach it.
+
+Action executed:
+controller.step(action='MoveLeft', moveMagnitude=0.5)
+Position: x=4.750 y=0.901 z=9.250
+Distance to target: 1.377m
+episode_success=True

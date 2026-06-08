@@ -1,0 +1,10 @@
+0: cistern
+1: toilet
+2: toothbrush
+3: painting
+4: door handle
+5: drawer
+6: sink
+7: trash bin/can
+8: faucet
+9: person

@@ -1,0 +1,8 @@
+Visible Objects (Segmented):
+- backpack located in the center-left, covering roughly 0.9% of the view.
+- bottle located in the center-right, covering roughly 0.3% of the view.
+- chair located in the center-right, covering roughly 0.9% of the view.
+- coffee cup located in the center-right, covering roughly 0.4% of the view.
+- kitchen & dining room table located in the center-right, covering roughly 24.7% of the view.
+- refrigerator located in the top-center, covering roughly 3.6% of the view.
+- vase located in the center-right, covering roughly 0.5% of the view.

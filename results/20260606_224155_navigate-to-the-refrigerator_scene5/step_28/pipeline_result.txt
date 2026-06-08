@@ -1,0 +1,60 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- cat located in the center-left, covering roughly 1.3% of the view.
+- chair located in the center-right, covering roughly 2.0% of the view.
+- kitchen & dining room table located in the bottom-right, covering roughly 32.0% of the view.
+- power plugs and sockets located in the center-left, covering roughly 0.1% of the view.
+- refrigerator located in the top-center, covering roughly 4.4% of the view.
+- vase located in the center-right, covering roughly 1.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 14
+- edges: 26
+- current_node: (2.75, 5.25, 2)
+- known_objects:
+  - backpack: seen from node 0.6m NE (seen at 5 location(s))
+  - bathtub: seen from node 2.5m NE (seen at 1 location(s))
+  - bottle: closest observed 2.6m (seen at 8 location(s))
+  - bowl: closest observed 2.1m (seen at 1 location(s))
+  - cabinetry: seen from node 2.8m NE (seen at 1 location(s))
+  - candle: closest observed 6.2m (seen at 1 location(s))
+  - cat: seen from node 0.0m here (seen at 1 location(s))
+  - chair: closest observed 2.2m (seen at 6 location(s))
+  - coffee cup: closest observed 2.8m (seen at 3 location(s))
+  - door handle: seen from node 2.5m NE (seen at 1 location(s))
+  - hinge: seen from node 2.2m NE (seen at 4 location(s))
+  - kitchen & dining room table: closest observed 7.4m (seen at 5 location(s))
+  - mirror: seen from node 2.8m NE (seen at 1 location(s))
+  - painting: closest observed 5.9m (seen at 2 location(s))
+  - power plugs and sockets: seen from node 0.0m here (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 6 location(s))
+  - sink: seen from node 2.2m NE (seen at 5 location(s))
+  - studio couch: seen from node 2.2m NE (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - toothbrush: seen from node 2.5m NE (seen at 2 location(s))
+  - trash bin/can: seen from node 2.8m NE (seen at 2 location(s))
+  - vase: closest observed 1.0m (seen at 4 location(s))
+- blocked_actions_at_current_node: MoveAhead
+
+Planner proposed:
+Plan: Rotate left 90 degrees.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Critic attempts (2):
+  [0] {'approved': False, 'reason': "WEDGE STATE: 3 consecutive movement actions have been blocked at this node — the agent CANNOT translate from here. Your next plan MUST be rotation-only. Acceptable plan shape: 'Rotate left 90 degrees to face a different direction.' Movement verbs (move, navigate, approach, go toward, advance, head) are FORBIDDEN in this plan and will cause re-rejection. Do NOT combine rotation with movement in one plan.", 'revised_subgoal': None}
+  [1] {'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Rotate left 90 degrees.
+
+Action executed:
+controller.step(action='RotateLeft', degrees=90)
+Position: x=2.750 y=0.901 z=5.250
+Distance to target: 5.198m
+episode_success=False

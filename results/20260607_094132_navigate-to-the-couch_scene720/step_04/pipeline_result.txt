@@ -1,0 +1,45 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- book located in the center-left, covering roughly 0.4% of the view.
+- coffee cup located in the center-left, covering roughly 0.2% of the view.
+- drawer located in the center-right, covering roughly 1.5% of the view.
+- drawer located in the center-right, covering roughly 1.1% of the view.
+- sink located in the top-right, covering roughly 0.5% of the view.
+- sofa bed located in the center-left, covering roughly 13.3% of the view.
+- toothbrush located in the top-right, covering roughly 0.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (5.25, 7.75, 0)
+- known_objects:
+  - book: closest observed 3.5m (seen at 1 location(s))
+  - coffee cup: closest observed 2.8m (seen at 3 location(s))
+  - computer keyboard: seen from node 2.0m S (seen at 1 location(s))
+  - cushion: seen from node 0.5m S (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - drawer: closest observed 3.2m (seen at 4 location(s))
+  - sink: closest observed 8.5m (seen at 2 location(s))
+  - sofa bed: closest observed 7.6m (seen at 2 location(s))
+  - studio couch: seen from node 1.0m S (seen at 2 location(s))
+  - television: closest observed 1.1m (seen at 3 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: I will move towards the sofa bed visible in the current view to reach the couch.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will move towards the sofa bed visible in the current view to reach the couch.
+
+Action executed:
+controller.step(action='MoveAhead', moveMagnitude=0.5)
+Position: x=5.250 y=0.901 z=8.250
+Distance to target: 2.336m
+episode_success=False

@@ -1,0 +1,33 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 3.7% of the view.
+- toilet located in the center-left, covering roughly 11.2% of the view.
+- toothbrush located in the center-left, covering roughly 0.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (1.0, 8.25, 0)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: I am currently in a bathroom, as indicated by the toilet and cistern. The refrigerator is not visible here. Based on the top-down view, the refrigerator is likely located in the kitchen area in the upper part of the house. I need to exit this room and navigate through the house to find the kitchen. My first step is to move out of the current room towards the unexplored (green) areas to find the path to the kitchen.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal is aligned with the task and follows a valid search strategy without violating map consistency, repetition, or progress rules.', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I am currently in a bathroom, as indicated by the toilet and cistern. The refrigerator is not visible here. Based on the top-down view, the refrigerator is likely located in the kitchen area in the upper part of the house. I need to exit this room and navigate through the house to find the kitchen. My first step is to move out of the current room towards the unexplored (green) areas to find the path to the kitchen.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=1.000 y=0.901 z=8.250
+Distance to target: 5.338m
+episode_success=False

@@ -1,0 +1,38 @@
+Task:
+Navigate to the Book on the bed
+
+Perception:
+Visible Objects (Segmented):
+- bed located in the bottom-right, covering roughly 18.4% of the view.
+- door handle located in the center-left, covering roughly 0.1% of the view.
+- door handle located in the center-left, covering roughly 0.0% of the view.
+- drawer located in the center, covering roughly 0.5% of the view.
+- television located in the top-left, covering roughly 1.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (5.25, 5.75, 1)
+- known_objects:
+  - bed: closest observed 7.1m (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - door handle: seen from node 0.0m here (seen at 1 location(s))
+  - drawer: closest observed 4.6m (seen at 1 location(s))
+  - mobile phone: closest observed 2.2m (seen at 1 location(s))
+  - television: closest observed 1.7m (seen at 2 location(s))
+
+Planner proposed:
+Plan: I can see the bed in the bottom-right of my view, and there appears to be a book on it. I will move towards the bed to reach the book.
+
+Critic verdict:
+{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I can see the bed in the bottom-right of my view, and there appears to be a book on it. I will move towards the bed to reach the book.
+
+Action executed:
+controller.step(action='MoveAhead', moveMagnitude=0.5)
+Position: x=5.750 y=0.901 z=5.750
+Distance to target: 1.537m
+episode_success=False

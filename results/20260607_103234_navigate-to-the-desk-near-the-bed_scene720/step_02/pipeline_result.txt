@@ -1,0 +1,32 @@
+Task:
+Navigate to the desk near the bed
+
+Perception:
+Visible Objects (Segmented):
+- laptop located in the center-right, covering roughly 0.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (4.25, 5.75, 3)
+- known_objects:
+  - computer keyboard: seen from node 1.0m E (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - television: closest observed 1.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: I will move towards the desk, which was previously observed at a distance of 2.3m, to reach the target. Since the current distance to the desk has increased, I need to re-orient and navigate in the direction where the desk was last seen to get closer to it.
+
+Critic verdict:
+{'approved': True, 'reason': 'The sub-goal aligns with the task and is consistent with the map, recency carve-out, and recent trajectory (A, B, C, D).', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will move towards the desk, which was previously observed at a distance of 2.3m, to reach the target. Since the current distance to the desk has increased, I need to re-orient and navigate in the direction where the desk was last seen to get closer to it.
+
+Action executed:
+controller.step(action='RotateRight', degrees=90)
+Position: x=4.250 y=0.901 z=5.750
+Distance to target: 3.199m
+episode_success=False
