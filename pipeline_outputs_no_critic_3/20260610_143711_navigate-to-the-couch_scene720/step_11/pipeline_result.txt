@@ -1,0 +1,52 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- book located in the center-left, covering roughly 0.3% of the view.
+- clock located in the center-left, covering roughly 0.1% of the view.
+- cushion located in the center-left, covering roughly 3.0% of the view.
+- cushion located in the center-left, covering roughly 1.7% of the view.
+- cushion located in the center, covering roughly 1.8% of the view.
+- desk located in the center-right, covering roughly 0.5% of the view.
+- desk located in the center-right, covering roughly 0.5% of the view.
+- studio couch located in the center-left, covering roughly 12.1% of the view.
+- vase located in the top-right, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 10
+- edges: 18
+- current_node: (5.25, 7.5, 0)
+- known_objects:
+  - book: closest observed 2.8m (seen at 3 location(s))
+  - cabinetry: seen from node 1.2m S (seen at 1 location(s))
+  - clock: closest observed 7.6m (seen at 1 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 4 location(s))
+  - computer monitor: seen from node 1.8m S (seen at 2 location(s))
+  - cushion: seen from node 0.0m here (seen at 3 location(s))
+  - desk: closest observed 2.3m (seen at 8 location(s))
+  - house: closest observed 0.9m (seen at 3 location(s))
+  - houseplant: seen from node 1.0m S (seen at 3 location(s))
+  - person: seen from node 1.8m S (seen at 1 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 7 location(s))
+  - television: closest observed 1.2m (seen at 3 location(s))
+  - vase: closest observed 3.5m (seen at 3 location(s))
+  - window: closest observed 4.1m (seen at 4 location(s))
+
+Planner proposed:
+Plan: Move towards the studio couch located in the center-left of the visual field.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the studio couch located in the center-left of the visual field.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=7.750
+Distance to target: 2.752m
+episode_success=False

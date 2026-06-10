@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- house located in the center-right, covering roughly 99.3% of the view.

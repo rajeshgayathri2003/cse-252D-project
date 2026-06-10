@@ -1,0 +1,40 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- door handle located in the bottom-center, covering roughly 0.4% of the view.
+- door handle located in the bottom-center, covering roughly 0.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 7
+- edges: 12
+- current_node: (3.5, 7.75, 0)
+- known_objects:
+  - cabinetry: seen from node 0.8m SE (seen at 1 location(s))
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - door: closest observed 2.7m (seen at 1 location(s))
+  - door handle: seen from node 0.0m here (seen at 6 location(s))
+  - furniture: seen from node 1.7m SE (seen at 2 location(s))
+  - hinge: seen from node 1.0m SE (seen at 3 location(s))
+  - house: seen from node 1.7m SE (seen at 1 location(s))
+  - sink: seen from node 1.4m SE (seen at 1 location(s))
+  - studio couch: seen from node 1.7m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: First, I will move into the room to begin exploring the environment. I will then search the floor area, particularly around the cabinetry, table, and other furniture, to locate the trash bag. Once the trash bag is identified, I will navigate directly to it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: First, I will move into the room to begin exploring the environment. I will then search the floor area, particularly around the cabinetry, table, and other furniture, to locate the trash bag. Once the trash bag is identified, I will navigate directly to it.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.263 y=0.901 z=7.987
+Distance to target: 5.274m
+episode_success=False

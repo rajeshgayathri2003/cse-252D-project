@@ -1,0 +1,43 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- door located in the center-left, covering roughly 35.9% of the view.
+- faucet located in the center-right, covering roughly 0.6% of the view.
+- faucet located in the center-right, covering roughly 0.6% of the view.
+- sink located in the center-right, covering roughly 6.8% of the view.
+- sink located in the center-right, covering roughly 1.6% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 15
+- edges: 28
+- current_node: (1.75, 6.5, 2)
+- known_objects:
+  - cistern: seen from node 2.0m N (seen at 1 location(s))
+  - desk: seen from node 0.3m N (seen at 7 location(s))
+  - door: closest observed 4.3m (seen at 8 location(s))
+  - door handle: seen from node 0.5m N (seen at 7 location(s))
+  - faucet: closest observed 2.6m (seen at 5 location(s))
+  - house: closest observed 9.5m (seen at 3 location(s))
+  - refrigerator: seen from node 0.8m N (seen at 10 location(s))
+  - sink: closest observed 2.7m (seen at 8 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 2.0m N (seen at 1 location(s))
+  - trash bin/can: seen from node 1.3m N (seen at 3 location(s))
+
+Planner proposed:
+Plan: I will first move towards the door visible on the left to exit the current room. Once I have exited, I will navigate through the house, following the known path towards the kitchen area. Once I reach the kitchen, I will locate the refrigerator and move towards it to complete the task.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first move towards the door visible on the left to exit the current room. Once I have exited, I will navigate through the house, following the known path towards the kitchen area. Once I reach the kitchen, I will locate the refrigerator and move towards it to complete the task.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=1.707 y=0.901 z=6.146
+Distance to target: 3.461m
+episode_success=False

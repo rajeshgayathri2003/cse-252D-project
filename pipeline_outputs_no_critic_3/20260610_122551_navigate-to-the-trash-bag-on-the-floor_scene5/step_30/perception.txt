@@ -1,0 +1,10 @@
+Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 6.3% of the view.
+- chair located in the bottom-left, covering roughly 4.9% of the view.
+- chair located in the bottom-left, covering roughly 2.9% of the view.
+- chair located in the center-left, covering roughly 2.8% of the view.
+- chair located in the center-left, covering roughly 0.6% of the view.
+- chair located in the bottom-left, covering roughly 0.3% of the view.
+- chair located in the center, covering roughly 0.3% of the view.
+- table located in the center-left, covering roughly 2.6% of the view.
+- trash bag located in the center, covering roughly 1.6% of the view.

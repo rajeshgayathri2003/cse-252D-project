@@ -1,0 +1,38 @@
+Task:
+Navigate to the Television
+
+Perception:
+Visible Objects (Segmented):
+- furniture located in the center, covering roughly 4.7% of the view.
+- mirror located in the top-right, covering roughly 4.9% of the view.
+- television located in the top-right, covering roughly 1.7% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (5.25, 6.75, 0)
+- known_objects:
+  - chair: closest observed 2.7m (seen at 1 location(s))
+  - coffee table: closest observed 6.1m (seen at 1 location(s))
+  - furniture: seen from node 0.0m here (seen at 3 location(s))
+  - house: seen from node 0.3m SW (seen at 3 location(s))
+  - mirror: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.3m SW (seen at 3 location(s))
+  - table: closest observed 6.3m (seen at 2 location(s))
+  - television: closest observed 4.5m (seen at 5 location(s))
+
+Planner proposed:
+Plan: I will first turn to face the television which is visible in the top-right of my current view, and then I will move towards it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first turn to face the television which is visible in the top-right of my current view, and then I will move towards it.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=5.177 y=0.901 z=6.677
+Distance to target: 4.518m
+episode_success=False

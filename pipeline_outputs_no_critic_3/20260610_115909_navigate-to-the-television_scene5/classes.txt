@@ -1,0 +1,13 @@
+0: furniture
+1: house
+2: studio couch
+3: table
+4: television
+5: chair
+6: coffee table
+7: mirror
+8: cushion
+9: painting
+10: remote control
+11: sofa bed
+12: laptop

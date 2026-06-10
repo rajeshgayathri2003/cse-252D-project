@@ -1,0 +1,49 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- garbage bag located in the center-left, covering roughly 0.6% of the view.
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- bottle located in the top-center, covering roughly 0.0% of the view.
+- chair located in the center-left, covering roughly 0.5% of the view.
+- chair located in the center-left, covering roughly 0.1% of the view.
+- refrigerator located in the top-left, covering roughly 3.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 7
+- edges: 12
+- current_node: (3.75, 6.75, 2)
+- known_objects:
+  - bottle: closest observed 3.8m (seen at 3 location(s))
+  - bowl: closest observed 3.2m (seen at 1 location(s))
+  - chair: closest observed 3.0m (seen at 2 location(s))
+  - coffee cup: closest observed 4.0m (seen at 2 location(s))
+  - door: closest observed 2.5m (seen at 1 location(s))
+  - door handle: seen from node 0.3m NE (seen at 3 location(s))
+  - faucet: seen from node 0.3m NE (seen at 2 location(s))
+  - furniture: seen from node 0.8m SE (seen at 2 location(s))
+  - garbage bag: closest observed 4.3m (seen at 1 location(s))
+  - hinge: seen from node 0.8m SE (seen at 1 location(s))
+  - house: seen from node 0.8m SE (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 2 location(s))
+  - sink: seen from node 0.4m E (seen at 1 location(s))
+  - studio couch: seen from node 0.8m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - vase: closest observed 3.1m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move towards the refrigerator, which is currently visible in the top-left of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the refrigerator, which is currently visible in the top-left of the view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.616 y=0.901 z=6.677
+Distance to target: 6.843m
+episode_success=False

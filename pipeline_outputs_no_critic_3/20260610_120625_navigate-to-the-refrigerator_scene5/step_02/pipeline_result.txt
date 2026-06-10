@@ -1,0 +1,33 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (4.5, 6.5, 0)
+- known_objects:
+  - furniture: seen from node 0.0m here (seen at 2 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - house: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+
+Planner proposed:
+Plan: First, I will move through the door to enter the house. Then, I will explore the rooms to locate the refrigerator. Once the refrigerator is identified, I will navigate towards it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: First, I will move through the door to enter the house. Then, I will explore the rooms to locate the refrigerator. Once the refrigerator is identified, I will navigate towards it.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 7.142m
+episode_success=False

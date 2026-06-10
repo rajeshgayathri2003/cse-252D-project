@@ -1,0 +1,4 @@
+0: cistern
+1: toilet
+2: toothbrush
+3: candle

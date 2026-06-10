@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- coffee cup located in the center, covering roughly 0.1% of the view.
+- coffee cup located in the top-right, covering roughly 0.1% of the view.
+- refrigerator located in the top-left, covering roughly 3.5% of the view.
+- vase located in the center-left, covering roughly 0.7% of the view.
+- vase located in the center, covering roughly 0.1% of the view.

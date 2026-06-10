@@ -1,0 +1,40 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.2% of the view.
+- door handle located in the center, covering roughly 0.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 6
+- edges: 10
+- current_node: (3.75, 7.5, 0)
+- known_objects:
+  - cabinetry: seen from node 0.3m SE (seen at 1 location(s))
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - door: closest observed 2.7m (seen at 1 location(s))
+  - door handle: seen from node 0.0m here (seen at 5 location(s))
+  - furniture: seen from node 1.2m SE (seen at 2 location(s))
+  - hinge: seen from node 0.5m SE (seen at 3 location(s))
+  - house: seen from node 1.2m SE (seen at 1 location(s))
+  - sink: seen from node 0.9m SE (seen at 1 location(s))
+  - studio couch: seen from node 1.2m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Since the trash bag is not currently in the known objects list, I need to explore the environment to locate it. I will start by moving to an adjacent node to get a better view of the current area and then navigate towards the kitchen (where the sink and cabinetry are located) as trash bags are frequently found in such areas. I will continue to explore the house until the trash bag is identified.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Since the trash bag is not currently in the known objects list, I need to explore the environment to locate it. I will start by moving to an adjacent node to get a better view of the current area and then navigate towards the kitchen (where the sink and cabinetry are located) as trash bags are frequently found in such areas. I will continue to explore the house until the trash bag is identified.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.616 y=0.901 z=7.634
+Distance to target: 4.984m
+episode_success=False

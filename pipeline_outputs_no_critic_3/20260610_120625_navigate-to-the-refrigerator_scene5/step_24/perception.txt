@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- bench located in the center-right, covering roughly 2.4% of the view.
+- chair located in the center-left, covering roughly 0.2% of the view.
+- mirror located in the top-right, covering roughly 1.8% of the view.
+- toilet located in the bottom-center, covering roughly 2.4% of the view.
+- refrigerator located in the top-center, covering roughly 5.0% of the view.

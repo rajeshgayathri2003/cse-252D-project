@@ -1,0 +1,46 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- door located in the center-right, covering roughly 34.5% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 31
+- edges: 60
+- current_node: (3.25, 6.75, 3)
+- known_objects:
+  - cabinetry: seen from node 0.2m SE (seen at 2 location(s))
+  - chair: closest observed 5.2m (seen at 1 location(s))
+  - cistern: seen from node 2.7m NW (seen at 1 location(s))
+  - desk: seen from node 1.2m W (seen at 8 location(s))
+  - door: closest observed 2.7m (seen at 21 location(s))
+  - door handle: seen from node 0.2m SE (seen at 9 location(s))
+  - faucet: closest observed 2.2m (seen at 7 location(s))
+  - furniture: seen from node 0.2m SE (seen at 1 location(s))
+  - house: closest observed 8.9m (seen at 15 location(s))
+  - picture frame: seen from node 0.2m S (seen at 5 location(s))
+  - refrigerator: seen from node 0.2m S (seen at 15 location(s))
+  - sink: closest observed 2.3m (seen at 10 location(s))
+  - sofa bed: closest observed 6.1m (seen at 1 location(s))
+  - studio couch: seen from node 0.2m S (seen at 9 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 2.7m NW (seen at 1 location(s))
+  - trash bin/can: seen from node 1.8m NW (seen at 3 location(s))
+  - window: closest observed 3.5m (seen at 1 location(s))
+
+Planner proposed:
+Plan: I will first move through the door visible in front of me to access the next area. Then, I will navigate through the house, following the path towards the kitchen area as shown in the top-down view. Once I reach the kitchen, I will locate the refrigerator and move towards it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first move through the door visible in front of me to access the next area. Then, I will navigate through the house, following the path towards the kitchen area as shown in the top-down view. Once I reach the kitchen, I will locate the refrigerator and move towards it.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.030 y=0.901 z=6.823
+Distance to target: 3.032m
+episode_success=False

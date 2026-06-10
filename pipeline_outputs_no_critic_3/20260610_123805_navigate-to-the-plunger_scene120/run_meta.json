@@ -1,0 +1,32 @@
+{
+  "run_dir": "20260610_123805_navigate-to-the-plunger_scene120",
+  "started_at": "2026-06-10T12:42:31",
+  "task": "Navigate to the Plunger",
+  "scene_index": 120,
+  "steps": 50,
+  "florence_model": "microsoft/Florence-2-base",
+  "sam_weights": "sam2_b.pt",
+  "device": "auto",
+  "tritonai": true,
+  "headless_perception": false,
+  "no_critic": true,
+  "completed_steps": 10,
+  "finished_at": "2026-06-10T12:42:31",
+  "action_history": [
+    "controller.step(action='RotateLeft')",
+    "controller.step(action='LookDown')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveBack')",
+    "controller.step(action='RotateRight')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')",
+    "controller.step(action='MoveAhead')"
+  ],
+  "success": true,
+  "actual_path_length": 1.750000429706302,
+  "shortest_path_length": 0.25,
+  "critic_aborted": false
+}

@@ -1,0 +1,47 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- door located in the top-center, covering roughly 4.9% of the view.
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle located in the center, covering roughly 0.1% of the view.
+- table located in the top-center, covering roughly 0.3% of the view.
+- television located in the top-right, covering roughly 2.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 17
+- edges: 32
+- current_node: (5.75, 7.25, 1)
+- known_objects:
+  - chair: closest observed 8.0m (seen at 1 location(s))
+  - coffee table: closest observed 3.0m (seen at 5 location(s))
+  - computer monitor: seen from node 1.5m S (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 12 location(s))
+  - door: closest observed 4.8m (seen at 6 location(s))
+  - door handle: seen from node 0.0m here (seen at 5 location(s))
+  - furniture: seen from node 0.2m W (seen at 2 location(s))
+  - house: closest observed 0.8m (seen at 4 location(s))
+  - houseplant: seen from node 1.2m SW (seen at 4 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - remote control: closest observed 4.4m (seen at 2 location(s))
+  - studio couch: seen from node 0.7m SW (seen at 8 location(s))
+  - table: closest observed 6.1m (seen at 4 location(s))
+  - television: closest observed 0.9m (seen at 7 location(s))
+  - vase: closest observed 4.5m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move towards the desk with shelves located on the right side of the current view.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the desk with shelves located on the right side of the current view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=6.030 y=0.901 z=7.134
+Distance to target: 2.074m
+episode_success=False

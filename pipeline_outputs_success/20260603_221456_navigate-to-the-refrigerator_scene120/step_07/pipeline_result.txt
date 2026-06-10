@@ -28,7 +28,7 @@ Planner proposed:
 Plan: Move through the doorway and head towards the refrigerator visible in the next room.
 
 Critic verdict:
-{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+{'approved': True, 'reason': 'The sub-goal is aligned with the task as the refrigerator is visible in the current view', 'revised_subgoal': None}
 
 Selected subgoal:
 Plan: Move through the doorway and head towards the refrigerator visible in the next room.

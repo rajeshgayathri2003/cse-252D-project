@@ -1,0 +1,66 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the top-left, covering roughly 0.1% of the view.
+- chair located in the center-left, covering roughly 2.7% of the view.
+- chair located in the center, covering roughly 1.8% of the view.
+- chair located in the center, covering roughly 1.2% of the view.
+- chair located in the center, covering roughly 1.1% of the view.
+- chair located in the center-right, covering roughly 0.4% of the view.
+- chair located in the top-center, covering roughly 0.2% of the view.
+- kitchen & dining room table located in the bottom-right, covering roughly 33.7% of the view.
+- kitchen & dining room table located in the center, covering roughly 6.4% of the view.
+- spoon located in the bottom-right, covering roughly 0.9% of the view.
+- spoon located in the bottom-right, covering roughly 0.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 21
+- edges: 40
+- current_node: (1.75, 5.5, 1)
+- known_objects:
+  - apple: closest observed 2.4m (seen at 1 location(s))
+  - ball: seen from node 0.6m W (seen at 1 location(s))
+  - bench: seen from node 0.4m W (seen at 1 location(s))
+  - bottle: closest observed 1.0m (seen at 13 location(s))
+  - bowl: closest observed 0.5m (seen at 6 location(s))
+  - box: seen from node 0.6m W (seen at 1 location(s))
+  - chair: closest observed 2.5m (seen at 15 location(s))
+  - coffee cup: closest observed 3.6m (seen at 3 location(s))
+  - door: closest observed 2.5m (seen at 1 location(s))
+  - door handle: seen from node 2.7m NE (seen at 3 location(s))
+  - faucet: seen from node 2.7m NE (seen at 2 location(s))
+  - furniture: seen from node 3.0m E (seen at 2 location(s))
+  - garbage bag: closest observed 4.3m (seen at 1 location(s))
+  - hinge: seen from node 3.0m E (seen at 1 location(s))
+  - house: seen from node 3.0m E (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 7.8m (seen at 6 location(s))
+  - knife: closest observed 0.7m (seen at 1 location(s))
+  - mirror: seen from node 0.4m W (seen at 1 location(s))
+  - plastic bag: closest observed 3.2m (seen at 1 location(s))
+  - plate: closest observed 0.8m (seen at 1 location(s))
+  - refrigerator: seen from node 0.1m W (seen at 14 location(s))
+  - sink: seen from node 0.4m E (seen at 4 location(s))
+  - spoon: closest observed 0.7m (seen at 1 location(s))
+  - studio couch: seen from node 3.0m E (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - toilet: seen from node 0.4m W (seen at 1 location(s))
+  - toothbrush: seen from node 0.1m E (seen at 1 location(s))
+  - vase: closest observed 1.1m (seen at 9 location(s))
+
+Planner proposed:
+Plan: Move towards the refrigerator, which is known to be located very close to the current position (approximately 0.1m West). Once in the immediate vicinity, identify the refrigerator visually and navigate to it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the refrigerator, which is known to be located very close to the current position (approximately 0.1m West). Once in the immediate vicinity, identify the refrigerator visually and navigate to it.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=1.732 y=0.901 z=5.439
+Distance to target: 5.027m
+episode_success=False

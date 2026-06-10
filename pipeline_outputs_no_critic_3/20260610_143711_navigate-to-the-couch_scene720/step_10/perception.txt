@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- book located in the center-left, covering roughly 0.2% of the view.
+- cushion located in the center-left, covering roughly 3.1% of the view.
+- studio couch located in the center-left, covering roughly 10.2% of the view.

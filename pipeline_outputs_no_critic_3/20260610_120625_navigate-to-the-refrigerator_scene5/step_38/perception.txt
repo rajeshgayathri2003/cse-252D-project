@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- computer monitor located in the top-right, covering roughly 0.5% of the view.
+- door located in the top-left, covering roughly 24.4% of the view.
+- suitcase located in the center-right, covering roughly 0.9% of the view.

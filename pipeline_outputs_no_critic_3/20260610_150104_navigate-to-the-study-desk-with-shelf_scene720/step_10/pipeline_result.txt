@@ -1,0 +1,44 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- desk located in the top-right, covering roughly 1.9% of the view.
+- coffee table located in the center-left, covering roughly 8.9% of the view.
+- desk located in the top-right, covering roughly 0.7% of the view.
+- desk located in the center-right, covering roughly 0.6% of the view.
+- studio couch located in the center, covering roughly 4.6% of the view.
+- television located in the center-left, covering roughly 11.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 8
+- edges: 14
+- current_node: (4.75, 6.0, 0)
+- known_objects:
+  - chair: closest observed 8.0m (seen at 1 location(s))
+  - coffee table: closest observed 3.0m (seen at 4 location(s))
+  - computer monitor: seen from node 0.3m SE (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 6 location(s))
+  - houseplant: seen from node 0.2m W (seen at 2 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - remote control: closest observed 4.8m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 4 location(s))
+  - table: closest observed 7.4m (seen at 1 location(s))
+  - television: closest observed 1.4m (seen at 3 location(s))
+  - vase: closest observed 5.0m (seen at 1 location(s))
+
+Planner proposed:
+Plan: I will navigate towards the room located in the top-right corner of the map, as the floor plan indicates a desk is located in that area. I will move through the current living area and head towards the top-right room to find the Study Desk with Shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will navigate towards the room located in the top-right corner of the map, as the floor plan indicates a desk is located in that area. I will move through the current living area and head towards the top-right room to find the Study Desk with Shelf.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=4.823 y=0.901 z=6.177
+Distance to target: 2.683m
+episode_success=False

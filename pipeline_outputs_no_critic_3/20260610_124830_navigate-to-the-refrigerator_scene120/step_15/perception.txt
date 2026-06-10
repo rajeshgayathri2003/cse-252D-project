@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- desk located in the center-left, covering roughly 5.2% of the view.
+- desk located in the center-left, covering roughly 4.0% of the view.
+- faucet located in the center-right, covering roughly 0.4% of the view.
+- faucet located in the top-right, covering roughly 0.3% of the view.
+- sink located in the center-right, covering roughly 5.4% of the view.
+- sink located in the center-right, covering roughly 1.2% of the view.

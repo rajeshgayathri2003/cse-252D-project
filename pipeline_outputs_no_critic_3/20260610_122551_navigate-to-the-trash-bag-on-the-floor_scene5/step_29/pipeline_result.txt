@@ -1,0 +1,56 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- apple located in the center-left, covering roughly 0.2% of the view.
+- chair located in the bottom-left, covering roughly 6.7% of the view.
+- chair located in the center-left, covering roughly 4.8% of the view.
+- chair located in the center-left, covering roughly 2.0% of the view.
+- chair located in the center, covering roughly 0.2% of the view.
+- kitchen & dining room table located in the center-left, covering roughly 3.0% of the view.
+- trash bag located in the center, covering roughly 1.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 23
+- edges: 44
+- current_node: (3.0, 4.75, 2)
+- known_objects:
+  - apple: closest observed 1.5m (seen at 4 location(s))
+  - bottle: closest observed 2.7m (seen at 10 location(s))
+  - bowl: closest observed 1.7m (seen at 6 location(s))
+  - cabinetry: seen from node 2.6m N (seen at 1 location(s))
+  - chair: closest observed 1.7m (seen at 13 location(s))
+  - coffee cup: closest observed 3.0m (seen at 6 location(s))
+  - door: closest observed 1.4m (seen at 2 location(s))
+  - door handle: seen from node 2.2m NE (seen at 6 location(s))
+  - faucet: seen from node 3.0m N (seen at 1 location(s))
+  - furniture: seen from node 2.2m NE (seen at 3 location(s))
+  - garbage bag: closest observed 3.6m (seen at 5 location(s))
+  - hinge: seen from node 2.2m NE (seen at 3 location(s))
+  - house: seen from node 2.2m NE (seen at 1 location(s))
+  - kitchen & dining room table: closest observed 7.0m (seen at 13 location(s))
+  - refrigerator: seen from node 0.5m N (seen at 11 location(s))
+  - sink: seen from node 0.5m N (seen at 3 location(s))
+  - stool: closest observed 4.9m (seen at 1 location(s))
+  - studio couch: seen from node 2.2m NE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+  - trash bag: closest observed 2.2m (seen at 9 location(s))
+  - vase: closest observed 1.6m (seen at 9 location(s))
+
+Planner proposed:
+Plan: Move towards the trash bag on the floor.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the trash bag on the floor.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=3.086 y=0.901 z=4.561
+Distance to target: 2.001m
+episode_success=False

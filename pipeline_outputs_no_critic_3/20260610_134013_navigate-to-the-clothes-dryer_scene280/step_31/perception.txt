@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- washing machine located in the center-left, covering roughly 17.1% of the view.
+- clothes dryer located in the center-left, covering roughly 17.1% of the view.

@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- candle located in the top-left, covering roughly 2.1% of the view.
+- toilet located in the center-left, covering roughly 27.0% of the view.
+- toilet located in the bottom-left, covering roughly 14.4% of the view.

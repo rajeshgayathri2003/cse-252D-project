@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- washing machine located in the center, covering roughly 11.6% of the view.

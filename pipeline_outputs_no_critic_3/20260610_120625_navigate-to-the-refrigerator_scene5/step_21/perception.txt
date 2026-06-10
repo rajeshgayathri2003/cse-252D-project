@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.4% of the view.
+- refrigerator located in the top-left, covering roughly 8.9% of the view.
+- toothbrush located in the center, covering roughly 0.9% of the view.
+- toothbrush located in the center, covering roughly 0.4% of the view.

@@ -1,0 +1,48 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.2% of the view.
+- bowl located in the center, covering roughly 0.4% of the view.
+- chair located in the center, covering roughly 0.8% of the view.
+- refrigerator located in the top-left, covering roughly 5.7% of the view.
+- vase located in the center, covering roughly 0.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 13
+- edges: 24
+- current_node: (2.75, 5.75, 2)
+- known_objects:
+  - bottle: closest observed 2.4m (seen at 9 location(s))
+  - bowl: closest observed 1.4m (seen at 4 location(s))
+  - chair: closest observed 2.5m (seen at 7 location(s))
+  - coffee cup: closest observed 3.6m (seen at 3 location(s))
+  - door: closest observed 2.5m (seen at 1 location(s))
+  - door handle: seen from node 1.8m NE (seen at 3 location(s))
+  - faucet: seen from node 1.8m NE (seen at 2 location(s))
+  - furniture: seen from node 1.9m E (seen at 2 location(s))
+  - garbage bag: closest observed 4.3m (seen at 1 location(s))
+  - hinge: seen from node 1.9m E (seen at 1 location(s))
+  - house: seen from node 1.9m E (seen at 1 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 8 location(s))
+  - sink: seen from node 1.0m NE (seen at 2 location(s))
+  - studio couch: seen from node 1.9m E (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - vase: closest observed 1.3m (seen at 8 location(s))
+
+Planner proposed:
+Plan: Move towards the refrigerator located in the top-left of the current view.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the refrigerator located in the top-left of the current view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=2.555 y=0.901 z=5.616
+Distance to target: 5.449m
+episode_success=False

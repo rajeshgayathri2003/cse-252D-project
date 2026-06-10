@@ -9,6 +9,7 @@ Usage:
     uv run python view_run.py <substring>     # run dir matching <substring>
     uv run python view_run.py --list          # one line per run
     uv run python view_run.py [<sub>] --html [--overlays]   # write report.html
+    uv run python view_run.py [<sub>] --video [--fps 2]     # write demo.mp4 (segmentation overlays)
     uv run python view_run.py --output-dir DIR ...          # parent dir (default pipeline_outputs)
 """
 
@@ -390,6 +391,68 @@ def render_html(run_data, overlays=False):
 
 
 # --------------------------------------------------------------------------
+# Video rendering
+# --------------------------------------------------------------------------
+
+def render_video(run_data, fps=2.0, overlays=True):
+    """Stitch each step's segmentation-overlay frame into demo.mp4 via ffmpeg.
+
+    Frame source per step (in priority order): frame_overlay.jpg, then
+    frame.jpg as a fallback. Overlays are generated on demand by
+    `_ensure_overlays` when missing, mirroring how `--html --overlays` behaves.
+    """
+    import shutil
+    import subprocess
+    import tempfile
+
+    if overlays:
+        _ensure_overlays(run_data)
+
+    frames = []
+    for s in run_data.steps:
+        overlay = s.step_dir / "frame_overlay.jpg"
+        raw = s.step_dir / "frame.jpg"
+        if overlay.exists():
+            frames.append(overlay)
+        elif raw.exists():
+            frames.append(raw)
+
+    if not frames:
+        print(f"[view_run] no frames found in {run_data.run_dir}", file=sys.stderr)
+        return None
+
+    if shutil.which("ffmpeg") is None:
+        print("[view_run] ffmpeg not found on PATH; cannot render video", file=sys.stderr)
+        return None
+
+    out_path = run_data.run_dir / "demo.mp4"
+    with tempfile.TemporaryDirectory() as tmp:
+        # Copy into a flat, zero-padded sequence so ffmpeg's image2 demuxer
+        # can pick them up via the standard %04d pattern.
+        for i, src in enumerate(frames):
+            shutil.copy(src, f"{tmp}/frame_{i:04d}.jpg")
+
+        cmd = [
+            "ffmpeg", "-y",
+            "-framerate", f"{fps}",
+            "-i", f"{tmp}/frame_%04d.jpg",
+            "-c:v", "libx264",
+            "-pix_fmt", "yuv420p",
+            # H.264 requires even dimensions; pad odd-sized frames.
+            "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+            str(out_path),
+        ]
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            print(f"[view_run] ffmpeg failed:\n{result.stderr}", file=sys.stderr)
+            return None
+
+    duration = len(frames) / fps
+    print(f"[view_run] {len(frames)} frames @ {fps} fps  →  {duration:.1f}s")
+    return out_path
+
+
+# --------------------------------------------------------------------------
 # CLI entry
 # --------------------------------------------------------------------------
 
@@ -419,7 +482,11 @@ def main(argv=None):
     parser.add_argument("--html", action="store_true", help="Write report.html into the run dir.")
     parser.add_argument("--overlays", action="store_true",
                         help="With --html: generate missing segmentation overlays first.")
-    parser.add_argument("--output-dir", default="pipeline_outputs",
+    parser.add_argument("--video", action="store_true",
+                        help="Write demo.mp4 into the run dir (segmentation-overlay frames stitched via ffmpeg).")
+    parser.add_argument("--fps", type=float, default=2.0,
+                        help="With --video: playback framerate (default 2.0 = 0.5 sec per cycle).")
+    parser.add_argument("--output-dir", default="pipeline_outputs_success",
                         help="Parent dir of runs (default: pipeline_outputs).")
     args = parser.parse_args(argv)
 
@@ -429,6 +496,12 @@ def main(argv=None):
 
     run_dir = _resolve_run(args.output_dir, args.run)
     run = parse_run(run_dir)
+
+    if args.video:
+        out = render_video(run, fps=args.fps, overlays=True)
+        if out is not None:
+            print(f"Wrote {out}")
+        return
 
     if args.html:
         out = render_html(run, overlays=args.overlays)

@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- door located in the center, covering roughly 48.8% of the view.
+- door handle located in the center, covering roughly 1.4% of the view.
+- window located in the top-center, covering roughly 3.3% of the view.

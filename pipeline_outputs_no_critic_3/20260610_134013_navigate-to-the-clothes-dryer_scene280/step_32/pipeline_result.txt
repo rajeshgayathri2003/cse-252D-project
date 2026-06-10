@@ -1,0 +1,39 @@
+Task:
+Navigate to the Clothes Dryer
+
+Perception:
+Visible Objects (Segmented):
+- washing machine located in the bottom-left, covering roughly 18.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 17
+- edges: 36
+- current_node: (8.5, 12.0, 2)
+- known_objects:
+  - bathtub: seen from node 1.6m E (seen at 1 location(s))
+  - cistern: seen from node 1.3m E (seen at 5 location(s))
+  - clothes dryer: closest observed 1.7m (seen at 3 location(s))
+  - faucet: closest observed 2.8m (seen at 2 location(s))
+  - fireplace: seen from node 0.8m NE (seen at 1 location(s))
+  - house: closest observed 3.1m (seen at 4 location(s))
+  - painting: closest observed 4.2m (seen at 2 location(s))
+  - sink: closest observed 2.7m (seen at 3 location(s))
+  - toilet: closest observed 2.5m (seen at 8 location(s))
+  - trash bin/can: seen from node 1.3m E (seen at 4 location(s))
+  - washing machine: seen from node 0.0m here (seen at 4 location(s))
+
+Planner proposed:
+Plan: I will first turn to locate the clothes dryer, which is known to be very close (approximately 1.7m away), and then navigate towards it.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first turn to locate the clothes dryer, which is known to be very close (approximately 1.7m away), and then navigate towards it.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=8.439 y=0.901 z=11.896
+Distance to target: 1.570m
+episode_success=False

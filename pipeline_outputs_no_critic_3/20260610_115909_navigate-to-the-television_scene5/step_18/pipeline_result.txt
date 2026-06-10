@@ -1,0 +1,46 @@
+Task:
+Navigate to the Television
+
+Perception:
+Visible Objects (Segmented):
+- cushion located in the center-right, covering roughly 8.6% of the view.
+- laptop located in the center-right, covering roughly 1.4% of the view.
+- remote control located in the center-left, covering roughly 0.3% of the view.
+- remote control located in the center-left, covering roughly 0.1% of the view.
+- studio couch located in the center, covering roughly 21.0% of the view.
+- television located in the center-left, covering roughly 8.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 19
+- edges: 36
+- current_node: (8.5, 6.75, 1)
+- known_objects:
+  - chair: closest observed 2.7m (seen at 2 location(s))
+  - coffee table: closest observed 5.4m (seen at 6 location(s))
+  - cushion: seen from node 0.0m here (seen at 12 location(s))
+  - furniture: seen from node 3.2m W (seen at 3 location(s))
+  - house: seen from node 3.4m W (seen at 3 location(s))
+  - laptop: closest observed 1.3m (seen at 2 location(s))
+  - mirror: seen from node 3.2m W (seen at 1 location(s))
+  - painting: closest observed 2.7m (seen at 10 location(s))
+  - remote control: closest observed 2.5m (seen at 8 location(s))
+  - sofa bed: closest observed 2.2m (seen at 5 location(s))
+  - studio couch: seen from node 0.0m here (seen at 13 location(s))
+  - table: closest observed 6.3m (seen at 2 location(s))
+  - television: closest observed 1.7m (seen at 19 location(s))
+
+Planner proposed:
+Plan: Move towards the television.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the television.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=8.677 y=0.901 z=6.677
+Distance to target: 1.531m
+episode_success=False

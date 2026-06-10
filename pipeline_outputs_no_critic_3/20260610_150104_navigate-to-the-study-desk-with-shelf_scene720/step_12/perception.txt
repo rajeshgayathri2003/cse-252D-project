@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- desk located in the bottom-left, covering roughly 14.5% of the view.
+- houseplant located in the bottom-center, covering roughly 0.4% of the view.
+- studio couch located in the center, covering roughly 6.1% of the view.
+- television located in the bottom-left, covering roughly 12.1% of the view.
+- vase located in the bottom-center, covering roughly 0.1% of the view.

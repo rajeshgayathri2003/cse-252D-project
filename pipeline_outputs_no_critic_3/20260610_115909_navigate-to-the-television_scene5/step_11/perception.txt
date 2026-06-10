@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- cushion located in the bottom-left, covering roughly 4.6% of the view.
+- painting located in the top-right, covering roughly 1.8% of the view.
+- sofa bed located in the center-right, covering roughly 8.6% of the view.
+- studio couch located in the bottom-left, covering roughly 8.1% of the view.
+- television located in the top-left, covering roughly 3.6% of the view.

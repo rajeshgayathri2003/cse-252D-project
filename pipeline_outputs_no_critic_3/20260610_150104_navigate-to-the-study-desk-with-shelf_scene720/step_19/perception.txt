@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- furniture located in the center, covering roughly 14.0% of the view.
+- furniture located in the center-left, covering roughly 7.4% of the view.

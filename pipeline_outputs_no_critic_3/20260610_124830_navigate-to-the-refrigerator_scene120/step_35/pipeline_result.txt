@@ -1,0 +1,46 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- furniture located in the top-center, covering roughly 0.4% of the view.
+- house located in the top-center, covering roughly 99.3% of the view.
+- picture frame located in the top-left, covering roughly 2.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 29
+- edges: 56
+- current_node: (3.5, 6.5, 0)
+- known_objects:
+  - cabinetry: seen from node 1.7m W (seen at 1 location(s))
+  - cistern: seen from node 3.0m NW (seen at 1 location(s))
+  - desk: seen from node 1.3m W (seen at 8 location(s))
+  - door: closest observed 2.7m (seen at 19 location(s))
+  - door handle: seen from node 1.3m W (seen at 8 location(s))
+  - faucet: closest observed 2.2m (seen at 7 location(s))
+  - furniture: seen from node 0.0m here (seen at 1 location(s))
+  - house: closest observed 8.9m (seen at 15 location(s))
+  - picture frame: seen from node 0.0m here (seen at 5 location(s))
+  - refrigerator: seen from node 0.2m W (seen at 15 location(s))
+  - sink: closest observed 2.3m (seen at 10 location(s))
+  - sofa bed: closest observed 6.1m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 9 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 3.0m NW (seen at 1 location(s))
+  - trash bin/can: seen from node 2.0m NW (seen at 3 location(s))
+
+Planner proposed:
+Plan: Turn towards the west and move forward to reach the refrigerator, which is located approximately 0.2m to the west of the current position.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Turn towards the west and move forward to reach the refrigerator, which is located approximately 0.2m to the west of the current position.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=3.384 y=0.901 z=6.470
+Distance to target: 2.576m
+episode_success=False

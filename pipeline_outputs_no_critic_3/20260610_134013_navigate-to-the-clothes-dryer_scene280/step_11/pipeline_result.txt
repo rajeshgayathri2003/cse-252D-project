@@ -1,0 +1,36 @@
+Task:
+Navigate to the Clothes Dryer
+
+Perception:
+Visible Objects (Segmented):
+- bathtub located in the center-right, covering roughly 2.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 5
+- edges: 8
+- current_node: (10.0, 12.25, 3)
+- known_objects:
+  - bathtub: seen from node 0.0m here (seen at 1 location(s))
+  - cistern: seen from node 0.0m here (seen at 3 location(s))
+  - faucet: closest observed 2.9m (seen at 1 location(s))
+  - house: closest observed 3.1m (seen at 1 location(s))
+  - painting: closest observed 4.2m (seen at 1 location(s))
+  - sink: closest observed 2.9m (seen at 1 location(s))
+  - toilet: closest observed 2.6m (seen at 4 location(s))
+  - trash bin/can: seen from node 0.2m W (seen at 2 location(s))
+
+Planner proposed:
+Plan: I will first move towards the doorway visible on the right to leave the current room (which appears to be a bathroom). Once I have exited, I will explore the connected areas of the house, specifically looking for rooms like a laundry room or kitchen where a clothes dryer is likely to be located, until I find the target object.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first move towards the doorway visible on the right to leave the current room (which appears to be a bathroom). Once I have exited, I will explore the connected areas of the house, specifically looking for rooms like a laundry room or kitchen where a clothes dryer is likely to be located, until I find the target object.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=10.000 y=0.901 z=12.250
+Distance to target: 2.354m
+episode_success=False

@@ -1,0 +1,16 @@
+0: computer monitor
+1: desk
+2: coffee table
+3: houseplant
+4: studio couch
+5: television
+6: laptop
+7: table
+8: chair
+9: remote control
+10: vase
+11: door
+12: house
+13: door handle
+14: furniture
+15: window

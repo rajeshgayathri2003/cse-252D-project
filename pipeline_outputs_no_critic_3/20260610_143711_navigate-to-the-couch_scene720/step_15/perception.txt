@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- house located in the center, covering roughly 99.3% of the view.
+- studio couch located in the center-right, covering roughly 27.5% of the view.
+- window located in the center-left, covering roughly 14.9% of the view.
+- window located in the top-left, covering roughly 6.0% of the view.
+- window located in the top-right, covering roughly 2.2% of the view.

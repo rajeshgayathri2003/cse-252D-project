@@ -1,0 +1,39 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- door located in the center-left, covering roughly 41.7% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 8
+- edges: 14
+- current_node: (3.25, 8.0, 0)
+- known_objects:
+  - cabinetry: seen from node 1.0m SE (seen at 1 location(s))
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - door: closest observed 1.4m (seen at 2 location(s))
+  - door handle: seen from node 0.3m SE (seen at 6 location(s))
+  - furniture: seen from node 1.9m SE (seen at 2 location(s))
+  - hinge: seen from node 1.3m SE (seen at 3 location(s))
+  - house: seen from node 1.9m SE (seen at 1 location(s))
+  - sink: seen from node 1.7m SE (seen at 1 location(s))
+  - studio couch: seen from node 1.9m SE (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: First, move through the door to enter the house. Once inside, navigate through the rooms, specifically looking towards the kitchen area near the sink and cabinetry, as the trash bag is likely located there. Continue exploring until the trash bag on the floor is visually identified.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: First, move through the door to enter the house. Once inside, navigate through the rooms, specifically looking towards the kitchen area near the sink and cabinetry, as the trash bag is likely located there. Continue exploring until the trash bag on the floor is visually identified.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=3.263 y=0.901 z=7.987
+Distance to target: 5.274m
+episode_success=False

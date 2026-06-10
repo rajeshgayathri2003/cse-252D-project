@@ -1,0 +1,3 @@
+Visible Objects (Segmented):
+- cistern located in the center-right, covering roughly 1.1% of the view.
+- toilet located in the center-right, covering roughly 4.6% of the view.

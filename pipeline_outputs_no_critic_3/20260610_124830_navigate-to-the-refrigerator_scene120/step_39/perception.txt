@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- door located in the center-right, covering roughly 52.3% of the view.

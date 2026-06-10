@@ -1,0 +1,46 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- door located in the center-right, covering roughly 61.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 33
+- edges: 64
+- current_node: (2.75, 7.0, 3)
+- known_objects:
+  - cabinetry: seen from node 0.7m SE (seen at 2 location(s))
+  - chair: closest observed 5.2m (seen at 1 location(s))
+  - cistern: seen from node 2.2m NW (seen at 1 location(s))
+  - desk: seen from node 1.1m SW (seen at 8 location(s))
+  - door: closest observed 2.7m (seen at 23 location(s))
+  - door handle: seen from node 0.7m SE (seen at 9 location(s))
+  - faucet: closest observed 2.2m (seen at 7 location(s))
+  - furniture: seen from node 0.7m SE (seen at 1 location(s))
+  - house: closest observed 8.9m (seen at 15 location(s))
+  - picture frame: seen from node 0.5m S (seen at 5 location(s))
+  - refrigerator: seen from node 0.5m S (seen at 15 location(s))
+  - sink: closest observed 2.3m (seen at 10 location(s))
+  - sofa bed: closest observed 6.1m (seen at 1 location(s))
+  - studio couch: seen from node 0.5m S (seen at 9 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 2.2m NW (seen at 1 location(s))
+  - trash bin/can: seen from node 1.3m NW (seen at 3 location(s))
+  - window: closest observed 3.5m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Navigate through the doorway and move towards the kitchen area to locate and reach the refrigerator.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Navigate through the doorway and move towards the kitchen area to locate and reach the refrigerator.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=2.854 y=0.901 z=7.000
+Distance to target: 3.265m
+episode_success=False

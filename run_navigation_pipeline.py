@@ -225,6 +225,7 @@ def write_run_meta(run_dir, args, task=None, scene_index=None, extra=None):
         "device": args.device,
         "tritonai": args.tritonai,
         "headless_perception": args.headless_perception,
+        "no_critic": args.no_critic,
     }
     if extra:
         meta.update(extra)
@@ -235,7 +236,7 @@ def write_run_meta(run_dir, args, task=None, scene_index=None, extra=None):
 
 def build_controller(scene_index):
     print("[Sim] Loading ProcTHOR house...")
-    dataset = prior.load_dataset("procthor-10k")
+    dataset = prior.load_dataset("procthor-10k", offline=True)
     house = dataset["train"][scene_index]
     print("[Sim] Starting AI2-THOR controller with CloudRendering...")
     try:
@@ -318,7 +319,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             incontext_dir=incontext_dir,
             use_incontext_example=args.in_context
         )
-        critic = CriticAgent.from_tritonai()
+        critic = None if args.no_critic else CriticAgent.from_tritonai()
         action_agent = ActionAgent.from_tritonai(
             name="ActionAgent",
             role="action executor",
@@ -338,7 +339,7 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
             incontext_dir=incontext_dir,
             use_incontext_example=args.in_context
         )
-        critic = CriticAgent.from_openai()
+        critic = None if args.no_critic else CriticAgent.from_openai()
         action_agent = ActionAgent(
             name="ActionAgent",
             role="User",
@@ -405,32 +406,11 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                 position_history=position_history,
             )
 
-            verdict = critic.review(
-                task=task,
-                proposed_subgoal=plan,
-                map_summary=map_summary,
-                action_history=action_history,
-                perception_description=perception.description,
-                distance_history=distance_history,
-                target_type=target_type,
-            )
-
-            critic_attempts = [verdict]
-            if verdict["approved"]:
+            if args.no_critic:
+                verdict = {"approved": True, "reason": "critic disabled (ablation)", "revised_subgoal": None}
+                critic_attempts = []
                 selected_subgoal = plan
-
-            loop_count = 0
-            while not verdict["approved"] and loop_count < 5:
-                print(f"\nCritic rejected (attempt {loop_count + 1}): {verdict['reason']}\n")
-                loop_count += 1
-                plan = planner.generate_plan(
-                    task=task,
-                    visual_input=encode_image(perception.frame_path),
-                    perception_description=perception.description,
-                    map_summary=map_summary,
-                    critic_feedback=verdict["reason"],
-                )
-
+            else:
                 verdict = critic.review(
                     task=task,
                     proposed_subgoal=plan,
@@ -440,20 +420,46 @@ def run_single_task(task: str, scene_index: int, task_id: str, args) -> tuple[Ep
                     distance_history=distance_history,
                     target_type=target_type,
                 )
-                critic_attempts.append(verdict)
 
-            # If the rejection loop exited because the ceiling was hit,
-            # use the critic's own revised_subgoal (it is context-aware) rather
-            # than a hardcoded action that may face away from the target.
-            if not verdict["approved"]:
-                fallback = verdict.get("revised_subgoal") or "Look around to reacquire the target."
-                print(
-                    f"\n  [Critic] Ceiling hit after {loop_count} rejections "
-                    f"at cycle {step + 1}; using critic's revised_subgoal: {fallback!r}"
-                )
-                selected_subgoal = fallback
-            else:
-                selected_subgoal = plan
+                critic_attempts = [verdict]
+                if verdict["approved"]:
+                    selected_subgoal = plan
+
+                loop_count = 0
+                while not verdict["approved"] and loop_count < 5:
+                    print(f"\nCritic rejected (attempt {loop_count + 1}): {verdict['reason']}\n")
+                    loop_count += 1
+                    plan = planner.generate_plan(
+                        task=task,
+                        visual_input=encode_image(perception.frame_path),
+                        perception_description=perception.description,
+                        map_summary=map_summary,
+                        critic_feedback=verdict["reason"],
+                    )
+
+                    verdict = critic.review(
+                        task=task,
+                        proposed_subgoal=plan,
+                        map_summary=map_summary,
+                        action_history=action_history,
+                        perception_description=perception.description,
+                        distance_history=distance_history,
+                        target_type=target_type,
+                    )
+                    critic_attempts.append(verdict)
+
+                # If the rejection loop exited because the ceiling was hit,
+                # use the critic's own revised_subgoal (it is context-aware) rather
+                # than a hardcoded action that may face away from the target.
+                if not verdict["approved"]:
+                    fallback = verdict.get("revised_subgoal") or "Look around to reacquire the target."
+                    print(
+                        f"\n  [Critic] Ceiling hit after {loop_count} rejections "
+                        f"at cycle {step + 1}; using critic's revised_subgoal: {fallback!r}"
+                    )
+                    selected_subgoal = fallback
+                else:
+                    selected_subgoal = plan
 
             print("\n[Perception]\n" + perception.description)
             print("\n[Map]\n" + map_summary)
@@ -697,6 +703,7 @@ def parse_args():
                         help="Skip tasks before this point, e.g. '120:T3' starts at scene 120 T3.")
     parser.add_argument("--florence-model", default=FLORENCE_MODEL_ID)
     parser.add_argument("--sam-weights", default=SAM_WEIGHTS)
+    parser.add_argument("--no-critic", action="store_true", help="Ablation: skip the critic entirely; planner's first proposal is used directly.")
     parser.add_argument("--tritonai", action="store_true", help="Use TritonAI-hosted models for planner and critic.")
     parser.add_argument(
         "--headless-perception",

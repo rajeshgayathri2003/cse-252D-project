@@ -1,0 +1,48 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- house located in the center, covering roughly 99.3% of the view.
+- studio couch located in the center-right, covering roughly 27.5% of the view.
+- window located in the center-left, covering roughly 14.9% of the view.
+- window located in the top-left, covering roughly 6.0% of the view.
+- window located in the top-right, covering roughly 2.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 22
+- current_node: (5.0, 8.0, 0)
+- known_objects:
+  - book: closest observed 2.8m (seen at 3 location(s))
+  - cabinetry: seen from node 1.9m S (seen at 1 location(s))
+  - clock: closest observed 7.6m (seen at 1 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 4 location(s))
+  - computer monitor: seen from node 2.4m S (seen at 2 location(s))
+  - cushion: seen from node 0.5m SE (seen at 4 location(s))
+  - desk: closest observed 2.3m (seen at 8 location(s))
+  - house: closest observed 0.9m (seen at 5 location(s))
+  - houseplant: seen from node 1.6m S (seen at 3 location(s))
+  - person: seen from node 2.4m S (seen at 1 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 9 location(s))
+  - television: closest observed 1.2m (seen at 3 location(s))
+  - vase: closest observed 3.5m (seen at 3 location(s))
+  - window: closest observed 4.1m (seen at 6 location(s))
+
+Planner proposed:
+Plan: The studio couch is clearly visible in the current view, located in the center-right. Since the map summary indicates the couch is seen from the current location (0.0m), I will move forward to reach the couch.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: The studio couch is clearly visible in the current view, located in the center-right. Since the map summary indicates the couch is seen from the current location (0.0m), I will move forward to reach the couch.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=4.720 y=0.901 z=8.280
+Distance to target: 2.118m
+episode_success=False

@@ -1,0 +1,5 @@
+Visible Objects (Segmented):
+- coffee table located in the center-right, covering roughly 1.7% of the view.
+- studio couch located in the center-left, covering roughly 4.7% of the view.
+- studio couch located in the center-right, covering roughly 3.7% of the view.
+- television located in the top-left, covering roughly 1.0% of the view.

@@ -1,0 +1,331 @@
+Task: Navigate to the Trash bag on the floor
+Scene: 5
+Steps: 50
+
+Cycle 1:
+  Perception: Visible Objects (Segmented):
+- furniture located in the center-left, covering roughly 3.1% of the view.
+- house located 
+  Plan: Plan: Search the current room for the trash bag by moving to different vantage points. If the trash bag is not found, na
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=4.500 y=0.901 z=6.500
+  Distance to target: 4.206m
+  goal_reached=False
+Cycle 2:
+  Perception: Visible Objects (Segmented):
+- furniture located in the center, covering roughly 2.9% of the view.
+- furniture located i
+  Plan: Plan: Since the trash bag is not currently visible or in the known objects list, I will first search the current room by
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=4.500 y=0.901 z=6.500
+  Distance to target: 4.206m
+  goal_reached=False
+Cycle 3:
+  Perception: Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.2% of the view.
+  Plan: Plan: Since the trash bag is not currently visible in the visual input and is not listed in the known objects, I will be
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=4.500 y=0.901 z=6.500
+  Distance to target: 4.206m
+  goal_reached=False
+Cycle 4:
+  Perception: Visible Objects (Segmented):
+- coffee cup located in the top-left, covering roughly 0.2% of the view.
+- door handle loca
+  Plan: Plan: Since the trash bag is not currently visible or listed in the known objects, I will need to explore the environmen
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=4.323 y=0.901 z=6.677
+  Distance to target: 4.290m
+  goal_reached=False
+Cycle 5:
+  Perception: Visible Objects (Segmented):
+- door located in the center-right, covering roughly 42.6% of the view.
+- door handle locat
+  Plan: Plan: Since the trash bag is not currently visible or listed in the known objects, I will first explore the current room
+  Critic: approved=True
+  Action: controller.step(action='RotateRight')
+  Position: x=4.323 y=0.901 z=6.677
+  Distance to target: 4.290m
+  goal_reached=False
+Cycle 6:
+  Perception: Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.3% of the view.
+  Plan: Plan: Move towards the door to explore the adjacent area and search for the trash bag.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=4.323 y=0.901 z=6.927
+  Distance to target: 4.516m
+  goal_reached=False
+Cycle 7:
+  Perception: Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.3% of the view.
+  Plan: Plan: I will search the environment to locate the trash bag. Since trash bags are commonly found in or near kitchens, I 
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=4.323 y=0.901 z=6.927
+  Distance to target: 4.516m
+  goal_reached=False
+Cycle 8:
+  Perception: Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle locat
+  Plan: Plan: Since the trash bag is not currently visible or listed in the known objects, I will first explore the house to loc
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=4.146 y=0.901 z=7.104
+  Distance to target: 4.617m
+  goal_reached=False
+Cycle 9:
+  Perception: Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle locat
+  Plan: Plan: Move through the door to enter the room and search the floor area for the trash bag. Once the trash bag is identif
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.970 y=0.901 z=7.280
+  Distance to target: 4.729m
+  goal_reached=False
+Cycle 10:
+  Perception: Visible Objects (Segmented):
+- cabinetry located in the center-left, covering roughly 3.1% of the view.
+- door handle lo
+  Plan: Plan: Since the trash bag is not currently listed in the known objects, I will first move to a central position in the r
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.793 y=0.901 z=7.457
+  Distance to target: 4.852m
+  goal_reached=False
+Cycle 11:
+  Perception: Visible Objects (Segmented):
+- door handle located in the center, covering roughly 0.2% of the view.
+- door handle locat
+  Plan: Plan: Since the trash bag is not currently in the known objects list, I need to explore the environment to locate it. I 
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.616 y=0.901 z=7.634
+  Distance to target: 4.984m
+  goal_reached=False
+Cycle 12:
+  Perception: Visible Objects (Segmented):
+- door handle located in the bottom-center, covering roughly 0.3% of the view.
+- door handl
+  Plan: Plan: Move towards the interior of the house and search the rooms to locate the trash bag on the floor.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.439 y=0.901 z=7.811
+  Distance to target: 5.125m
+  goal_reached=False
+Cycle 13:
+  Perception: Visible Objects (Segmented):
+- door handle located in the bottom-center, covering roughly 0.4% of the view.
+- door handl
+  Plan: Plan: First, I will move into the room to begin exploring the environment. I will then search the floor area, particular
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.263 y=0.901 z=7.987
+  Distance to target: 5.274m
+  goal_reached=False
+Cycle 14:
+  Perception: Visible Objects (Segmented):
+- door located in the center-left, covering roughly 41.7% of the view.
+  Plan: Plan: First, move through the door to enter the house. Once inside, navigate through the rooms, specifically looking tow
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=3.263 y=0.901 z=7.987
+  Distance to target: 5.274m
+  goal_reached=False
+Cycle 15:
+  Perception: Visible Objects (Segmented):
+- coffee cup located in the top-left, covering roughly 0.2% of the view.
+  Plan: Plan: Since the trash bag is not currently in the known objects list, I need to explore the environment to find it. I wi
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=3.263 y=0.901 z=7.987
+  Distance to target: 5.274m
+  goal_reached=False
+Cycle 16:
+  Perception: Visible Objects (Segmented):
+- bottle located in the top-left, covering roughly 0.1% of the view.
+- bottle located in th
+  Plan: Plan: Move towards the trash bag located on the floor to the left.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=7.811
+  Distance to target: 5.083m
+  goal_reached=False
+Cycle 17:
+  Perception: Visible Objects (Segmented):
+- bottle located in the top-center, covering roughly 0.1% of the view.
+- coffee cup located
+  Plan: Plan: Navigate to the trash bag on the floor, which is visible to the left of the counter.
+  Critic: approved=True
+  Action: controller.step(action='RotateLeft')
+  Position: x=3.086 y=0.901 z=7.811
+  Distance to target: 5.083m
+  goal_reached=False
+Cycle 18:
+  Perception: Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.3% of the view.
+- bottle located in
+  Plan: Plan: Move towards the garbage bag in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=7.561
+  Distance to target: 4.838m
+  goal_reached=False
+Cycle 19:
+  Perception: Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.3% of the view.
+- bottle located in
+  Plan: Plan: I will move towards the garbage bag located in the center of the room to reach the trash bag on the floor.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=7.311
+  Distance to target: 4.594m
+  goal_reached=False
+Cycle 20:
+  Perception: Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.4% of the view.
+- bottle located in
+  Plan: Plan: The trash bag is visible in the center of the scene, located on the floor in the background. I will navigate towar
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=7.061
+  Distance to target: 4.350m
+  goal_reached=False
+Cycle 21:
+  Perception: Visible Objects (Segmented):
+- bottle located in the center-left, covering roughly 0.1% of the view.
+- bowl located in t
+  Plan: Plan: Move towards the trash bag located on the floor in the background.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=6.811
+  Distance to target: 4.107m
+  goal_reached=False
+Cycle 22:
+  Perception: Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.4% of the view.
+- bottle located in
+  Plan: Plan: Move towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=6.561
+  Distance to target: 3.865m
+  goal_reached=False
+Cycle 23:
+  Perception: Visible Objects (Segmented):
+- bottle located in the center-left, covering roughly 0.1% of the view.
+- bottle located in
+  Plan: Plan: Move forward toward the trash bag visible on the floor in the center of the background.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=6.311
+  Distance to target: 3.624m
+  goal_reached=False
+Cycle 24:
+  Perception: Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.5% of the view.
+- bottle located in
+  Plan: Plan: Move forward towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=6.061
+  Distance to target: 3.384m
+  goal_reached=False
+Cycle 25:
+  Perception: Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.1% of the view.
+- bowl located in 
+  Plan: Plan: Move forward towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=5.811
+  Distance to target: 3.146m
+  goal_reached=False
+Cycle 26:
+  Perception: Visible Objects (Segmented):
+- bottle located in the center-right, covering roughly 0.3% of the view.
+- bowl located in 
+  Plan: Plan: Move forward towards the trash bag located in the center of the floor.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=5.561
+  Distance to target: 2.910m
+  goal_reached=False
+Cycle 27:
+  Perception: Visible Objects (Segmented):
+- apple located in the center-left, covering roughly 0.1% of the view.
+- apple located in t
+  Plan: Plan: Move towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=5.311
+  Distance to target: 2.677m
+  goal_reached=False
+Cycle 28:
+  Perception: Visible Objects (Segmented):
+- apple located in the center-left, covering roughly 0.1% of the view.
+- apple located in t
+  Plan: Plan: Walk towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=5.061
+  Distance to target: 2.447m
+  goal_reached=False
+Cycle 29:
+  Perception: Visible Objects (Segmented):
+- apple located in the center-left, covering roughly 0.1% of the view.
+- apple located in t
+  Plan: Plan: Move forward towards the trash bag located on the floor in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=4.811
+  Distance to target: 2.221m
+  goal_reached=False
+Cycle 30:
+  Perception: Visible Objects (Segmented):
+- apple located in the center-left, covering roughly 0.2% of the view.
+- chair located in t
+  Plan: Plan: Move towards the trash bag on the floor.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=4.561
+  Distance to target: 2.001m
+  goal_reached=False
+Cycle 31:
+  Perception: Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 6.3% of the view.
+- chair located in t
+  Plan: Plan: Move towards the trash bag located in the center of the room.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=4.311
+  Distance to target: 1.788m
+  goal_reached=False
+Cycle 32:
+  Perception: Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 8.3% of the view.
+- chair located in t
+  Plan: Plan: Move towards the trash bag located in the center of the view.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=4.061
+  Distance to target: 1.587m
+  goal_reached=False
+Cycle 33:
+  Perception: Visible Objects (Segmented):
+- chair located in the center-left, covering roughly 6.8% of the view.
+- chair located in t
+  Plan: Plan: Move forward towards the trash bag located in the center of the view.
+  Critic: approved=True
+  Action: controller.step(action='MoveAhead')
+  Position: x=3.086 y=0.901 z=3.811
+  Distance to target: 1.401m
+  goal_reached=True
+
+Final: success=True  shortest_path=2.462214450449026  actual_path=6.250

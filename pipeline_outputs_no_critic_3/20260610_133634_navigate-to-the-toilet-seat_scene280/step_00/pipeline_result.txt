@@ -1,0 +1,40 @@
+Task:
+Navigate to the Toilet Seat
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 1.6% of the view.
+- faucet located in the center-right, covering roughly 0.2% of the view.
+- painting located in the top-center, covering roughly 3.2% of the view.
+- sink located in the center-right, covering roughly 4.9% of the view.
+- sink located in the center-right, covering roughly 1.9% of the view.
+- toilet located in the center-left, covering roughly 4.8% of the view.
+- trash bin/can located in the center, covering roughly 1.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 1
+- edges: 0
+- current_node: (9.75, 12.25, 1)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - faucet: closest observed 2.9m (seen at 1 location(s))
+  - painting: closest observed 4.2m (seen at 1 location(s))
+  - sink: closest observed 2.9m (seen at 1 location(s))
+  - toilet: closest observed 2.8m (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the toilet to reach the toilet seat.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the toilet to reach the toilet seat.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=10.000 y=0.901 z=12.250
+Distance to target: 2.622m
+episode_success=False

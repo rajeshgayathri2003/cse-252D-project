@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- door located in the top-left, covering roughly 5.8% of the view.
+- house located in the bottom-left, covering roughly 99.3% of the view.
+- picture frame located in the top-center, covering roughly 1.3% of the view.

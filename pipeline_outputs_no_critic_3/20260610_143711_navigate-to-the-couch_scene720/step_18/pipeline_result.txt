@@ -1,0 +1,49 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- clock located in the center-right, covering roughly 0.5% of the view.
+- cushion located in the bottom-right, covering roughly 6.6% of the view.
+- cushion located in the center, covering roughly 5.9% of the view.
+- cushion located in the center-right, covering roughly 6.5% of the view.
+- cushion located in the center-right, covering roughly 4.7% of the view.
+- studio couch located in the center, covering roughly 35.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 15
+- edges: 28
+- current_node: (4.25, 8.75, 0)
+- known_objects:
+  - book: closest observed 2.8m (seen at 3 location(s))
+  - cabinetry: seen from node 2.5m S (seen at 1 location(s))
+  - clock: closest observed 7.6m (seen at 2 location(s))
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 4 location(s))
+  - computer monitor: seen from node 3.0m S (seen at 2 location(s))
+  - cushion: seen from node 0.0m here (seen at 5 location(s))
+  - desk: closest observed 2.3m (seen at 8 location(s))
+  - house: closest observed 0.9m (seen at 7 location(s))
+  - houseplant: seen from node 2.3m SE (seen at 3 location(s))
+  - person: seen from node 3.0m S (seen at 1 location(s))
+  - sofa bed: closest observed 7.3m (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 12 location(s))
+  - television: closest observed 1.2m (seen at 3 location(s))
+  - vase: closest observed 3.5m (seen at 3 location(s))
+  - window: closest observed 4.1m (seen at 8 location(s))
+
+Planner proposed:
+Plan: I can see the studio couch directly in front of me. I will move towards the studio couch to complete the task.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I can see the studio couch directly in front of me. I will move towards the studio couch to complete the task.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=4.189 y=0.901 z=8.811
+Distance to target: 1.589m
+episode_success=False

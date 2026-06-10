@@ -1,0 +1,7 @@
+Visible Objects (Segmented):
+- clock located in the center-right, covering roughly 0.5% of the view.
+- cushion located in the bottom-right, covering roughly 6.6% of the view.
+- cushion located in the center, covering roughly 5.9% of the view.
+- cushion located in the center-right, covering roughly 6.5% of the view.
+- cushion located in the center-right, covering roughly 4.7% of the view.
+- studio couch located in the center, covering roughly 35.9% of the view.

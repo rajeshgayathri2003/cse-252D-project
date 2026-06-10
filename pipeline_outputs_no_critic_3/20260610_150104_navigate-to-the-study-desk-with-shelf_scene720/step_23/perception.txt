@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- door handle located in the bottom-center, covering roughly 0.3% of the view.
+- door handle located in the bottom-center, covering roughly 0.2% of the view.
+- television located in the top-right, covering roughly 5.6% of the view.

@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- furniture located in the top-center, covering roughly 0.4% of the view.
+- house located in the top-center, covering roughly 99.3% of the view.
+- picture frame located in the top-left, covering roughly 2.3% of the view.

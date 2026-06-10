@@ -1,0 +1,37 @@
+Task:
+Navigate to the Clothes Dryer
+
+Perception:
+Visible Objects (Segmented):
+- house located in the center-right, covering roughly 99.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 26
+- current_node: (9.5, 12.5, 3)
+- known_objects:
+  - bathtub: seen from node 0.6m E (seen at 1 location(s))
+  - cistern: seen from node 0.3m SE (seen at 5 location(s))
+  - faucet: closest observed 2.8m (seen at 2 location(s))
+  - house: closest observed 3.1m (seen at 3 location(s))
+  - painting: closest observed 4.2m (seen at 2 location(s))
+  - sink: closest observed 2.7m (seen at 3 location(s))
+  - toilet: closest observed 2.5m (seen at 8 location(s))
+  - trash bin/can: seen from node 0.3m SE (seen at 4 location(s))
+  - washing machine: seen from node 0.5m E (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the washing machine, as the clothes dryer is likely located in the same room or in close proximity to it, and then search the immediate area to find the clothes dryer.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the washing machine, as the clothes dryer is likely located in the same room or in close proximity to it, and then search the immediate area to find the clothes dryer.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=9.220 y=0.901 z=12.427
+Distance to target: 2.126m
+episode_success=False

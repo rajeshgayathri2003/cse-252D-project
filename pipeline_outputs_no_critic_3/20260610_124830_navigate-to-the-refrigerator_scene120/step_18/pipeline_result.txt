@@ -1,0 +1,42 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- faucet located in the center-right, covering roughly 0.6% of the view.
+- sink located in the center-right, covering roughly 7.9% of the view.
+- sink located in the center-right, covering roughly 3.5% of the view.
+- sink located in the center-right, covering roughly 2.3% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 17
+- edges: 32
+- current_node: (1.75, 6.0, 2)
+- known_objects:
+  - cistern: seen from node 2.5m N (seen at 1 location(s))
+  - desk: seen from node 0.8m N (seen at 7 location(s))
+  - door: closest observed 4.3m (seen at 8 location(s))
+  - door handle: seen from node 1.0m N (seen at 7 location(s))
+  - faucet: closest observed 2.2m (seen at 7 location(s))
+  - house: closest observed 9.5m (seen at 3 location(s))
+  - refrigerator: seen from node 1.3m N (seen at 10 location(s))
+  - sink: closest observed 2.3m (seen at 10 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 2.5m N (seen at 1 location(s))
+  - trash bin/can: seen from node 1.8m N (seen at 3 location(s))
+
+Planner proposed:
+Plan: First, I will navigate out of the current room (the bathroom) and move through the house towards the kitchen. Once I reach the kitchen, I will locate the refrigerator and move towards it to complete the task.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: First, I will navigate out of the current room (the bathroom) and move through the house towards the kitchen. Once I reach the kitchen, I will locate the refrigerator and move towards it to complete the task.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=1.707 y=0.901 z=5.896
+Distance to target: 3.337m
+episode_success=False

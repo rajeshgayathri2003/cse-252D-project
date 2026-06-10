@@ -32,7 +32,7 @@ Planner proposed:
 Plan: Exit the current room through the door and navigate through the house towards the kitchen area to find and reach the refrigerator.
 
 Critic verdict:
-{'approved': True, 'reason': 'None', 'revised_subgoal': None}
+{'approved': True, 'reason': 'The sub-goal is aligned with the task as we cannot see the refrigerator in the current view', 'revised_subgoal': None}
 
 Selected subgoal:
 Plan: Exit the current room through the door and navigate through the house towards the kitchen area to find and reach the refrigerator.

@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- ball located in the center, covering roughly 0.2% of the view.
+- box located in the center-right, covering roughly 2.0% of the view.
+- chair located in the center, covering roughly 0.2% of the view.
+- plastic bag located in the center-left, covering roughly 1.7% of the view.
+- refrigerator located in the top-center, covering roughly 4.7% of the view.

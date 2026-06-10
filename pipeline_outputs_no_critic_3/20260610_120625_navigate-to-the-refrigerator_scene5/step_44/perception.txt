@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- bottle located in the center, covering roughly 0.4% of the view.

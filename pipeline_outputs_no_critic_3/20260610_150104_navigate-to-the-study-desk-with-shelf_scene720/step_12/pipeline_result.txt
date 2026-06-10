@@ -1,0 +1,49 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- desk located in the bottom-left, covering roughly 14.5% of the view.
+- houseplant located in the bottom-center, covering roughly 0.4% of the view.
+- studio couch located in the center, covering roughly 6.1% of the view.
+- television located in the bottom-left, covering roughly 12.1% of the view.
+- vase located in the bottom-center, covering roughly 0.1% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 10
+- edges: 18
+- current_node: (4.75, 6.5, 0)
+- known_objects:
+  - chair: closest observed 8.0m (seen at 1 location(s))
+  - coffee table: closest observed 3.0m (seen at 5 location(s))
+  - computer monitor: seen from node 0.7m S (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 7 location(s))
+  - houseplant: seen from node 0.0m here (seen at 4 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - remote control: closest observed 4.4m (seen at 2 location(s))
+  - studio couch: seen from node 0.0m here (seen at 6 location(s))
+  - table: closest observed 7.4m (seen at 1 location(s))
+  - television: closest observed 0.9m (seen at 5 location(s))
+  - vase: closest observed 4.5m (seen at 2 location(s))
+
+Planner proposed:
+Plan:
+1. Move towards the room on the right, which appears to be the study area based on the top-down view.
+2. Once inside the study, search for the desk that has a shelf.
+3. Navigate to the Study Desk with Shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan:
+1. Move towards the room on the right, which appears to be the study area based on the top-down view.
+2. Once inside the study, search for the desk that has a shelf.
+3. Navigate to the Study Desk with Shelf.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=4.823 y=0.901 z=6.427
+Distance to target: 2.731m
+episode_success=False

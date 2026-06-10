@@ -1,0 +1,13 @@
+Visible Objects (Segmented):
+- garbage bag located in the center, covering roughly 0.3% of the view.
+- bottle located in the top-right, covering roughly 0.1% of the view.
+- bottle located in the top-left, covering roughly 0.1% of the view.
+- bottle located in the top-right, covering roughly 0.0% of the view.
+- chair located in the center-left, covering roughly 1.7% of the view.
+- chair located in the center, covering roughly 1.0% of the view.
+- chair located in the center, covering roughly 0.4% of the view.
+- chair located in the top-left, covering roughly 0.1% of the view.
+- coffee cup located in the top-left, covering roughly 0.0% of the view.
+- kitchen & dining room table located in the center-left, covering roughly 1.1% of the view.
+- refrigerator located in the top-right, covering roughly 2.5% of the view.
+- vase located in the top-right, covering roughly 0.1% of the view.

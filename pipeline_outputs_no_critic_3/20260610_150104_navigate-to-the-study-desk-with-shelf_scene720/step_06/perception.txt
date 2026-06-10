@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- houseplant located in the bottom-right, covering roughly 0.5% of the view.
+- studio couch located in the center-right, covering roughly 4.9% of the view.
+- table located in the bottom-right, covering roughly 18.6% of the view.

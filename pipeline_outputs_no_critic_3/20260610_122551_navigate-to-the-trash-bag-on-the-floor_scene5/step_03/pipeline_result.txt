@@ -1,0 +1,38 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- coffee cup located in the top-left, covering roughly 0.2% of the view.
+- door handle located in the center, covering roughly 0.1% of the view.
+- door handle located in the center, covering roughly 0.0% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (4.5, 6.5, 0)
+- known_objects:
+  - coffee cup: closest observed 4.4m (seen at 1 location(s))
+  - door handle: seen from node 0.0m here (seen at 1 location(s))
+  - furniture: seen from node 0.0m here (seen at 2 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - house: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Since the trash bag is not currently visible or listed in the known objects, I will need to explore the environment to find it. I will start by moving towards the door to investigate the adjacent area.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Since the trash bag is not currently visible or listed in the known objects, I will need to explore the environment to find it. I will start by moving towards the door to investigate the adjacent area.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=4.323 y=0.901 z=6.677
+Distance to target: 4.290m
+episode_success=False

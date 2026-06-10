@@ -1,0 +1,43 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- coffee cup located in the center, covering roughly 0.1% of the view.
+- computer monitor located in the center-left, covering roughly 8.4% of the view.
+- desk located in the center-left, covering roughly 6.9% of the view.
+- desk located in the top-right, covering roughly 0.5% of the view.
+- houseplant located in the center-left, covering roughly 0.1% of the view.
+- studio couch located in the center, covering roughly 4.4% of the view.
+- vase located in the center-left, covering roughly 0.0% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (5.25, 5.75, 0)
+- known_objects:
+  - coffee cup: closest observed 2.8m (seen at 1 location(s))
+  - coffee table: closest observed 2.8m (seen at 1 location(s))
+  - computer monitor: seen from node 0.0m here (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - houseplant: seen from node 0.0m here (seen at 1 location(s))
+  - person: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - television: closest observed 1.7m (seen at 1 location(s))
+  - vase: closest observed 4.7m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the studio couch located in the center of the view.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the studio couch located in the center of the view.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.250 y=0.901 z=6.000
+Distance to target: 4.350m
+episode_success=False

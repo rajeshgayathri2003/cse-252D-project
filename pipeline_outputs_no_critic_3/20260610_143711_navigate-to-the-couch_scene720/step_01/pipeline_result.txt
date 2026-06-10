@@ -1,0 +1,31 @@
+Task:
+Navigate to the Couch
+
+Perception:
+Visible Objects (Segmented):
+- person located in the bottom-left, covering roughly 7.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (5.25, 5.75, 2)
+- known_objects:
+  - computer monitor: seen from node 0.0m here (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 1 location(s))
+  - person: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: I will first move through the house to explore the different rooms. Based on the top-down view, the couch is located in the living area on the right side of the map. I will navigate towards that area to find and reach the couch.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: I will first move through the house to explore the different rooms. Based on the top-down view, the couch is located in the living area on the right side of the map. I will navigate towards that area to find and reach the couch.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=5.250 y=0.901 z=5.750
+Distance to target: 4.587m
+episode_success=False

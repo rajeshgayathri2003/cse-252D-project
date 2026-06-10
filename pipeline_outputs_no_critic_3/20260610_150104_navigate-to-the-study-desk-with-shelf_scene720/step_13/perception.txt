@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- desk located in the center-left, covering roughly 2.2% of the view.
+- door located in the top-right, covering roughly 10.8% of the view.
+- house located in the center, covering roughly 99.3% of the view.
+- studio couch located in the center-left, covering roughly 4.3% of the view.
+- table located in the center-right, covering roughly 3.7% of the view.

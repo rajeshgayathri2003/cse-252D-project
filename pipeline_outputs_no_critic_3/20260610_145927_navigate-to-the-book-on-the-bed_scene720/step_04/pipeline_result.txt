@@ -1,0 +1,38 @@
+Task:
+Navigate to the Book on the bed
+
+Perception:
+Visible Objects (Segmented):
+- bed located in the center, covering roughly 21.6% of the view.
+- book located in the center, covering roughly 0.6% of the view.
+- desk located in the center-left, covering roughly 2.1% of the view.
+- pillow located in the center, covering roughly 0.4% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 3
+- edges: 4
+- current_node: (5.25, 5.5, 2)
+- known_objects:
+  - bed: closest observed 7.1m (seen at 1 location(s))
+  - book: closest observed 1.7m (seen at 1 location(s))
+  - computer monitor: seen from node 0.2m N (seen at 1 location(s))
+  - desk: closest observed 2.3m (seen at 2 location(s))
+  - mobile phone: closest observed 2.2m (seen at 1 location(s))
+  - person: seen from node 0.2m N (seen at 1 location(s))
+  - pillow: closest observed 7.8m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Move towards the bed to reach the book.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the bed to reach the book.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.427 y=0.901 z=5.323
+Distance to target: 1.433m
+episode_success=True

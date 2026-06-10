@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- fireplace located in the center, covering roughly 82.7% of the view.

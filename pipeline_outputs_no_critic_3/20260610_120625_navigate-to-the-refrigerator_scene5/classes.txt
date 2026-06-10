@@ -1,0 +1,34 @@
+0: furniture
+1: house
+2: studio couch
+3: table
+4: hinge
+5: coffee cup
+6: door handle
+7: door
+8: sink
+9: faucet
+10: bottle
+11: bowl
+12: vase
+13: chair
+14: refrigerator
+15: garbage bag
+16: apple
+17: kitchen & dining room table
+18: plate
+19: toothbrush
+20: knife
+21: bench
+22: mirror
+23: toilet
+24: ball
+25: box
+26: plastic bag
+27: spoon
+28: bed
+29: television
+30: cabinetry
+31: computer monitor
+32: suitcase
+33: trash bin/can

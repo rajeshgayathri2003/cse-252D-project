@@ -1,0 +1,45 @@
+Task:
+Navigate to the Refrigerator
+
+Perception:
+Visible Objects (Segmented):
+- door handle located in the center-left, covering roughly 0.2% of the view.
+- desk located in the center-left, covering roughly 0.8% of the view.
+- faucet located in the top-right, covering roughly 0.2% of the view.
+- sink located in the center-right, covering roughly 2.1% of the view.
+- sink located in the top-right, covering roughly 0.4% of the view.
+- trash bin/can located in the center-right, covering roughly 3.5% of the view.
+- refrigerator located in the top-left, covering roughly 7.9% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 9
+- edges: 16
+- current_node: (1.75, 8.0, 2)
+- known_objects:
+  - cistern: seen from node 0.8m NW (seen at 1 location(s))
+  - desk: seen from node 0.0m here (seen at 2 location(s))
+  - door: closest observed 4.6m (seen at 6 location(s))
+  - door handle: seen from node 0.0m here (seen at 3 location(s))
+  - faucet: closest observed 3.9m (seen at 1 location(s))
+  - house: closest observed 9.5m (seen at 3 location(s))
+  - refrigerator: seen from node 0.0m here (seen at 7 location(s))
+  - sink: closest observed 3.9m (seen at 2 location(s))
+  - toilet: closest observed 1.6m (seen at 2 location(s))
+  - toothbrush: seen from node 0.8m NW (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move towards the door, pass through it, and then navigate towards the refrigerator which is visible in the adjacent room.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the door, pass through it, and then navigate towards the refrigerator which is visible in the adjacent room.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=1.707 y=0.901 z=7.646
+Distance to target: 4.433m
+episode_success=False

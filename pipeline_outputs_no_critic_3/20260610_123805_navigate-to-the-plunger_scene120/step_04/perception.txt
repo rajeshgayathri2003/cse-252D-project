@@ -1,0 +1,4 @@
+Visible Objects (Segmented):
+- toilet located in the top-right, covering roughly 22.9% of the view.
+- toilet located in the center, covering roughly 6.2% of the view.
+- toothbrush located in the top-right, covering roughly 0.8% of the view.

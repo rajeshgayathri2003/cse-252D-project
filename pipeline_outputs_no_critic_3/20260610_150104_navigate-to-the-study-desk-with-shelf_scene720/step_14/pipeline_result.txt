@@ -1,0 +1,48 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- desk located in the center-left, covering roughly 2.5% of the view.
+- door located in the top-right, covering roughly 14.1% of the view.
+- door handle located in the center-right, covering roughly 0.1% of the view.
+- door handle located in the center-right, covering roughly 0.0% of the view.
+- furniture located in the center-left, covering roughly 3.9% of the view.
+- furniture located in the center-right, covering roughly 1.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 12
+- edges: 22
+- current_node: (5.0, 6.5, 1)
+- known_objects:
+  - chair: closest observed 8.0m (seen at 1 location(s))
+  - coffee table: closest observed 3.0m (seen at 5 location(s))
+  - computer monitor: seen from node 0.9m S (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 9 location(s))
+  - door: closest observed 4.8m (seen at 2 location(s))
+  - door handle: seen from node 0.0m here (seen at 1 location(s))
+  - furniture: seen from node 0.0m here (seen at 1 location(s))
+  - house: closest observed 0.8m (seen at 1 location(s))
+  - houseplant: seen from node 0.3m SW (seen at 4 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - remote control: closest observed 4.4m (seen at 2 location(s))
+  - studio couch: seen from node 0.3m SW (seen at 7 location(s))
+  - table: closest observed 7.1m (seen at 2 location(s))
+  - television: closest observed 0.9m (seen at 5 location(s))
+  - vase: closest observed 4.5m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Walk towards the door in the top-right of the current view, pass through it to enter the adjacent room, and then navigate to the study desk with the shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Walk towards the door in the top-right of the current view, pass through it to enter the adjacent room, and then navigate to the study desk with the shelf.
+
+Action executed:
+controller.step(action='MoveAhead')
+Position: x=5.177 y=0.901 z=6.780
+Distance to target: 2.530m
+episode_success=False

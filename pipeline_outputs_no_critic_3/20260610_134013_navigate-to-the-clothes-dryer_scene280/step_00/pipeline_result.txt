@@ -1,0 +1,40 @@
+Task:
+Navigate to the Clothes Dryer
+
+Perception:
+Visible Objects (Segmented):
+- cistern located in the center-left, covering roughly 1.6% of the view.
+- faucet located in the center-right, covering roughly 0.2% of the view.
+- painting located in the top-center, covering roughly 3.2% of the view.
+- sink located in the center-right, covering roughly 4.9% of the view.
+- sink located in the center-right, covering roughly 1.9% of the view.
+- toilet located in the center-left, covering roughly 4.8% of the view.
+- trash bin/can located in the center, covering roughly 1.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 1
+- edges: 0
+- current_node: (9.75, 12.25, 1)
+- known_objects:
+  - cistern: seen from node 0.0m here (seen at 1 location(s))
+  - faucet: closest observed 2.9m (seen at 1 location(s))
+  - painting: closest observed 4.2m (seen at 1 location(s))
+  - sink: closest observed 2.9m (seen at 1 location(s))
+  - toilet: closest observed 2.8m (seen at 1 location(s))
+  - trash bin/can: seen from node 0.0m here (seen at 1 location(s))
+
+Planner proposed:
+Plan: Exit the bathroom, move through the hallway into the living area, then proceed towards the kitchen/utility area at the bottom of the map to locate the clothes dryer.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Exit the bathroom, move through the hallway into the living area, then proceed towards the kitchen/utility area at the bottom of the map to locate the clothes dryer.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=9.750 y=0.901 z=12.250
+Distance to target: 2.210m
+episode_success=False

@@ -1,0 +1,2 @@
+Visible Objects (Segmented):
+- bathtub located in the center-right, covering roughly 2.9% of the view.

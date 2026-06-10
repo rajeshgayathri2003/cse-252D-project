@@ -1,0 +1,49 @@
+Task:
+Navigate to the Study Desk with Shelf
+
+Perception:
+Visible Objects (Segmented):
+- desk located in the center-left, covering roughly 3.7% of the view.
+- door handle located in the center-right, covering roughly 0.6% of the view.
+- door handle located in the center-right, covering roughly 0.2% of the view.
+- door handle located in the center-right, covering roughly 0.2% of the view.
+- desk located in the center-left, covering roughly 0.4% of the view.
+- house located in the center, covering roughly 99.3% of the view.
+- table located in the center-right, covering roughly 0.8% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 15
+- edges: 28
+- current_node: (5.5, 7.25, 1)
+- known_objects:
+  - chair: closest observed 8.0m (seen at 1 location(s))
+  - coffee table: closest observed 3.0m (seen at 5 location(s))
+  - computer monitor: seen from node 1.4m S (seen at 2 location(s))
+  - desk: closest observed 2.3m (seen at 12 location(s))
+  - door: closest observed 4.8m (seen at 4 location(s))
+  - door handle: seen from node 0.0m here (seen at 4 location(s))
+  - furniture: seen from node 0.8m SW (seen at 1 location(s))
+  - house: closest observed 0.8m (seen at 4 location(s))
+  - houseplant: seen from node 1.0m SW (seen at 4 location(s))
+  - laptop: closest observed 7.2m (seen at 2 location(s))
+  - remote control: closest observed 4.4m (seen at 2 location(s))
+  - studio couch: seen from node 0.5m SW (seen at 8 location(s))
+  - table: closest observed 6.4m (seen at 3 location(s))
+  - television: closest observed 0.9m (seen at 5 location(s))
+  - vase: closest observed 4.5m (seen at 2 location(s))
+
+Planner proposed:
+Plan: Move towards the door on the right, pass through it to enter the adjacent room, and then search the area for the Study Desk with Shelf.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Move towards the door on the right, pass through it to enter the adjacent room, and then search the area for the Study Desk with Shelf.
+
+Action executed:
+controller.step(action='RotateRight')
+Position: x=5.530 y=0.901 z=7.134
+Distance to target: 2.417m
+episode_success=False

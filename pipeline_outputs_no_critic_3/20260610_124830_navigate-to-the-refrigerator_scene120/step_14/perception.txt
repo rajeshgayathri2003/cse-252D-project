@@ -1,0 +1,8 @@
+Visible Objects (Segmented):
+- door handle located in the center-left, covering roughly 0.7% of the view.
+- desk located in the center-left, covering roughly 5.0% of the view.
+- desk located in the center-left, covering roughly 3.2% of the view.
+- desk located in the bottom-left, covering roughly 1.9% of the view.
+- faucet located in the top-right, covering roughly 0.6% of the view.
+- sink located in the center-right, covering roughly 4.3% of the view.
+- sink located in the center-right, covering roughly 0.9% of the view.

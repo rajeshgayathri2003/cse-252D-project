@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- door located in the top-left, covering roughly 11.0% of the view.
+- house located in the top-center, covering roughly 99.3% of the view.
+- picture frame located in the top-center, covering roughly 2.9% of the view.
+- studio couch located in the top-center, covering roughly 0.9% of the view.
+- refrigerator located in the center-right, covering roughly 5.5% of the view.

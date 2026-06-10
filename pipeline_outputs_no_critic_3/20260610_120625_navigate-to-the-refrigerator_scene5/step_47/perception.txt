@@ -1,0 +1,6 @@
+Visible Objects (Segmented):
+- bottle located in the center-left, covering roughly 0.9% of the view.
+- bottle located in the bottom-left, covering roughly 0.4% of the view.
+- bottle located in the center, covering roughly 0.2% of the view.
+- refrigerator located in the top-left, covering roughly 7.3% of the view.
+- sink located in the center-left, covering roughly 0.8% of the view.

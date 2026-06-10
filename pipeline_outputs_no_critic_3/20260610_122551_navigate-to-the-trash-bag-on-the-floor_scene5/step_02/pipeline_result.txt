@@ -1,0 +1,34 @@
+Task:
+Navigate to the Trash bag on the floor
+
+Perception:
+Visible Objects (Segmented):
+- hinge located in the center-left, covering roughly 0.2% of the view.
+
+Map:
+Spatial map summary:
+- nodes: 2
+- edges: 2
+- current_node: (4.5, 6.5, 0)
+- known_objects:
+  - furniture: seen from node 0.0m here (seen at 2 location(s))
+  - hinge: seen from node 0.0m here (seen at 1 location(s))
+  - house: seen from node 0.0m here (seen at 1 location(s))
+  - studio couch: seen from node 0.0m here (seen at 1 location(s))
+  - table: closest observed 6.5m (seen at 1 location(s))
+  - television: closest observed 5.2m (seen at 1 location(s))
+
+Planner proposed:
+Plan: Since the trash bag is not currently visible in the visual input and is not listed in the known objects, I will begin searching for it by exploring the house. I will navigate through the connected nodes in the map, moving from my current location to adjacent areas to survey different rooms and floor spaces. Once the trash bag is identified, I will proceed to navigate directly to its location.
+
+Critic verdict:
+{'approved': True, 'reason': 'critic disabled (ablation)', 'revised_subgoal': None}
+
+Selected subgoal:
+Plan: Since the trash bag is not currently visible in the visual input and is not listed in the known objects, I will begin searching for it by exploring the house. I will navigate through the connected nodes in the map, moving from my current location to adjacent areas to survey different rooms and floor spaces. Once the trash bag is identified, I will proceed to navigate directly to its location.
+
+Action executed:
+controller.step(action='RotateLeft')
+Position: x=4.500 y=0.901 z=6.500
+Distance to target: 4.206m
+episode_success=False
