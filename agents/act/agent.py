@@ -55,6 +55,7 @@ For object interactions use the exact objectId from the list above: controller.s
 IMPORTANT: Always use y=0.9 for the Teleport action. Using y=0.0 will fail silently.
 
 ROTATION INCREMENT: The default rotation step is 90 degrees, which over-corrects for a target that is only slightly off-center. Prefer fine rotations: controller.step(action='RotateLeft', degrees=30) or controller.step(action='RotateRight', degrees=30). Use larger degrees (60-90) only when you need to scan/search for an out-of-view target, not when correcting heading toward a target already visible in the frame.
+ROTATE ONLY IF YOU ARE EXPLORING. Prefer MoveAhead for making progress toward the target, even if the target is not perfectly centered in the view. Excessive rotation can lead to a stuck oscillation where the agent rotates left/right without making forward progress toward the target. If the target is visible in the frame but off-center, prefer MoveAhead to gradually approach it; small natural offsets from perfect center are normal and will correct themselves as you move forward. Rotate only if you need to search for the target (it is not visible at all) or if you are trying to fine-align with a target that is already approximately centered in the view.
 """
 
 class ActionAgent:

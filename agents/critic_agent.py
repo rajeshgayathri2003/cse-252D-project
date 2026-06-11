@@ -40,13 +40,22 @@ the planner a chance to course-correct.
 
 (A) Goal alignment: does the sub-goal make progress toward the task?
 (B) Map consistency: is the sub-goal reachable / non-contradictory given the
-    map? Specifically: if the sub-goal says "move toward the <target>" but
-    the target is NOT in the current visual input AND the agent has no
-    inferred direction to it from the map, reject — demand the planner first
-    propose a *search* action (e.g., RotateLeft/RotateRight to look around,
-    or move to a known landmark) rather than a blind "MoveAhead".
+    map? Reject ONLY if the map explicitly shows that the target is known to
+    be in a direction or area that clearly contradicts the proposed movement
+    (e.g., the map records the target behind the agent but the sub-goal says
+    MoveAhead away from it). Do NOT reject merely because the target is
+    absent from the current visual input — forward exploration is valid even
+    without a visual fix on the target.
+    PLANNER-SIGHTING CARVE-OUT: if the proposed sub-goal text itself
+    describes visual evidence of the target (e.g., contains phrases like
+    "I can see", "visible", "in front of me", "to my left/right",
+    "spotted", "detected", "I see the <target>"), treat that as a valid
+    first-person sighting and approve any movement toward it, regardless
+    of what the formal "Visual input" field reports. The Planning Agent
+    has access to a richer multimodal context than the perception summary;
+    its inline sighting descriptions should be trusted.
     EXCEPTION (perception-recency carve-out): if the "Target recency" field
-    below shows the target was detected within the last 2 perception frames
+    below shows the target was detected within the last 4 perception frames
     AND no rotation actions (RotateLeft/RotateRight) have been executed
     since that last sighting, treat the target as still in the forward
     camera frustum. The perception model is known to drop small/distant
@@ -54,7 +63,7 @@ the planner a chance to course-correct.
     a recent sighting remains a valid bearing. In this case, do NOT reject a
     MoveAhead that continues toward the recently-seen target — approve it.
     This carve-out does NOT apply if rotation has happened since the last
-    sighting (the prior bearing is stale) or if recency exceeds 2 cycles.
+    sighting (the prior bearing is stale) or if recency exceeds 4 cycles.
     BLOCKED-NODE RULE: if the Map summary contains a field
     `blocked_actions_at_current_node:` with one or more movement actions
     listed (MoveAhead / MoveBack / MoveLeft / MoveRight) AND the proposed
@@ -215,11 +224,15 @@ class CriticAgent:
             if has_rotation
             else "NO rotation since last sighting (prior bearing still valid)"
         )
+        carve_out_note = (
+            f"(recency carve-out {'ACTIVE' if cycles_since <= 4 and not has_rotation else 'INACTIVE'}: "
+            f"threshold is 4 cycles)"
+        )
         actions_text = ", ".join(actions_since) if actions_since else "(none)"
         return (
             f"{target_label} last detected {cycles_since} cycle(s) ago. "
             f"Actions executed since last sighting: {actions_text}. "
-            f"{rotation_note}."
+            f"{rotation_note}. {carve_out_note}"
         )
 
     def _parse_verdict(self, raw):
